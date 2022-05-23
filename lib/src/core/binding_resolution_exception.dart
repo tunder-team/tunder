@@ -1,0 +1,1 @@
+class BindingResolutionException implements Exception {}
