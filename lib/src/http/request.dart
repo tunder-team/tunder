@@ -36,13 +36,8 @@ class Request {
     );
 
     if (route == null) return null;
-    if (!route.methods.contains(method)) throw MethodNotAllowedHttpException();
 
     return route;
-  }
-
-  bool hasContentType(String contentType) {
-    return headers.containsKey(contentType);
   }
 
   void setRoute(RouteEntry route) {

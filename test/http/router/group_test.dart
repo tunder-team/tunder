@@ -15,7 +15,6 @@ main() {
       Route.prefix('prefix').name('crazy.').group(() {
         Route.get('get', TestController, 'index').name('get');
       });
-      print('done loading');
     });
 
     test('it works with prefix', () async {

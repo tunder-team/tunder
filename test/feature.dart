@@ -8,7 +8,8 @@ import 'package:tunder/tunder.dart';
 import 'package:test/test.dart';
 
 feature() {
-  load();
+  final DotEnv dotenv = DotEnv();
+  dotenv.load();
   HttpServer? server;
   String? baseUrl;
   late Application app;

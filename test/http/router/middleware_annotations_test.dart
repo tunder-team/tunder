@@ -13,7 +13,6 @@ main() {
   group('Route(middlewares) annotation', () {
     setUp(() {
       Route.discovery(ExampleController);
-      print('done');
     });
 
     test('it adds middleware to methods and class', () async {
