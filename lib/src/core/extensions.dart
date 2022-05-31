@@ -1,3 +1,5 @@
+import 'dart:mirrors';
+
 extension tunderInt on int {
   Duration get week => Duration(days: this * 7);
   Duration get weeks => Duration(days: this * 7);
@@ -37,6 +39,10 @@ extension Trimmer on String {
 
     return trim().replaceAll(leading, '').replaceAll(trailing, '');
   }
+}
+
+extension Name on Symbol {
+  String get name => MirrorSystem.getName(this);
 }
 
 extension Unique<E, Id> on List<E> {
