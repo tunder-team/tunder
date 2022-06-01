@@ -20,6 +20,12 @@ class Query<T extends Model<T>> {
     table = _inferTableNameByGenericType<T>();
   }
 
+  Query<T> select(List<String> columns) {
+    this.columns = columns;
+
+    return this;
+  }
+
   Future<List<T>> all() {
     return get();
   }
@@ -84,14 +90,17 @@ class Query<T extends Model<T>> {
 
   String toSql() {
     String wheres = _compileWheres();
-    if (wheres.isEmpty) return 'SELECT * FROM $table';
-    return 'SELECT ${_compileColumns()} FROM $table WHERE $wheres';
+    String columns = _compileColumns();
+
+    return wheres.isEmpty
+        ? 'SELECT $columns FROM $table'
+        : 'SELECT $columns FROM $table WHERE $wheres';
   }
 
   String _compileColumns() {
     if (columns.length == 1 && columns.first == '*') return '*';
 
-    return columns.map((column) => "`$column`").join(', ');
+    return columns.map((c) => "$table.$c").join(', ');
   }
 
   String _compileWheres() {

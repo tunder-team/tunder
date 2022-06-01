@@ -33,6 +33,14 @@ class Container {
     return value;
   }
 
+  T? getSafe<T>(key) {
+    try {
+      return get<T>(key);
+    } on BindingResolutionException {
+      return null;
+    }
+  }
+
   _resolveType(Type type) {
     var mirror = reflectClass(type);
 

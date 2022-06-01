@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:tunder/database.dart';
+import '../examples/models.dart';
 
 main() {
   group('Model class', () {
@@ -27,24 +27,16 @@ main() {
           'id': '1',
           'name': 'Marco',
           'email': 'marco@mail.com',
-          'createdAt': '2022-05-27 05:04:23.805328',
-          'updatedAt': '2022-05-27 05:04:23.805328',
+          'created_at': '2022-05-27 05:04:23.805328',
+          'updated_at': '2022-05-27 05:04:23.805328',
         });
 
         expect(user.id, 1);
         expect(user.name, 'Marco');
         expect(user.email, 'marco@mail.com');
-        expect(user.createdAt, DateTime.parse('2022-05-27 05:04:23.805328'));
-        expect(user.updatedAt, DateTime.parse('2022-05-27 05:04:23.805328'));
+        expect(user.created_at, DateTime.parse('2022-05-27 05:04:23.805328'));
+        expect(user.updated_at, DateTime.parse('2022-05-27 05:04:23.805328'));
       });
     });
   });
-}
-
-class User extends Model<User> {
-  int? id;
-  String? name;
-  String? email;
-  late DateTime createdAt;
-  late DateTime updatedAt;
 }

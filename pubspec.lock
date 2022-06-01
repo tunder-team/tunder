@@ -86,7 +86,7 @@ packages:
     source: hosted
     version: "3.0.2"
   dotenv:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: dotenv
       url: "https://pub.dartlang.org"
