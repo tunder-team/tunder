@@ -16,6 +16,7 @@ class Query<T> {
   int? offset;
   int? limit;
 
+  String? _orderBy;
   List<Where> _wheres = [];
   List<String> columns = ['*'];
 
@@ -43,6 +44,12 @@ class Query<T> {
       page: page,
       perPage: perPage,
     );
+  }
+
+  Query<T> orderBy(String column, [String direction = 'asc']) {
+    _orderBy = "ORDER BY $column ${direction.toUpperCase()}";
+
+    return this;
   }
 
   Future<List<T>> get() async {
@@ -111,6 +118,7 @@ class Query<T> {
         ? 'SELECT $columns FROM $table'
         : 'SELECT $columns FROM $table WHERE $wheres';
 
+    if (_orderBy != null) sql += ' $_orderBy';
     if (offset != null) sql += ' OFFSET $offset';
     if (limit != null) sql += ' LIMIT $limit';
 

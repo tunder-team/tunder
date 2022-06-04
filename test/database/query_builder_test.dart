@@ -271,5 +271,13 @@ main() {
       var users = await query.get();
       expect(users.length, 1);
     });
+
+    test('Query.orderBy(column, direction) builds with ORDER BY', () async {
+      var query = Query<User>().orderBy('id').paginate();
+      expect(query.toSql(),
+          "SELECT * FROM users ORDER BY id ASC OFFSET 0 LIMIT 10");
+      var pagination = await query.get();
+      expect(pagination.total, 2);
+    });
   });
 }
