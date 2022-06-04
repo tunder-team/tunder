@@ -35,8 +35,8 @@ main() {
         () async {
       var query = Query<User>().add(Where('email').equals('john.doe@mail.com'));
       String sql = query.toSql();
-      expect(
-          sql, "SELECT * FROM users WHERE email = \$\$john.doe@mail.com\$\$");
+      expect(sql,
+          'SELECT * FROM "users" WHERE "email" = \$\$john.doe@mail.com\$\$');
       List<User> users = await query.get();
       expect(users.length, 1);
       expect(users.first.name, 'John Doe');
@@ -48,7 +48,7 @@ main() {
       var query = Query<User>().and(Where('email').equals('john.doe@mail.com'));
 
       expect(query.toSql(),
-          "SELECT * FROM users WHERE email = \$\$john.doe@mail.com\$\$");
+          'SELECT * FROM "users" WHERE "email" = \$\$john.doe@mail.com\$\$');
     });
 
     test('or() adds an OR clause to the query', () async {
@@ -59,7 +59,7 @@ main() {
           .or(Where('email').startsWith('john'));
 
       expect(query.toSql(),
-          "SELECT * FROM users WHERE email = \$\$john.doe@mail.com\$\$ OR email LIKE \$\$%john.doe%\$\$ AND email LIKE \$\$%@mail.com\$\$ OR email LIKE \$\$john%\$\$");
+          'SELECT * FROM "users" WHERE "email" = \$\$john.doe@mail.com\$\$ OR "email" LIKE \$\$%john.doe%\$\$ AND "email" LIKE \$\$%@mail.com\$\$ OR "email" LIKE \$\$john%\$\$');
 
       var users = await query.get();
       expect(users.length, 1);
@@ -72,7 +72,48 @@ main() {
         ..orWhere('email').isNotNull;
 
       expect(query.toSql(),
-          "SELECT * FROM users WHERE email LIKE \$\$%@mail.com\$\$ AND email LIKE \$\$john.doe%\$\$ OR email IS NOT NULL");
+          'SELECT * FROM "users" WHERE "email" LIKE \$\$%@mail.com\$\$ AND "email" LIKE \$\$john.doe%\$\$ OR "email" IS NOT NULL');
+      var users = await query.get();
+      expect(users.length, 2);
+    });
+
+    test('starting with orWhere removes the first OR from the query', () async {
+      var query = Query<User>()
+        ..orWhere('email').startsWith('marco')
+        ..orWhere('email').startsWith('john.doe')
+        ..where('admin').isTrue;
+      expect(query.toSql(),
+          'SELECT * FROM "users" WHERE "email" LIKE \$\$marco%\$\$ OR "email" LIKE \$\$john.doe%\$\$ AND "admin" IS TRUE');
+      var users = await query.get();
+      expect(users.length, 1);
+    });
+
+    test(
+        'group where clauses with parenthesis with [and] and [or] getters api in Where objects',
+        () async {
+      var query = Query<User>()
+        ..where('email').endsWith('@mail.com').and.startsWith('john.doe')
+        ..where('name').equals('Marco')
+        ..orWhere('email').isNotNull;
+
+      expect(query.toSql(),
+          'SELECT * FROM "users" WHERE ("email" LIKE \$\$%@mail.com\$\$ AND "email" LIKE \$\$john.doe%\$\$) AND "name" = \$\$Marco\$\$ OR "email" IS NOT NULL');
+      var users = await query.get();
+      expect(users.length, 2);
+    });
+
+    test('group where clauses and remove trailing parenthesis', () async {
+      var query = Query<User>()
+        ..where('email')
+            .endsWith('@mail.com')
+            .and
+            .startsWith('john.doe')
+            .or
+            .contains('@mail')
+        ..orWhere('admin').isNot(true);
+
+      expect(query.toSql(),
+          'SELECT * FROM "users" WHERE ("email" LIKE \$\$%@mail.com\$\$ AND "email" LIKE \$\$john.doe%\$\$ OR "email" LIKE \$\$%@mail%\$\$) OR "admin" IS NOT true');
       var users = await query.get();
       expect(users.length, 2);
     });
@@ -83,7 +124,7 @@ main() {
         ..orWhere('email').different('marco@mail.com');
 
       expect(query.toSql(),
-          "SELECT * FROM users WHERE email != \$\$marco@mail.com\$\$ OR email != \$\$marco@mail.com\$\$");
+          'SELECT * FROM "users" WHERE "email" != \$\$marco@mail.com\$\$ OR "email" != \$\$marco@mail.com\$\$');
       var users = await query.get();
       expect(users.length, 1);
     });
@@ -91,24 +132,25 @@ main() {
     group('Nullable operators', () {
       test('Where.isNull', () async {
         var query = Query<User>()..where('email').isNull;
-        expect(query.toSql(), "SELECT * FROM users WHERE email IS NULL");
+        expect(query.toSql(), 'SELECT * FROM "users" WHERE "email" IS NULL');
       });
 
       test('Where.equals(null) builds with IS NULL', () {
         var query = Query<User>()..where('email').equals(null);
-        expect(query.toSql(), "SELECT * FROM users WHERE email IS NULL");
+        expect(query.toSql(), 'SELECT * FROM "users" WHERE "email" IS NULL');
       });
 
       test('Where.isNotNull', () {
         var query = Query<User>()..where('email').isNotNull;
-        expect(query.toSql(), "SELECT * FROM users WHERE email IS NOT NULL");
+        expect(
+            query.toSql(), 'SELECT * FROM "users" WHERE "email" IS NOT NULL');
       });
     });
 
     test('Query.select(columns)', () async {
       var query = Query<User>().select(['id', 'name']);
 
-      expect(query.toSql(), "SELECT users.id, users.name FROM users");
+      expect(query.toSql(), 'SELECT "users"."id", "users"."name" FROM "users"');
       var users = await query.all();
       expect(users.length, 2);
     });
@@ -116,7 +158,7 @@ main() {
     test('Where.contains(value) builds with LIKE %...%', () async {
       var query = Query<User>()..where('email').contains('marco');
       expect(query.toSql(),
-          "SELECT * FROM users WHERE email LIKE \$\$%marco%\$\$");
+          'SELECT * FROM "users" WHERE "email" LIKE \$\$%marco%\$\$');
       var users = await query.get();
       expect(users.length, 1);
     });
@@ -127,7 +169,7 @@ main() {
       var query = Query<User>()
         ..where('email').contains('marco').caseInsensitive;
       expect(query.toSql(),
-          "SELECT * FROM users WHERE email ILIKE \$\$%marco%\$\$");
+          'SELECT * FROM "users" WHERE "email" ILIKE \$\$%marco%\$\$');
       var users = await query.get();
       expect(users.length, 1);
     });
@@ -136,49 +178,49 @@ main() {
         () async {
       var query = Query<User>()..where('email').contains('marco').insensitive;
       expect(query.toSql(),
-          "SELECT * FROM users WHERE email ILIKE \$\$%marco%\$\$");
+          'SELECT * FROM "users" WHERE "email" ILIKE \$\$%marco%\$\$');
       var users = await query.get();
       expect(users.length, 1);
     });
 
     test('Where.greaterThan(value) builds with >', () async {
       var query = Query<User>()..where('id').greaterThan(1);
-      expect(query.toSql(), "SELECT * FROM users WHERE id > 1");
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "id" > 1');
       var users = await query.get();
       expect(users.length, 1);
     });
 
     test('Where.greaterThanOrEqual(value) builds with >=', () async {
       var query = Query<User>()..where('id').greaterThanOrEqual(1);
-      expect(query.toSql(), "SELECT * FROM users WHERE id >= 1");
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "id" >= 1');
       var users = await query.get();
       expect(users.length, 2);
     });
 
     test('Where.lessThan(value) builds with <', () async {
       var query = Query<User>()..where('id').lessThan(1);
-      expect(query.toSql(), "SELECT * FROM users WHERE id < 1");
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "id" < 1');
       var users = await query.get();
       expect(users.length, 0);
     });
 
     test('Where.lessThanOrEqual(value) builds with <=', () async {
       var query = Query<User>()..where('id').lessThanOrEqual(1);
-      expect(query.toSql(), "SELECT * FROM users WHERE id <= 1");
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "id" <= 1');
       var users = await query.get();
       expect(users.length, 1);
     });
 
     test('Where.isIn(values) builds with IN', () async {
       var query = Query<User>()..where('id').isIn([1, 2, 3]);
-      expect(query.toSql(), "SELECT * FROM users WHERE id IN (1, 2, 3)");
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "id" IN (1, 2, 3)');
       var users = await query.get();
       expect(users.length, 2);
     });
 
     test('Where.inList(values) is an alias of isIn', () async {
       var query = Query<User>()..where('id').inList([1, 2, 3]);
-      expect(query.toSql(), "SELECT * FROM users WHERE id IN (1, 2, 3)");
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "id" IN (1, 2, 3)');
       var users = await query.get();
       expect(users.length, 2);
     });
@@ -187,21 +229,21 @@ main() {
       var query = Query<User>()
         ..where('name').isIn(['Marco', 'jetete', 'gorilla']);
       expect(query.toSql(),
-          "SELECT * FROM users WHERE name IN (\$\$Marco\$\$, \$\$jetete\$\$, \$\$gorilla\$\$)");
+          'SELECT * FROM "users" WHERE "name" IN (\$\$Marco\$\$, \$\$jetete\$\$, \$\$gorilla\$\$)');
       var users = await query.get();
       expect(users.length, 1);
     });
 
     test('Where.notIn(values) builds with NOT IN', () async {
       var query = Query<User>()..where('id').notIn([2, 3]);
-      expect(query.toSql(), "SELECT * FROM users WHERE id NOT IN (2, 3)");
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "id" NOT IN (2, 3)');
       var users = await query.get();
       expect(users.length, 1);
     });
 
     test('Where.isNotIn(values) is an alias of notIn', () async {
       var query = Query<User>()..where('id').isNotIn([2, 3]);
-      expect(query.toSql(), "SELECT * FROM users WHERE id NOT IN (2, 3)");
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "id" NOT IN (2, 3)');
       var users = await query.get();
       expect(users.length, 1);
     });
@@ -214,7 +256,7 @@ main() {
         ]);
       expect(
         query.toSql(),
-        "SELECT * FROM users WHERE name NOT IN (\$\$Marco\$\$, \$\$John\$\$)",
+        'SELECT * FROM "users" WHERE "name" NOT IN (\$\$Marco\$\$, \$\$John\$\$)',
       );
       var users = await query.get();
       expect(users.length, 1);
@@ -222,7 +264,7 @@ main() {
 
     test('Where.between(value, value) builds with BETWEEN', () async {
       var query = Query<User>()..where('id').between(1, 2);
-      expect(query.toSql(), "SELECT * FROM users WHERE id BETWEEN 1 AND 2");
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "id" BETWEEN 1 AND 2');
       var users = await query.get();
       expect(users.length, 2);
     });
@@ -234,7 +276,7 @@ main() {
           DateTime.parse('2022-05-27 05:04:24'),
         );
       expect(query.toSql(),
-          "SELECT * FROM users WHERE created_at BETWEEN \$\$2022-05-27 05:04:22.000\$\$ AND \$\$2022-05-27 05:04:24.000\$\$");
+          'SELECT * FROM "users" WHERE "created_at" BETWEEN \$\$2022-05-27 05:04:22.000\$\$ AND \$\$2022-05-27 05:04:24.000\$\$');
       var users = await query.get();
       expect(users.length, 1);
     });
@@ -246,28 +288,28 @@ main() {
           DateTime.parse('2022-05-27 05:04:24'),
         );
       expect(query.toSql(),
-          "SELECT * FROM users WHERE created_at NOT BETWEEN \$\$2022-05-27 05:04:22.000\$\$ AND \$\$2022-05-27 05:04:24.000\$\$");
+          'SELECT * FROM "users" WHERE "created_at" NOT BETWEEN \$\$2022-05-27 05:04:22.000\$\$ AND \$\$2022-05-27 05:04:24.000\$\$');
       var users = await query.get();
       expect(users.length, 1);
     });
 
     test('Where.isTrue builds with IS TRUE', () async {
       var query = Query<User>()..where('admin').isTrue;
-      expect(query.toSql(), "SELECT * FROM users WHERE admin IS TRUE");
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "admin" IS TRUE');
       var users = await query.get();
       expect(users.length, 1);
     });
 
     test('Where.isFalse builds with IS FALSE', () async {
       var query = Query<User>()..where('admin').isFalse;
-      expect(query.toSql(), "SELECT * FROM users WHERE admin IS FALSE");
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "admin" IS FALSE');
       var users = await query.get();
       expect(users.length, 0);
     });
 
     test('Where.isNot(value) builds with IS NOT', () async {
       var query = Query<User>()..where('admin').isNot(true);
-      expect(query.toSql(), "SELECT * FROM users WHERE admin IS NOT true");
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "admin" IS NOT true');
       var users = await query.get();
       expect(users.length, 1);
     });
@@ -275,7 +317,7 @@ main() {
     test('Query.orderBy(column, direction) builds with ORDER BY', () async {
       var query = Query<User>().orderBy('id').paginate();
       expect(query.toSql(),
-          "SELECT * FROM users ORDER BY id ASC OFFSET 0 LIMIT 10");
+          'SELECT * FROM "users" ORDER BY "id" ASC OFFSET 0 LIMIT 10');
       var pagination = await query.get();
       expect(pagination.total, 2);
     });

@@ -48,7 +48,7 @@ main() {
       expect(paginator.page, 1);
       Pagination<Post> result = await paginator.get();
 
-      expect(paginator.toSql(), 'SELECT * FROM posts OFFSET 0 LIMIT 10');
+      expect(paginator.toSql(), 'SELECT * FROM "posts" OFFSET 0 LIMIT 10');
       expect(result.data, TypeMatcher<List<Post>>());
       expect(result.data.length, 10);
       expect(result.total, 12);
@@ -66,7 +66,7 @@ main() {
       expect(paginator.page, 2);
       Pagination<Post> result = await paginator.get();
 
-      expect(paginator.toSql(), 'SELECT * FROM posts OFFSET 10 LIMIT 10');
+      expect(paginator.toSql(), 'SELECT * FROM "posts" OFFSET 10 LIMIT 10');
       expect(result.data, TypeMatcher<List<Post>>());
       expect(result.data.length, 2);
       expect(result.total, 12);
@@ -84,7 +84,7 @@ main() {
       expect(paginator.page, 2);
       Pagination<Post> result = await paginator.get();
 
-      expect(paginator.toSql(), 'SELECT * FROM posts OFFSET 3 LIMIT 3');
+      expect(paginator.toSql(), 'SELECT * FROM "posts" OFFSET 3 LIMIT 3');
       expect(result.data, TypeMatcher<List<Post>>());
       expect(result.data.length, 3);
       expect(result.total, 12);

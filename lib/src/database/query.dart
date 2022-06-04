@@ -47,7 +47,7 @@ class Query<T> {
   }
 
   Query<T> orderBy(String column, [String direction = 'asc']) {
-    _orderBy = "ORDER BY $column ${direction.toUpperCase()}";
+    _orderBy = 'ORDER BY "$column" ${direction.toUpperCase()}';
 
     return this;
   }
@@ -115,8 +115,8 @@ class Query<T> {
     String columns = _compileColumns();
 
     var sql = wheres.isEmpty
-        ? 'SELECT $columns FROM $table'
-        : 'SELECT $columns FROM $table WHERE $wheres';
+        ? 'SELECT $columns FROM "$table"'
+        : 'SELECT $columns FROM "$table" WHERE $wheres';
 
     if (_orderBy != null) sql += ' $_orderBy';
     if (offset != null) sql += ' OFFSET $offset';
@@ -127,7 +127,7 @@ class Query<T> {
 
   String toSqlCount() {
     String wheres = _compileWheres();
-    String countQuery = 'SELECT COUNT(*) AS TOTAL FROM $table';
+    String countQuery = 'SELECT COUNT(*) AS TOTAL FROM "$table"';
 
     return wheres.isEmpty ? countQuery : '$countQuery WHERE $wheres';
   }
@@ -135,13 +135,15 @@ class Query<T> {
   String _compileColumns() {
     if (columns.length == 1 && columns.first == '*') return '*';
 
-    return columns.map((c) => "$table.$c").join(', ');
+    return columns.map((c) => '"$table"."$c"').join(', ');
   }
 
   String _compileWheres() {
     var sql = _wheres.map((w) => w.toSql()).join(' ').trim();
-    if (sql.startsWith('AND ')) sql = sql.substring(4);
-    if (sql.startsWith('OR ')) sql = sql.substring(3);
+    if (sql.startsWith('AND ') || sql.startsWith('(AND'))
+      sql = sql.replaceFirst('AND ', '');
+    if (sql.startsWith('OR ') || sql.startsWith('(OR'))
+      sql = sql.replaceFirst('OR ', '');
 
     return sql.trim();
   }

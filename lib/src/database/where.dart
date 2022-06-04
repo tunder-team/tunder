@@ -4,7 +4,22 @@ class Where {
   String operator = '=';
   dynamic value;
 
+  final List<Where> _wheres = [];
+
   Where(this.column, {this.boolOperator = 'AND'});
+
+  Where get and {
+    return add(Where(this.column, boolOperator: 'AND'));
+  }
+
+  Where get or {
+    return add(Where(this.column, boolOperator: 'OR'));
+  }
+
+  Where add(Where where) {
+    _wheres.add(where);
+    return where;
+  }
 
   Where equals(value) {
     this.value = value;
@@ -164,6 +179,23 @@ class Where {
   }
 
   String toSql() {
+    String sql = _thisSql();
+    String otherClauses = _wheres
+        .map((where) => where.toSql())
+        .join(' ${boolOperator.toUpperCase()} ');
+
+    if (otherClauses.isEmpty) return sql;
+    if (otherClauses.startsWith('(')) {
+      // remove trailing parenthesis from otherClauses
+      otherClauses = otherClauses.substring(1, otherClauses.length - 1);
+    }
+
+    return "($sql $otherClauses)";
+  }
+
+  String _thisSql() {
+    var column = '"${this.column}"';
+
     if (operator == 'IS NOT NULL') return "$boolOperator $column $operator";
     if (value == null) return "$boolOperator $column IS NULL";
     if (value is num) return "$boolOperator $column $operator $value";
