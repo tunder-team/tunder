@@ -22,8 +22,10 @@ main() {
       expect(user.id, 1);
       expect(user.name, 'Marco');
       expect(user.email, 'marco@mail.com');
-      expect(user.created_at, DateTime.parse('2022-05-27 05:04:23.805328Z'));
-      expect(user.updated_at, DateTime.parse('2022-05-27 05:04:23.805328Z'));
+      expect(user.created_at,
+          DateTime.parse('2022-05-27 05:04:23.805328Z').toLocal());
+      expect(user.updated_at,
+          DateTime.parse('2022-05-27 05:04:23.805328Z').toLocal());
     });
 
     // .find(id) should return the user with the given id

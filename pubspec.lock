@@ -36,13 +36,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  buffer:
-    dependency: transitive
-    description:
-      name: buffer
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.1"
   charcode:
     dependency: transitive
     description:
@@ -204,13 +197,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.8.1"
-  pedantic:
-    dependency: transitive
-    description:
-      name: pedantic
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.11.1"
   pool:
     dependency: transitive
     description:
@@ -218,13 +204,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.5.0"
-  postgres:
+  postgresql2:
     dependency: "direct main"
     description:
-      name: postgres
+      name: postgresql2
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "2.4.3"
+    version: "1.0.3"
   pub_semver:
     dependency: transitive
     description:
@@ -239,20 +225,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "4.0.0"
-  sasl_scram:
+  rikulo_commons:
     dependency: transitive
     description:
-      name: sasl_scram
+      name: rikulo_commons
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0"
-  saslprep:
-    dependency: transitive
-    description:
-      name: saslprep
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.2"
+    version: "5.2.0+2"
   shelf:
     dependency: transitive
     description:
@@ -365,13 +344,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.3.1"
-  unorm_dart:
-    dependency: transitive
-    description:
-      name: unorm_dart
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.0"
   vm_service:
     dependency: transitive
     description:

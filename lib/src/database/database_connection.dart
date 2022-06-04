@@ -1,1 +1,15 @@
-abstract class DatabaseConnection {}
+typedef MappedRow = Map<String, dynamic>;
+
+abstract class DatabaseConnection {
+  late String host;
+  late int port;
+  late String database;
+  late String username;
+  late String password;
+
+  Future<void> open();
+  void close();
+  Future<int> execute(String query);
+  Future<List<MappedRow>> query(String query);
+  Future<T> transaction<T>(Future<T> Function() function);
+}

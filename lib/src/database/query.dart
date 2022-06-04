@@ -1,22 +1,26 @@
 import 'dart:mirrors';
 
 import 'package:inflection3/inflection3.dart';
-import 'package:postgres/postgres.dart';
 import 'package:tunder/tunder.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/utils.dart';
 
-class Query<T extends Model<T>> {
+class Query<T> {
   late Application container;
-  late PostgreSQLConnection connection;
   late String table;
+
+  DatabaseConnection? _connectionInstance;
+  DatabaseConnection get _connection => _connectionInstance ??=
+      container.get<DatabaseConnection>(DatabaseConnection);
+
+  int? offset;
+  int? limit;
 
   List<Where> _wheres = [];
   List<String> columns = ['*'];
 
   Query() {
     container = app();
-    connection = app(DatabaseConnection);
     table = _inferTableNameByGenericType<T>();
   }
 
@@ -30,17 +34,32 @@ class Query<T extends Model<T>> {
     return get();
   }
 
+  Paginator<T> paginate({
+    int page = 1,
+    int perPage = 10,
+  }) {
+    return Paginator(
+      query: this,
+      page: page,
+      perPage: perPage,
+    );
+  }
+
   Future<List<T>> get() async {
-    var sql = toSql();
-    return execute(sql);
+    return execute(toSql());
+  }
+
+  Future<int> count() async {
+    var rows = await executeRaw(toSqlCount());
+    return rows.first['total'];
+  }
+
+  Future<List<MappedRow>> executeRaw(String sql) {
+    return _connection.query(sql);
   }
 
   Future<List<T>> execute(String sql) async {
-    await connection.open();
-
-    final results = await connection.mappedResultsQuery(sql);
-
-    return _mapResultsToModel<T>(results);
+    return _transformRows<T>(await _connection.query(sql));
   }
 
   String _inferTableNameByGenericType<M>() {
@@ -53,12 +72,8 @@ class Query<T extends Model<T>> {
         .snakeCase;
   }
 
-  List<M> _mapResultsToModel<M extends Model>(
-      List<Map<String, Map<String, dynamic>>> results) {
-    return results
-        .map((r) => r[table])
-        .map((r) => (app(M) as M).fill(r!) as M)
-        .toList();
+  List<M> _transformRows<M>(List<MappedRow> rows) {
+    return rows.map((r) => (app(M) as Model).fill(r) as M).toList();
   }
 
   Query<T> add(Where where) {
@@ -92,9 +107,21 @@ class Query<T extends Model<T>> {
     String wheres = _compileWheres();
     String columns = _compileColumns();
 
-    return wheres.isEmpty
+    var sql = wheres.isEmpty
         ? 'SELECT $columns FROM $table'
         : 'SELECT $columns FROM $table WHERE $wheres';
+
+    if (offset != null) sql += ' OFFSET $offset';
+    if (limit != null) sql += ' LIMIT $limit';
+
+    return sql;
+  }
+
+  String toSqlCount() {
+    String wheres = _compileWheres();
+    String countQuery = 'SELECT COUNT(*) AS TOTAL FROM $table';
+
+    return wheres.isEmpty ? countQuery : '$countQuery WHERE $wheres';
   }
 
   String _compileColumns() {

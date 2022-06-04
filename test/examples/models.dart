@@ -7,3 +7,11 @@ class User extends Model<User> {
   late DateTime created_at;
   late DateTime updated_at;
 }
+
+class Post extends Model<Post> {
+  int? id;
+  String? title;
+  String? body;
+  late DateTime created_at;
+  late DateTime updated_at;
+}
