@@ -11,6 +11,23 @@ main() {
       DatabaseServiceProvider().boot(app());
     });
 
+    test('can be initialized with table name: Query(tableName)', () async {
+      var query = Query('users')..where('id').equals(1);
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "id" = 1');
+      var users = await query.get();
+      expect(users.length, 1);
+      expect(users.first, TypeMatcher<Map>());
+    });
+
+    test('can be initialized passing the type to constructor: Query(User)',
+        () async {
+      var query = Query(User)..where('id').equals(1);
+      expect(query.toSql(), 'SELECT * FROM "users" WHERE "id" = 1');
+      var users = await query.get();
+      expect(users.length, 1);
+      expect(users.first, TypeMatcher<Map>());
+    });
+
     test('Query<User>().all() returns all users from the table', () async {
       List<User> users = await Query<User>().all();
 

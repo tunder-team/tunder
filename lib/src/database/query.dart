@@ -8,21 +8,33 @@ import 'package:tunder/utils.dart';
 class Query<T> {
   late Application container;
   late String table;
+  int? offset;
+  int? limit;
+  List<String> columns = ['*'];
+
+  late bool _shouldMap = false;
+  String? _orderBy;
+  List<Where> _wheres = [];
 
   DatabaseConnection? _connectionInstance;
   DatabaseConnection get _connection => _connectionInstance ??=
       container.get<DatabaseConnection>(DatabaseConnection);
 
-  int? offset;
-  int? limit;
-
-  String? _orderBy;
-  List<Where> _wheres = [];
-  List<String> columns = ['*'];
-
-  Query() {
+  Query([tableNameOrModelClass]) {
     container = app();
-    table = _inferTableNameByGenericType<T>();
+
+    if (tableNameOrModelClass is String) {
+      this.table = tableNameOrModelClass;
+      return;
+    }
+
+    if (tableNameOrModelClass == null) {
+      _shouldMap = true;
+      this.table = _inferTableNameVia(T);
+      return;
+    }
+
+    this.table = _inferTableNameVia(tableNameOrModelClass);
   }
 
   Query<T> select(List<String> columns) {
@@ -69,8 +81,8 @@ class Query<T> {
     return _transformRows<T>(await _connection.query(sql));
   }
 
-  String _inferTableNameByGenericType<M>() {
-    var modelClass = reflectClass(M);
+  String _inferTableNameVia(type) {
+    var modelClass = reflectClass(type);
     return modelClass.simpleName.name.titleCase
         .split(' ')
         .map((word) => word.toLowerCase())
@@ -80,6 +92,7 @@ class Query<T> {
   }
 
   List<M> _transformRows<M>(List<MappedRow> rows) {
+    if (!_shouldMap) return rows as List<M>;
     return rows.map((r) => (app(M) as Model).fill(r) as M).toList();
   }
 
