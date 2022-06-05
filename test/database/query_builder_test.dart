@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:tunder/database.dart';
+import 'package:tunder/src/exceptions/record_not_found_exception.dart';
 import 'package:tunder/src/providers/database_service_provider.dart';
 import 'package:tunder/utils.dart';
 
@@ -337,6 +338,31 @@ main() {
           'SELECT * FROM "users" ORDER BY "id" ASC OFFSET 0 LIMIT 10');
       var pagination = await query.get();
       expect(pagination.total, 2);
+    });
+
+    test('Query.findBy(column, value) builds and returns the value', () async {
+      User user = await Query<User>().findBy('id', 1);
+      expect(user.id, 1);
+    });
+
+    test('Query.find(value) builds with defaults to ID', () async {
+      User user = await Query<User>().find(1);
+      expect(user.id, 1);
+    });
+
+    test('Query.find(value) throws an error if doesnt find the record',
+        () async {
+      expect(
+        () => Query<User>().find(321),
+        throwsA(isA<RecordNotFoundException>()),
+      );
+    });
+
+    test('Query.findOrNull(value) returns null if doesnt find the record',
+        () async {
+      User? user = await Query<User>().findOrNull(321);
+      expect(user, isNull);
+      expect(await Query<User>().findOrNull(1), isNotNull);
     });
   });
 }

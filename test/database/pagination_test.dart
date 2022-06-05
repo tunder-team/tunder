@@ -3,15 +3,15 @@ import 'dart:io';
 
 import 'package:test/test.dart';
 import 'package:tunder/database.dart';
-import 'package:tunder/src/providers/database_service_provider.dart';
-import 'package:tunder/utils.dart';
+import 'package:tunder/test.dart';
 
 import '../examples/models.dart';
 
 main() {
   group('Query.paginate', () {
-    setUpAll(() async {
-      DatabaseServiceProvider().boot(app());
+    useDatabaseTransaction();
+
+    setUp(() async {
       List data =
           json.decode(File('test/fixtures/posts.json').readAsStringSync());
 
@@ -35,10 +35,6 @@ main() {
         ''';
         await DB.execute(insert);
       }
-    });
-
-    tearDownAll(() async {
-      await DB.execute('DROP TABLE IF EXISTS posts');
     });
 
     test('it paginates per 10 by default', () async {

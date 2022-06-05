@@ -57,4 +57,19 @@ class PostgresConnection implements DatabaseConnection {
       return row.toMap() as MappedRow;
     }).toList();
   }
+
+  @override
+  Future begin() async {
+    return execute('BEGIN');
+  }
+
+  @override
+  Future commit() {
+    return execute('COMMIT');
+  }
+
+  @override
+  Future rollback() {
+    return execute('ROLLBACK');
+  }
 }

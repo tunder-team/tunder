@@ -1,6 +1,8 @@
+import 'dart:async';
 import 'dart:mirrors';
 
 import 'package:inflection3/inflection3.dart';
+import 'package:tunder/src/exceptions/record_not_found_exception.dart';
 import 'package:tunder/tunder.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/utils.dart';
@@ -16,9 +18,7 @@ class Query<T> {
   String? _orderBy;
   List<Where> _wheres = [];
 
-  DatabaseConnection? _connectionInstance;
-  DatabaseConnection get _connection => _connectionInstance ??=
-      container.get<DatabaseConnection>(DatabaseConnection);
+  DatabaseConnection get _connection => DB.connection;
 
   Query([tableNameOrModelClass]) {
     container = app();
@@ -45,6 +45,33 @@ class Query<T> {
 
   Future<List<T>> all() {
     return get();
+  }
+
+  Future<T> findBy(column, value) async {
+    return this
+        .add(where(column).equals(value))
+        .first()
+        .catchError((e) => throw RecordNotFoundException());
+  }
+
+  Future<T?> findByOrNull(column, value) async {
+    return this.add(where(column).equals(value)).firstOrNull();
+  }
+
+  Future<T> find(value) {
+    return findBy('id', value);
+  }
+
+  Future<T?> findOrNull(value) {
+    return findByOrNull('id', value);
+  }
+
+  Future<T> first() {
+    return get().then((result) => result.first);
+  }
+
+  Future<T?> firstOrNull() {
+    return get().then((result) => result.isEmpty ? null : result.first);
   }
 
   Paginator<T> paginate({
@@ -78,7 +105,8 @@ class Query<T> {
   }
 
   Future<List<T>> execute(String sql) async {
-    return _transformRows<T>(await _connection.query(sql));
+    var results = await _connection.query(sql);
+    return _transformRows<T>(results);
   }
 
   String _inferTableNameVia(type) {

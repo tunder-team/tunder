@@ -12,4 +12,7 @@ abstract class DatabaseConnection {
   Future<int> execute(String query);
   Future<List<MappedRow>> query(String query);
   Future<T> transaction<T>(Future<T> Function() function);
+  Future begin();
+  Future commit();
+  Future rollback();
 }

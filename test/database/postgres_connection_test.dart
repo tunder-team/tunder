@@ -64,6 +64,48 @@ main() {
       var results = await connection.query(queryJose);
       expect(results, isEmpty);
     });
+
+    test('begin() and rollback()', () async {
+      // Arrange
+      var insertRobert = "INSERT INTO users (name) VALUES ('Robert')";
+
+      // Act
+      await connection.begin();
+      var result = await connection.execute(insertRobert);
+      expect(result, 1);
+      await connection.rollback();
+
+      // Assert
+      expect(
+          await DB.connection
+              .query("SELECT * from users where name = 'Robert'"),
+          isEmpty);
+    });
+
+    test('begin() and commit() should persist in database', () async {
+      // Arrange
+      var insertRobert = "INSERT INTO users (name) VALUES ('Robert')";
+      var deleteRobert = "DELETE FROM users WHERE name = 'Robert'";
+
+      // Act
+      await connection.begin();
+      var result = await connection.execute(insertRobert);
+      expect(result, 1);
+      await connection.commit();
+
+      // Assert
+      expect(
+          await DB.connection
+              .query("SELECT * from users where name = 'Robert'"),
+          isNotEmpty);
+
+      // Cleanup
+      await connection.execute(deleteRobert);
+      expect(
+          await DB.connection
+              .query("SELECT * from users where name = 'Robert'"),
+          isEmpty);
+    });
   });
 }
 

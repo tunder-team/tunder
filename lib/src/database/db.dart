@@ -17,4 +17,16 @@ class DB {
   static Future<List<MappedRow>> query(String query) async {
     return connection.query(query);
   }
+
+  static Future begin() {
+    return connection.begin();
+  }
+
+  static Future commit() {
+    return connection.commit();
+  }
+
+  static Future rollback() {
+    return connection.rollback();
+  }
 }

@@ -6,11 +6,12 @@ import 'package:tunder/utils.dart';
 main() {
   group('DB', () {
     setUpAll(() => DatabaseServiceProvider().boot(app()));
-    test('DB is an instance of DatabaseConnection', () async {
+    test('is an instance of DatabaseConnection', () async {
       expect(DB.connection, isA<DatabaseConnection>());
     });
 
-    test('DB.transaction(function) opens a transaction', () async {
+    test('transaction(function) executes a function inside a transaction',
+        () async {
       var queryJose = "SELECT * FROM users WHERE name = 'Jose'";
       var connection = DB.connection;
 
@@ -38,7 +39,7 @@ main() {
       expect(results, isEmpty);
     });
 
-    test('DB.execute returns number of affected rows', () async {
+    test('execute returns number of affected rows', () async {
       var insert = "INSERT INTO users (name) VALUES ('Jane')";
       var affectedRows = await DB.execute(insert);
       expect(affectedRows, 1);
@@ -47,11 +48,49 @@ main() {
       expect(affectedRows, 1);
     });
 
-    test('DB.query returns a list of mapped rows', () async {
+    test('query returns a list of mapped rows', () async {
       var query = "SELECT * FROM users WHERE name = 'Marco'";
       var results = await DB.query(query);
       expect(results, isNotEmpty);
       expect(results.first, isA<MappedRow>());
+    });
+
+    test('begin() and rollback()', () async {
+      await DB.begin();
+      var insertJane = "INSERT INTO users (name) VALUES ('Jane')";
+      var findJane = "SELECT * FROM users WHERE name = 'Jane'";
+      var affectedRows = await DB.execute(insertJane);
+      expect(affectedRows, 1);
+
+      var results = await DB.query(findJane);
+      expect(results, isNotEmpty);
+
+      await DB.rollback();
+      results = await DB.query(findJane);
+      expect(results, isEmpty);
+    });
+
+    test('begin() and commit()', () async {
+      await DB.begin();
+      var insertJane = "INSERT INTO users (name) VALUES ('Jane')";
+      var findJane = "SELECT * FROM users WHERE name = 'Jane'";
+      var deleteJane = "DELETE FROM users WHERE name = 'Jane'";
+      var affectedRows = await DB.execute(insertJane);
+      expect(affectedRows, 1);
+
+      var results = await DB.query(findJane);
+      expect(results, isNotEmpty);
+
+      await DB.commit();
+      results = await DB.query(findJane);
+      expect(results, isNotEmpty);
+
+      // Cleanup
+      affectedRows = await DB.execute(deleteJane);
+      expect(affectedRows, 1);
+
+      results = await DB.query(findJane);
+      expect(results, isEmpty);
     });
   });
 }
