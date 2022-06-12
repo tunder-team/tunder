@@ -7,6 +7,7 @@ class PostgresConnection implements DatabaseConnection {
   late String database;
   late String username;
   late String password;
+  late final String driver;
   Connection? _connection;
 
   String get url => 'postgres://$username:$password@$host:$port/$database';
@@ -17,7 +18,7 @@ class PostgresConnection implements DatabaseConnection {
     required this.database,
     required this.username,
     required this.password,
-  });
+  }) : driver = DB.drivers.postgres;
 
   @override
   Future<int> execute(String query) async {
@@ -43,6 +44,15 @@ class PostgresConnection implements DatabaseConnection {
     List<Row> rows = await _connection!.query(query).toList();
 
     return _transformedRows(rows);
+  }
+
+  Future<bool> tableExists(String table) async {
+    await open();
+
+    var res = await query(
+        "SELECT EXISTS (SELECT FROM pg_tables WHERE schemaname = 'public' AND tablename = '$table' )");
+
+    return res.first['exists'];
   }
 
   @override

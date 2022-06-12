@@ -3,21 +3,32 @@ import 'package:tunder/database.dart';
 import 'package:tunder/src/providers/database_service_provider.dart';
 import 'package:tunder/utils.dart';
 
-void useDatabaseTransaction() {
+void useDatabaseTransactions({bool debug = false}) {
   setUpAll(() => DatabaseServiceProvider().boot(app()));
-  setUp(() => DB.begin());
-  tearDown(() => DB.rollback());
-}
+  late DatabaseConnection connection;
 
-void useDatabaseTransactionAll({bool debug = false}) {
-  setUpAll(() {
-    DatabaseServiceProvider().boot(app());
+  setUp(() async {
     if (debug) print('>> using database transaction');
-    DB.begin();
+    connection = DB.newConnection;
+    await connection.begin();
   });
 
-  tearDownAll(() {
-    DB.rollback();
+  tearDown(() async {
+    await connection.rollback();
+    connection.close();
+    if (debug) print('>> database transaction rolled back');
+  });
+}
+
+void useDatabaseTransactionsAll({bool debug = false}) {
+  setUpAll(() async {
+    DatabaseServiceProvider().boot(app());
+    if (debug) print('>> using database transaction');
+    await DB.begin();
+  });
+
+  tearDownAll(() async {
+    await DB.rollback();
     if (debug) print('>> database transaction rolled back');
   });
 }

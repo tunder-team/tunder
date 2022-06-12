@@ -9,7 +9,7 @@ import '../examples/models.dart';
 
 main() {
   group('Query.paginate', () {
-    useDatabaseTransaction();
+    useDatabaseTransactions();
 
     setUp(() async {
       List data =

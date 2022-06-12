@@ -1,6 +1,7 @@
+import 'dart:math';
 import 'dart:mirrors';
 
-extension tunderInt on int {
+extension TunderInt on int {
   Duration get week => Duration(days: this * 7);
   Duration get weeks => Duration(days: this * 7);
 
@@ -23,7 +24,7 @@ extension tunderInt on int {
   Duration get microseconds => Duration(microseconds: this);
 }
 
-extension tunderDurations on Duration {
+extension TunderDurations on Duration {
   Future<void> get delay => Future.delayed(this);
 
   DateTime get fromNow => DateTime.now().add(this);
@@ -32,13 +33,26 @@ extension tunderDurations on Duration {
   DateTime get ago => DateTime.now().subtract(this);
 }
 
-extension Trimmer on String {
+extension TunderString on String {
   String trimWith(String pattern) {
     RegExp leading = RegExp('^[$pattern]*');
     RegExp trailing = RegExp('/*[${pattern}]\$');
 
     return trim().replaceAll(leading, '').replaceAll(trailing, '');
   }
+
+  String shuffle() {
+    var random = Random.secure();
+    var chars = this.split('');
+    var shuffled = List<String>.from(chars);
+
+    shuffled.shuffle(random);
+    return shuffled.join('');
+  }
+
+  String get removeExtraSpaces => replaceAll(RegExp('\\s+'), ' ');
+  String get removeNewLines => replaceAll(RegExp('\n'), '');
+  String get linerized => removeExtraSpaces.removeNewLines;
 }
 
 extension Name on Symbol {
@@ -69,6 +83,24 @@ extension Unique<E, Id> on List<E> {
     final uniqueSet = Set();
     var list = inplace ? this : List<E>.from(this);
     list.retainWhere((x) => uniqueSet.add(id != null ? id(x) : x as Id));
+    return list;
+  }
+}
+
+extension TunderIterable<E> on Iterable<E> {
+  /**
+   * Returns a new list with flattened elements.
+   * Example:
+   * ```dart
+   * var list = [1, [2, 3], [4, [5, 6]]];
+   * print(list.flatten()); // [1, 2, 3, 4, 5, 6]
+   * ```
+   */
+  List flatten() {
+    var list = [];
+    for (var item in this) {
+      item is Iterable ? list.addAll(item.flatten()) : list.add(item);
+    }
     return list;
   }
 }
