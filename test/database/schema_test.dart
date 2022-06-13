@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'package:tunder/src/database/schema/table_schema.dart';
 import 'package:tunder/tunder.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/test.dart';
@@ -8,9 +7,8 @@ main() {
   group('Schema', () {
     useDatabaseTransactions();
 
-    test('TableSchema createSql returns the table schema for creation',
+    test('.createSql(table, define) returns the table schema for creation',
         () async {
-      final table = TableSchema('testing_table', DB.connection);
       final expectedSql = '''
         CREATE TABLE "testing_table" ("custom_id" BIGSERIAL PRIMARY KEY NOT NULL,
           "name" VARCHAR(255) NOT NULL,
@@ -19,27 +17,28 @@ main() {
           "published_at" TIMESTAMP NULL,
           "is_active" BOOLEAN NULL,
           "price" DOUBLE PRECISION NULL,
-          "created_at" TIMESTAMP NOT NULL DEFAULT NOW(),
-          "updated_at" TIMESTAMP NOT NULL DEFAULT NOW(),
+          "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+          "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
           "deleted_at" TIMESTAMP NULL);
         ''';
 
-      table
-        ..id('custom_id')
-        ..string('name')
-        ..integer('age').unsigned
-        ..text('body').nullable
-        ..timestamp('published_at').nullable
-        ..boolean('is_active').nullable
-        ..double('price').nullable
-        ..timestamps()
-        ..softDeletes();
-
-      expect(table.createSql(), expectedSql.linerized.trim());
-      expect(await DB.execute(table.createSql()), isNotNull);
+      var createSql = Schema.createSql('testing_table', (table) {
+        table
+          ..id('custom_id')
+          ..string('name')
+          ..integer('age').unsigned
+          ..text('body').nullable
+          ..timestamp('published_at').nullable
+          ..boolean('is_active').nullable
+          ..double('price').nullable
+          ..timestamps()
+          ..softDeletes();
+      });
+      expect(createSql, expectedSql.linerized.trim());
+      expect(await DB.execute(createSql), isNotNull);
     });
 
-    test('.create(table, function) creates a table', () async {
+    test('.create(table, define) creates a table', () async {
       var exists = await DB.tableExists('testing_table');
       expect(exists, isFalse);
 

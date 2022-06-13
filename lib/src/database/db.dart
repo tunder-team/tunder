@@ -2,8 +2,8 @@ import 'package:tunder/src/database/database_connection.dart';
 import 'package:tunder/src/utils/functions.dart';
 
 class DB {
-  static String get driver => connection.driver;
-  static final drivers = _Drivers();
+  static Symbol get driver => connection.driver;
+  static set driver(Symbol driver) => connection.driver = driver;
   static DatabaseConnection? _connection;
   static DatabaseConnection get connection =>
       _connection ??= app(DatabaseConnection);
@@ -43,10 +43,8 @@ class DB {
   }
 }
 
-class _Drivers {
-  final String postgres = 'postgres';
-  // TODO: final String mysql = 'mysql';
-  // TODO: final String sqlite = 'sqlite';
-
-  const _Drivers();
+class DatabaseDriver {
+  static const postgres = #postgres;
+  // static const sqlite = #sqlite;
+  // static const mysql = #mysql;
 }

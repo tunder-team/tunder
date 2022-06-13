@@ -11,26 +11,39 @@ class ColumnSchema {
   final TableSchema table;
   bool addIndex = false;
   bool isUpdating = false;
-  bool _primary = false;
-  bool? _nullable;
-  bool? _unique;
-  bool _unsigned = false;
-  bool _autoIncrement = false;
-  dynamic _defaultValue;
-  int _length;
+  bool isPrimary = false;
+  bool? isNullable;
+  bool? isUnique;
+  bool isUnsigned = false;
+  bool isAutoIncrement = false;
+  bool defaultsToNow = false;
+  dynamic realDefaultValue;
+  String rawDefaultValue = '';
+  int length;
+  int precision = 12;
+  int scale = 2;
 
-  ColumnSchema(this.name, this.datatype, this.table, [this._length = 255]);
+  ColumnSchema(this.name, this.datatype, this.table, [this.length = 255]);
 
   ColumnSchema get primary => this
-    .._primary = true
+    ..isPrimary = true
     ..notNull;
-  ColumnSchema get notNull => this.._nullable = false;
-  ColumnSchema get nullable => this.._nullable = true;
-  ColumnSchema get unique => this.._unique = true;
-  ColumnSchema get notUnique => this.._unique = false;
-  ColumnSchema get unsigned => this.._unsigned = true;
-  ColumnSchema get autoIncrement => this.._autoIncrement = true;
-  ColumnSchema defaultValue(value) => this.._defaultValue = value;
+  ColumnSchema get notNull => this..isNullable = false;
+  ColumnSchema get nullable => this..isNullable = true;
+  ColumnSchema get unique => this..isUnique = true;
+  ColumnSchema get notUnique => this..isUnique = false;
+  ColumnSchema get unsigned => this..isUnsigned = true;
+  ColumnSchema get autoIncrement => this..isAutoIncrement = true;
+  ColumnSchema defaultValue(value) => this..realDefaultValue = value;
+  ColumnSchema defaultRaw(value) => this..rawDefaultValue = value;
+
+  ColumnSchema defaultToNow([int precision = 6]) => this
+    ..defaultsToNow = true
+    ..precision = precision;
+  // Alias of [defaultToNow]
+  ColumnSchema defaultToCurrent([int precision = 6]) => defaultToNow(precision);
+  // Alias of [defaultToNow]
+  ColumnSchema useCurrent([int precision = 6]) => defaultToNow(precision);
 
   ColumnSchema get index => this..addIndex = true;
   /**
@@ -53,15 +66,15 @@ class ColumnSchema {
   List<String> get changes {
     final changes = <String>[];
 
-    if (_nullable == true) changes.add('ALTER COLUMN "$name" DROP NOT NULL');
-    if (_nullable == false) changes.add('ALTER COLUMN "$name" SET NOT NULL');
+    if (isNullable == true) changes.add('ALTER COLUMN "$name" DROP NOT NULL');
+    if (isNullable == false) changes.add('ALTER COLUMN "$name" SET NOT NULL');
 
     changes.add('ALTER COLUMN "$name" TYPE ${_parsedDatatype}');
 
-    if (_unique == true)
+    if (isUnique == true)
       changes.add(
           'ADD CONSTRAINT "${table.name}_${name}_unique" UNIQUE ("$name")');
-    if (_unique == false)
+    if (isUnique == false)
       changes.add('DROP CONSTRAINT "${table.name}_${name}_unique"');
 
     return changes;
@@ -70,19 +83,19 @@ class ColumnSchema {
   String toString() {
     String sql = '"$name" $_parsedDatatype'.removeExtraSpaces;
 
-    if (_primary && datatype == DataType.integer)
+    if (isPrimary && datatype == DataType.integer)
       sql = '"$name" BIGSERIAL PRIMARY KEY';
-    if (_unique == true) sql += ' UNIQUE';
-    if (_autoIncrement) sql += ' AUTO_INCREMENT';
-    sql += _nullable == true ? ' NULL' : ' NOT NULL';
-    if (_defaultValue != null) sql += ' DEFAULT ${_defaultValue}';
-    if (_unsigned) sql += ' CHECK ("$name" >= 0)';
+    if (isUnique == true) sql += ' UNIQUE';
+    if (isAutoIncrement) sql += ' AUTO_INCREMENT';
+    sql += isNullable == true ? ' NULL' : ' NOT NULL';
+    if (realDefaultValue != null) sql += ' DEFAULT ${realDefaultValue}';
+    if (isUnsigned) sql += ' CHECK ("$name" >= 0)';
 
     return sql;
   }
 
   String get _parsedDatatype {
-    if (table.connection.driver == DB.drivers.postgres)
+    if (table.connection.driver == DatabaseDriver.postgres)
       return _postgresDatatype;
 
     throw UnknownDatabaseDriverException(DB.driver);
@@ -93,7 +106,7 @@ class ColumnSchema {
       case DataType.integer:
         return 'INTEGER';
       case DataType.string:
-        return 'VARCHAR($_length)';
+        return 'VARCHAR($length)';
       case DataType.text:
         return 'TEXT';
       case DataType.timestamp:
@@ -103,6 +116,6 @@ class ColumnSchema {
       case DataType.double:
         return 'DOUBLE PRECISION';
     }
-    throw UnknownDataTypeException(datatype, DB.drivers.postgres);
+    throw UnknownDataTypeException(datatype, DatabaseDriver.postgres);
   }
 }

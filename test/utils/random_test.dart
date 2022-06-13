@@ -3,10 +3,10 @@ import 'package:tunder/utils.dart';
 
 main() {
   group('Random', () {
-    test('.id() generates unique string ID with 20 characters', () {
+    test('.id() generates unique string ID with 16 characters', () {
       final id = Generate.id();
-      expect(id.length, 20);
-      expect(id, isNot(equals(Generate.id(20))));
+      expect(id.length, 16);
+      expect(id, isNot(equals(Generate.id(16))));
     });
 
     test('.id(length) generates unique string ID with given length', () {

@@ -6,7 +6,7 @@ abstract class DatabaseConnection {
   late String database;
   late String username;
   late String password;
-  late final String driver;
+  late Symbol driver;
 
   Future<void> open();
   void close();

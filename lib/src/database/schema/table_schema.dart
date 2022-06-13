@@ -8,11 +8,20 @@ class TableSchema {
   final String name;
   final DatabaseConnection connection;
   final List<ColumnSchema> columns = [];
-  final List<IndexSchema> _indexes = [];
-  final List<String> _dropping = [];
+  final List<IndexSchema> indexes = [];
+  final List<String> droppings = [];
 
   TableSchema(this.name, this.connection);
 
+  /**
+   * Generates a string primary key column with 16 characters long.
+   */
+  void stringId([String name = 'id']) =>
+      _add(name, DataType.string).primary..length = 16;
+
+  /**
+   * Generates a serial big integer primary key column with auto incement.
+   */
   void id([String name = 'id']) => _add(name, DataType.integer).primary;
 
   ColumnSchema string(String name, [int length = 255]) =>
@@ -22,25 +31,53 @@ class TableSchema {
   ColumnSchema double(String name) => _add(name, DataType.double);
 
   ColumnSchema integer(String name) => _add(name, DataType.integer);
+  ColumnSchema bigInteger(String name) => _add(name, DataType.bigInteger);
+  ColumnSchema smallInteger(String name) => _add(name, DataType.smallInteger);
+  ColumnSchema decimal(String name, {int precision = 12, int scale = 2}) =>
+      _add(name, DataType.decimal)
+        ..precision = precision
+        ..scale = scale;
   ColumnSchema timestamp(String name) => _add(name, DataType.timestamp);
+  ColumnSchema dateTime(String name) => _add(name, DataType.dateTime);
+  ColumnSchema date(String name) => _add(name, DataType.date);
   ColumnSchema boolean(String name) => _add(name, DataType.boolean);
+  ColumnSchema json(String name) => _add(name, DataType.json);
+  ColumnSchema jsonb(String name) => _add(name, DataType.jsonb);
 
-  void timestamps() => this
-    .._add('created_at', DataType.timestamp).notNull.defaultValue('NOW()')
-    .._add('updated_at', DataType.timestamp).notNull.defaultValue('NOW()');
+  void timestamps({
+    String? createdColumn,
+    String? updatedColumn,
+    bool camelCase = false,
+  }) =>
+      this
+        .._add(
+                camelCase
+                    ? (createdColumn ?? 'createdAt')
+                    : (createdColumn ?? 'created_at'),
+                DataType.timestamp)
+            .notNull
+            .useCurrent()
+        .._add(
+                camelCase
+                    ? (updatedColumn ?? 'updatedAt')
+                    : (updatedColumn ?? 'updated_at'),
+                DataType.timestamp)
+            .notNull
+            .useCurrent();
 
-  void softDeletes() => _add('deleted_at', DataType.timestamp).nullable;
+  void softDeletes([String name = 'deleted_at']) =>
+      _add(name, DataType.timestamp).nullable;
 
   void index({required String column, String? name = null}) {
     // 'CREATE INDEX $indexName ON $table ($columnName)'
-    var index = IndexSchema(column: column, table: this, name: name);
-    _indexes.add(index);
+    var index = IndexSchema(column: column, table: this.name, name: name);
+    indexes.add(index);
   }
 
   String createSql() {
     var createTableSql = 'CREATE TABLE "$name" (${columns.join(", ")})';
 
-    return '$createTableSql; ${_indexes.join("; ")}'.trim();
+    return '$createTableSql; ${indexes.join("; ")}'.trim();
   }
 
   String alterSql() {
@@ -54,16 +91,16 @@ class TableSchema {
 
     var columnIndexes = columns
         .where((column) => column.addIndex)
-        .map((column) => IndexSchema(column: column.name, table: this))
+        .map((column) => IndexSchema(column: column.name, table: this.name))
         .toList();
 
     return [
-      parsedColumns + _dropping + columnIndexes + _indexes,
+      parsedColumns + droppings + columnIndexes + indexes,
     ].flatten().unique().join('; ');
   }
 
   void dropColumn(String column) {
-    _dropping.add('ALTER TABLE "$name" DROP COLUMN "$column"');
+    droppings.add('ALTER TABLE "$name" DROP COLUMN "$column"');
   }
 
   void dropColumns(List<String> columns) {
@@ -75,11 +112,11 @@ class TableSchema {
   }
 
   void dropUnique(String key) {
-    _dropping.add('ALTER TABLE "$name" DROP CONSTRAINT "$key"');
+    droppings.add('ALTER TABLE "$name" DROP CONSTRAINT "$key"');
   }
 
   void dropIndex(String key) {
-    _dropping.add('DROP INDEX "$key"');
+    droppings.add('DROP INDEX "$key"');
   }
 
   ColumnSchema _add(String name, String datatype, [int length = 255]) {

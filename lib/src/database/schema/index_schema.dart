@@ -1,17 +1,13 @@
-import 'package:tunder/src/database/schema/table_schema.dart';
-
 class IndexSchema {
-  String? name;
+  final String name;
   final String column;
-  final TableSchema table;
+  final String table;
+  final List<String> columns;
 
   IndexSchema({
     required this.column,
     required this.table,
+    this.columns = const [],
     name,
-  }) : this.name = name ?? '${table.name}_${column}_index';
-
-  String toString() {
-    return 'CREATE INDEX "$name" ON "${table.name}" ("$column")';
-  }
+  }) : this.name = name ?? '${table}_${column}_index';
 }

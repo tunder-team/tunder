@@ -7,7 +7,7 @@ class PostgresConnection implements DatabaseConnection {
   late String database;
   late String username;
   late String password;
-  late final String driver;
+  late final Symbol driver;
   Connection? _connection;
 
   String get url => 'postgres://$username:$password@$host:$port/$database';
@@ -18,7 +18,7 @@ class PostgresConnection implements DatabaseConnection {
     required this.database,
     required this.username,
     required this.password,
-  }) : driver = DB.drivers.postgres;
+  }) : driver = DatabaseDriver.postgres;
 
   @override
   Future<int> execute(String query) async {

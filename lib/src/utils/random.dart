@@ -1,7 +1,7 @@
 import 'dart:math';
 
 class Generate {
-  static String id([int length = 20]) {
+  static String id([int length = 16]) {
     const characters =
         '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
