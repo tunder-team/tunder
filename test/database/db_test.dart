@@ -100,92 +100,11 @@ main() {
     });
 
     test('if trying to connect to an unexisting driver it throws an error', () {
-      app().bind(
-        DatabaseConnection,
-        (_) => FakeConnection(
-          host: env('DB_HOST') ?? "localhost",
-          port: int.parse(env('DB_PORT') ?? '5432'),
-          database: env('DB_DATABASE') ?? "tunder_test",
-          username: env('DB_USERNAME') ?? "postgres",
-          password: env('DB_PASSWORD') ?? "docker",
-        ),
-      );
-      var column = ColumnSchema(
-          'name', DataType.string, TableSchema('test', DB.newConnection));
-      expect(() => column.toString(),
+      DB.driver = #fake;
+      expect(() => Schema.createSql('test', (table) => table.string('name')),
           toThrow(UnknownDatabaseDriverException, 'Unknown driver [fake]'));
     });
   });
-}
-
-class FakeConnection implements DatabaseConnection {
-  late String host;
-  late int port;
-  late String database;
-  late String username;
-  late String password;
-  late final String driver;
-
-  FakeConnection({
-    this.host = 'localhost',
-    this.port = 5432,
-    required this.database,
-    required this.username,
-    required this.password,
-  }) : driver = 'fake';
-
-  @override
-  Future begin() {
-    // TODO: implement begin
-    throw UnimplementedError();
-  }
-
-  @override
-  void close() {
-    // TODO: implement close
-  }
-
-  @override
-  Future commit() {
-    // TODO: implement commit
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<int> execute(String query) {
-    // TODO: implement execute
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<void> open() {
-    // TODO: implement open
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<List<MappedRow>> query(String query) {
-    // TODO: implement query
-    throw UnimplementedError();
-  }
-
-  @override
-  Future rollback() {
-    // TODO: implement rollback
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<bool> tableExists(String table) {
-    // TODO: implement tableExists
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<T> transaction<T>(Future<T> Function() function) {
-    // TODO: implement transaction
-    throw UnimplementedError();
-  }
 }
 
 class SomeException implements Exception {

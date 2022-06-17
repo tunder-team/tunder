@@ -7,7 +7,7 @@ class PostgresConnection implements DatabaseConnection {
   late String database;
   late String username;
   late String password;
-  late final Symbol driver;
+  late Symbol driver;
   Connection? _connection;
 
   String get url => 'postgres://$username:$password@$host:$port/$database';

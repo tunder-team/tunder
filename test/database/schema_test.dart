@@ -10,16 +10,16 @@ main() {
     test('.createSql(table, define) returns the table schema for creation',
         () async {
       final expectedSql = '''
-        CREATE TABLE "testing_table" ("custom_id" BIGSERIAL PRIMARY KEY NOT NULL,
-          "name" VARCHAR(255) NOT NULL,
-          "age" INTEGER NOT NULL CHECK ("age" >= 0),
-          "body" TEXT NULL,
-          "published_at" TIMESTAMP NULL,
-          "is_active" BOOLEAN NULL,
-          "price" DOUBLE PRECISION NULL,
-          "created_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-          "updated_at" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-          "deleted_at" TIMESTAMP NULL);
+        create table "testing_table" ("custom_id" bigserial primary key,
+          "name" varchar(255),
+          "age" integer check ("age" >= 0),
+          "body" text null,
+          "published_at" timestamp null,
+          "is_active" boolean null,
+          "price" double precision null,
+          "created_at" timestamp not null default current_timestamp(6),
+          "updated_at" timestamp not null default current_timestamp(6),
+          "deleted_at" timestamp null);
         ''';
 
       var createSql = Schema.createSql('testing_table', (table) {

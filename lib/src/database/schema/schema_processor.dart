@@ -13,4 +13,5 @@ abstract class SchemaProcessor {
   }
 
   String createSql(TableSchema table);
+  String updateSql(TableSchema table);
 }

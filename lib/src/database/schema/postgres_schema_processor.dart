@@ -11,9 +11,16 @@ class PostgresSchemaProcessor implements SchemaProcessor {
   String createSql(TableSchema table) {
     var columns = compileColumnsForCreate(table);
     var indexes = compileIndexesForCreate(table);
-    var createTableSql = 'CREATE TABLE "${table.name}" ($columns)';
+    var createTableSql = 'create table "${table.name}" ($columns)';
 
     return '$createTableSql; $indexes'.trim();
+  }
+
+  String updateSql(TableSchema table) {
+    var columns = compileColumnsForUpdate(table);
+    // var indexes = compileIndexesForUpdate(table);
+
+    return columns;
   }
 
   String compileColumnsForCreate(TableSchema table) {
@@ -27,29 +34,90 @@ class PostgresSchemaProcessor implements SchemaProcessor {
     String sql = '"${column.name}" $datatype'.removeExtraSpaces;
 
     if (column.isPrimary) sql = getPrimarySql(column);
-    if (column.isUnique == true) sql += ' UNIQUE';
+    if (column.isUnique == true) sql += ' unique';
     if (column.isAutoIncrement) {
       if (column.datatype == DataType.integer)
-        sql = sql.replaceAll(datatype, 'SERIAL');
+        sql = sql.replaceAll(datatype, 'serial');
       if (column.datatype == DataType.bigInteger)
-        sql = sql.replaceAll(datatype, 'BIGSERIAL');
+        sql = sql.replaceAll(datatype, 'bigserial');
       if (column.datatype == DataType.smallInteger)
-        sql = sql.replaceAll(datatype, 'SMALLSERIAL');
+        sql = sql.replaceAll(datatype, 'smallserial');
     }
-    sql += column.isNullable == true ? ' NULL' : ' NOT NULL';
+    if (column.isNullable == true) sql += ' null';
+    if (column.isNullable == false) sql += ' not null';
     sql += _getDefaultValue(column);
-    if (column.isUnsigned) sql += ' CHECK ("${column.name}" >= 0)';
+    if (column.isUnsigned) sql += ' check ("${column.name}" >= 0)';
 
     return sql;
+  }
+
+  String compileColumnsForUpdate(TableSchema table) {
+    List parsedColumns = table.columns.map((column) {
+      if (!column.isUpdating) {
+        var createColumn = _compileCreateColumn(column);
+        return ['alter table "${table.name}" add column $createColumn'];
+      }
+
+      return getChanges(column);
+    }).flatten();
+
+    var columnIndexes = table.columns
+        .where((column) => column.addIndex != null)
+        .map((column) => _compileCreateIndex(column.addIndex!))
+        .toList();
+
+    return [
+      parsedColumns + table.droppings + columnIndexes + table.indexes,
+    ].flatten().unique().join('; ');
+  }
+
+  List<String> getChanges(ColumnSchema column) {
+    final changes = <String>[];
+    final table = column.table;
+    final parsedDatatype = _parseDatatype(column);
+    final castUsing = _getCastFor(column);
+
+    changes.add(
+        'alter table "$table" alter column "$column" type $parsedDatatype $castUsing'
+            .trim());
+    if (column.isAutoIncrement)
+      changes
+        ..add(
+            'create sequence "${table}_${column}_seq" owned by "${table}"."${column}"')
+        ..add(
+            'select setval(\'"${table}_${column}_seq"\', (select max("${column}") from "${table}"), false)');
+
+    if (column.isNullable == true)
+      changes.add('alter table "$table" alter column "$column" drop not null');
+    if (column.isNullable == false)
+      changes.add('alter table "$table" alter column "$column" set not null');
+
+    if (column.isUnique == true)
+      changes.add(
+          'alter table "$table" add constraint "${table}_${column}_unique" unique ("$column")');
+    if (column.isPrimary)
+      changes.add(
+          'alter table "$table" add constraint "${table}_${column}_pkey" primary key ("$column")');
+    if (column.isUnique == false)
+      changes.add(
+          'alter table "$table" drop constraint "${table}_${column}_unique"');
+
+    var defaultValue = _getDefaultValue(column).trim();
+    if (defaultValue.isNotEmpty) {
+      changes
+          .add('alter table "$table" alter column "$column" set $defaultValue');
+    }
+
+    return changes;
   }
 
   String getPrimarySql(ColumnSchema column) {
     var columnName = '"${column.name}"';
 
     if (column.datatype == DataType.integer)
-      return '$columnName BIGSERIAL PRIMARY KEY';
+      return '$columnName bigserial primary key';
     if (column.datatype == DataType.string)
-      return '$columnName VARCHAR(${column.length}) PRIMARY KEY';
+      return '$columnName varchar(${column.length}) primary key';
 
     return columnName;
   }
@@ -57,20 +125,20 @@ class PostgresSchemaProcessor implements SchemaProcessor {
   String _getDefaultValue(ColumnSchema column) {
     if (column.realDefaultValue != null)
       return column.realDefaultValue is String
-          ? " DEFAULT '${column.realDefaultValue}'"
-          : ' DEFAULT ${column.realDefaultValue}';
+          ? " default '${column.realDefaultValue}'"
+          : ' default ${column.realDefaultValue}';
 
     if (column.rawDefaultValue.isNotEmpty)
-      return " DEFAULT ${column.rawDefaultValue}";
+      return " default ${column.rawDefaultValue}";
 
     if (column.defaultsToNow)
-      return ' DEFAULT CURRENT_TIMESTAMP(${column.precision})';
+      return ' default current_timestamp(${column.precision})';
 
     return '';
   }
 
   String compileIndexesForCreate(TableSchema table) {
-    var addingIndex = (ColumnSchema column) => column.addIndex;
+    var addingIndex = (ColumnSchema column) => column.addIndex != null;
     var toIndexSchema = (ColumnSchema column) =>
         IndexSchema(column: column.name, table: table.name);
     var columnIndexes =
@@ -84,38 +152,64 @@ class PostgresSchemaProcessor implements SchemaProcessor {
   String _compileCreateIndex(IndexSchema index) {
     var columns = ([index.column] + index.columns).map((column) => '"$column"');
 
-    return 'CREATE INDEX "${index.name}" ON "${index.table}" (${columns.join(', ')})';
+    return 'create index "${index.name}" on "${index.table}" (${columns.join(', ')})';
   }
 
   String _parseDatatype(ColumnSchema column) {
     switch (column.datatype) {
       case DataType.integer:
-        return 'INTEGER';
+        return 'integer';
       case DataType.bigInteger:
-        return 'BIGINT';
+        return 'bigint';
       case DataType.smallInteger:
-        return 'SMALLINT';
+        return 'smallint';
       case DataType.decimal:
-        return 'DECIMAL(${column.precision}, ${column.scale})';
+        return 'decimal(${column.precision}, ${column.scale})';
       case DataType.string:
-        return 'VARCHAR(${column.length})';
+        return 'varchar(${column.length})';
       case DataType.text:
-        return 'TEXT';
+        return 'text';
       case DataType.timestamp:
       case DataType.dateTime:
-        return 'TIMESTAMP';
+        return 'timestamp';
       case DataType.date:
-        return 'DATE';
+        return 'date';
       case DataType.boolean:
-        return 'BOOLEAN';
+        return 'boolean';
       case DataType.double:
-        return 'DOUBLE PRECISION';
+        return 'double precision';
       case DataType.json:
-        return 'JSON';
+        return 'json';
       case DataType.jsonb:
-        return 'JSONB';
+        return 'jsonb';
     }
 
     throw UnknownDataTypeException(column.datatype, DatabaseDriver.postgres);
+  }
+
+  String _getCastFor(ColumnSchema column) {
+    switch (column.datatype) {
+      case DataType.integer:
+        return 'using (trim("$column")::integer)';
+      case DataType.bigInteger:
+        return 'using (trim("$column")::bigint)';
+      case DataType.smallInteger:
+        return 'using (trim("$column")::smallint)';
+      case DataType.decimal:
+        return 'using (trim("$column")::decimal)';
+      case DataType.boolean:
+        return 'using (trim("$column")::boolean)';
+      case DataType.timestamp:
+      case DataType.dateTime:
+        return 'using (trim("$column")::timestamp)';
+      case DataType.date:
+        return 'using (trim("$column")::date)';
+      case DataType.json:
+        return 'using (trim("$column")::json)';
+      case DataType.jsonb:
+        return 'using (trim("$column")::jsonb)';
+    }
+
+    return '';
   }
 }

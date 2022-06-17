@@ -1,7 +1,6 @@
 import 'package:tunder/database.dart';
 import 'package:tunder/src/database/schema/column_schema.dart';
 import 'package:tunder/src/database/schema/data_type.dart';
-import 'package:tunder/extensions.dart';
 import 'package:tunder/src/database/schema/index_schema.dart';
 
 class TableSchema {
@@ -74,31 +73,6 @@ class TableSchema {
     indexes.add(index);
   }
 
-  String createSql() {
-    var createTableSql = 'CREATE TABLE "$name" (${columns.join(", ")})';
-
-    return '$createTableSql; ${indexes.join("; ")}'.trim();
-  }
-
-  String alterSql() {
-    List parsedColumns = columns.map((column) {
-      if (!column.isUpdating) return ['ALTER TABLE "$name" ADD COLUMN $column'];
-
-      return column.changes
-          .map((change) => 'ALTER TABLE "$name" $change')
-          .toList();
-    }).flatten();
-
-    var columnIndexes = columns
-        .where((column) => column.addIndex)
-        .map((column) => IndexSchema(column: column.name, table: this.name))
-        .toList();
-
-    return [
-      parsedColumns + droppings + columnIndexes + indexes,
-    ].flatten().unique().join('; ');
-  }
-
   void dropColumn(String column) {
     droppings.add('ALTER TABLE "$name" DROP COLUMN "$column"');
   }
@@ -125,4 +99,6 @@ class TableSchema {
 
     return column;
   }
+
+  String toString() => name;
 }

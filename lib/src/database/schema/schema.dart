@@ -13,16 +13,22 @@ class Schema {
       DB.execute(createSql(name, define));
 
   static Future<void> update(
-      String name, void Function(TableSchema table) define) async {
-    final table = TableSchema(name, DB.connection);
-    define(table);
-    await DB.execute(table.alterSql());
-  }
+    String name,
+    void Function(TableSchema table) define,
+  ) =>
+      DB.execute(updateSql(name, define));
 
   static String createSql(
       String tableName, void Function(TableSchema table) define) {
     final table = TableSchema(tableName, DB.connection);
     define(table);
     return SchemaProcessor.forDatabase(DB.driver).createSql(table);
+  }
+
+  static String updateSql(
+      String tableName, void Function(TableSchema table) define) {
+    final table = TableSchema(tableName, DB.connection);
+    define(table);
+    return SchemaProcessor.forDatabase(DB.driver).updateSql(table);
   }
 }
