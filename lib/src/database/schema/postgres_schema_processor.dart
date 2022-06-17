@@ -61,13 +61,17 @@ class PostgresSchemaProcessor implements SchemaProcessor {
       return getChanges(column);
     }).flatten();
 
+    var droppings = table.droppings.map((column) {
+      return 'alter table "${table.name}" drop column "${column.name}"';
+    }).toList();
+
     var columnIndexes = table.columns
         .where((column) => column.addIndex != null)
         .map((column) => _compileCreateIndex(column.addIndex!))
         .toList();
 
     return [
-      parsedColumns + table.droppings + columnIndexes + table.indexes,
+      parsedColumns + droppings + columnIndexes + table.indexes,
     ].flatten().unique().join('; ');
   }
 

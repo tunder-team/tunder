@@ -8,7 +8,7 @@ class TableSchema {
   final DatabaseConnection connection;
   final List<ColumnSchema> columns = [];
   final List<IndexSchema> indexes = [];
-  final List<String> droppings = [];
+  final List<ColumnSchema> droppings = [];
 
   TableSchema(this.name, this.connection);
 
@@ -74,7 +74,7 @@ class TableSchema {
   }
 
   void dropColumn(String column) {
-    droppings.add('ALTER TABLE "$name" DROP COLUMN "$column"');
+    droppings.add(ColumnSchema(column, DataType.string, this));
   }
 
   void dropColumns(List<String> columns) {
@@ -86,11 +86,11 @@ class TableSchema {
   }
 
   void dropUnique(String key) {
-    droppings.add('ALTER TABLE "$name" DROP CONSTRAINT "$key"');
+    // droppings.add('ALTER TABLE "$name" DROP CONSTRAINT "$key"');
   }
 
   void dropIndex(String key) {
-    droppings.add('DROP INDEX "$key"');
+    // droppings.add('DROP INDEX "$key"');
   }
 
   ColumnSchema _add(String name, String datatype, [int length = 255]) {

@@ -54,5 +54,35 @@ main() {
 
       expect(await DB.tableExists('testing_table'), isTrue);
     });
+
+    group('droppings', () {
+      setUp(() async {
+        await Schema.create('test', (table) {
+          table.id();
+          table.string('name');
+          table.timestamps();
+          table.softDeletes();
+        });
+      });
+
+      test('.drop(table) and .dropIfExists(table)', () async {
+        expect(Schema.dropSql('test'), 'drop table "test"');
+        expect(Schema.drop('test'), isNotNull);
+        expect(Schema.dropIfExistsSql('test'), 'drop table if exists "test"');
+        expect(Schema.dropIfExists('test'), isNotNull);
+      });
+
+      test('.dropColumn(name) and .dropColumns([name1, name2])', () async {
+        expect(
+          Schema.updateSql('test', (table) {
+            table.dropColumn('name');
+            table.dropColumns(['second', 'third']);
+          }),
+          'alter table "test" drop column "name"; '
+          'alter table "test" drop column "second"; '
+          'alter table "test" drop column "third"',
+        );
+      });
+    });
   });
 }

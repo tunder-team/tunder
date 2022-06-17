@@ -31,4 +31,12 @@ class Schema {
     define(table);
     return SchemaProcessor.forDatabase(DB.driver).updateSql(table);
   }
+
+  static Future<int> drop(String table) async => DB.execute(dropSql(table));
+  static String dropSql(String tableName) => 'drop table "$tableName"';
+
+  static Future<int> dropIfExists(String table) async =>
+      DB.execute(dropIfExistsSql(table));
+  static String dropIfExistsSql(String tableName) =>
+      'drop table if exists "$tableName"';
 }
