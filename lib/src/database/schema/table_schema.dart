@@ -85,6 +85,19 @@ class TableSchema {
     throw UnimplementedError();
   }
 
+  void dropTimestamps({
+    String? createdColumn,
+    String? updatedColumn,
+    bool camelCase = false,
+  }) {
+    dropColumns([
+      createdColumn ?? (camelCase ? 'createdAt' : 'created_at'),
+      updatedColumn ?? (camelCase ? 'updatedAt' : 'updated_at'),
+    ]);
+  }
+
+  void dropSoftDeletes([String name = 'deleted_at']) => dropColumn(name);
+
   void dropUnique(String key) {
     // droppings.add('ALTER TABLE "$name" DROP CONSTRAINT "$key"');
   }

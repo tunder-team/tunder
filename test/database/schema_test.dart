@@ -72,7 +72,7 @@ main() {
         expect(Schema.dropIfExists('test'), isNotNull);
       });
 
-      test('.dropColumn(name) and .dropColumns([name1, name2])', () async {
+      test('.dropColumn(name) and .dropColumns([name1, name2])', () {
         expect(
           Schema.updateSql('test', (table) {
             table.dropColumn('name');
@@ -81,6 +81,41 @@ main() {
           'alter table "test" drop column "name"; '
           'alter table "test" drop column "second"; '
           'alter table "test" drop column "third"',
+        );
+      });
+
+      test('dropTimestamps() / dropTimestamps(createdColumn, updatedColumn)',
+          () {
+        expect(
+          Schema.updateSql('test', (table) => table.dropTimestamps()),
+          'alter table "test" drop column "created_at"; '
+          'alter table "test" drop column "updated_at"',
+        );
+        expect(
+          Schema.updateSql('test',
+              (table) => table.dropTimestamps(createdColumn: 'created_date')),
+          'alter table "test" drop column "created_date"; '
+          'alter table "test" drop column "updated_at"',
+        );
+        expect(
+          Schema.updateSql(
+              'test',
+              (table) => table.dropTimestamps(
+                  updatedColumn: 'updatedDate', camelCase: true)),
+          'alter table "test" drop column "createdAt"; '
+          'alter table "test" drop column "updatedDate"',
+        );
+      });
+
+      test('dropSoftDeletes', () {
+        expect(
+          Schema.updateSql('test', (table) => table.dropSoftDeletes()),
+          'alter table "test" drop column "deleted_at"',
+        );
+        expect(
+          Schema.updateSql(
+              'test', (table) => table.dropSoftDeletes('removed_at')),
+          'alter table "test" drop column "removed_at"',
         );
       });
     });
