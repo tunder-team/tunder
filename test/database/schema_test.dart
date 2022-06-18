@@ -19,7 +19,7 @@ main() {
           "price" double precision null,
           "created_at" timestamp not null default current_timestamp(6),
           "updated_at" timestamp not null default current_timestamp(6),
-          "deleted_at" timestamp null);
+          "deleted_at" timestamp null)
         ''';
 
       var createSql = Schema.createSql('testing_table', (table) {
@@ -116,6 +116,34 @@ main() {
           Schema.updateSql(
               'test', (table) => table.dropSoftDeletes('removed_at')),
           'alter table "test" drop column "removed_at"',
+        );
+      });
+
+      test('index(name)', () {
+        expect(
+          Schema.updateSql('test', (table) {
+            table.index(column: 'name');
+            table.index(column: 'name', name: 'custom_name');
+          }),
+          'create index "test_name_index" on "test" ("name"); '
+          'create index "custom_name" on "test" ("name")',
+        );
+      });
+
+      test('dropIndex(column, name) / dropIndexes(columns, names)', () {
+        expect(
+          Schema.updateSql('test', (table) {
+            table.dropIndex(column: 'name');
+            table.dropIndexes(columns: ['second', 'third']);
+            table.dropIndex(name: 'custom_name');
+            table.dropIndexes(names: ['custom_name_1', 'custom_name_2']);
+          }),
+          'drop index "test_name_index"; '
+          'drop index "test_second_index"; '
+          'drop index "test_third_index"; '
+          'drop index "custom_name"; '
+          'drop index "custom_name_1"; '
+          'drop index "custom_name_2"',
         );
       });
     });

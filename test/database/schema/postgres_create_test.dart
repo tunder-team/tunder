@@ -10,28 +10,28 @@ main() {
       var stringTestCases = {
         "table.string('name')": {
           'action': () => Schema.createSql('test', (t) => t.string('name')),
-          'result': 'create table "test" ("name" varchar(255));'
+          'result': 'create table "test" ("name" varchar(255))'
         },
         "table.string('status').defaultValue('active')": {
           'action': () => Schema.createSql(
               'test', (t) => t.string('status').defaultValue('active')),
           'result':
-              'create table "test" ("status" varchar(255) default \'active\');'
+              'create table "test" ("status" varchar(255) default \'active\')'
         },
         "table.string('name').unique": {
           'action': () =>
               Schema.createSql('test', (t) => t.string('name').unique),
-          'result': 'create table "test" ("name" varchar(255) unique);'
+          'result': 'create table "test" ("name" varchar(255) unique)'
         },
         "table.string('name').nullable.unique": {
           'action': () =>
               Schema.createSql('test', (t) => t.string('name').nullable.unique),
-          'result': 'create table "test" ("name" varchar(255) unique null);'
+          'result': 'create table "test" ("name" varchar(255) unique null)'
         },
         "table.string('name', 123)": {
           'action': () =>
               Schema.createSql('test', (t) => t.string('name', 123)),
-          'result': 'create table "test" ("name" varchar(123));'
+          'result': 'create table "test" ("name" varchar(123))'
         },
         "table.string('name', 123).index()": {
           'action': () =>
@@ -56,22 +56,22 @@ main() {
       var textTestCases = {
         "table.text('name')": {
           'action': () => Schema.createSql('test', (t) => t.text('name')),
-          'result': 'create table "test" ("name" text);'
+          'result': 'create table "test" ("name" text)'
         },
         "table.text('name').defaultValue('jetete')": {
           'action': () => Schema.createSql(
               'test', (t) => t.text('name').defaultValue('jetete')),
-          'result': 'create table "test" ("name" text default \'jetete\');'
+          'result': 'create table "test" ("name" text default \'jetete\')'
         },
         "table.text('name').unique": {
           'action': () =>
               Schema.createSql('test', (t) => t.text('name').unique),
-          'result': 'create table "test" ("name" text unique);'
+          'result': 'create table "test" ("name" text unique)'
         },
         "table.text('name').nullable.unique": {
           'action': () =>
               Schema.createSql('test', (t) => t.text('name').nullable.unique),
-          'result': 'create table "test" ("name" text unique null);'
+          'result': 'create table "test" ("name" text unique null)'
         },
         "table.text('name').index()": {
           'action': () =>
@@ -96,27 +96,27 @@ main() {
       var integerTestCases = {
         "table.integer('number')": {
           'action': () => Schema.createSql('test', (t) => t.integer('number')),
-          'result': 'create table "test" ("number" integer);'
+          'result': 'create table "test" ("number" integer)'
         },
         "table.integer('number').defaultValue(12)": {
           'action': () => Schema.createSql(
               'test', (t) => t.integer('number').defaultValue(12)),
-          'result': 'create table "test" ("number" integer default 12);'
+          'result': 'create table "test" ("number" integer default 12)'
         },
         "table.integer('number').unique": {
           'action': () =>
               Schema.createSql('test', (t) => t.integer('number').unique),
-          'result': 'create table "test" ("number" integer unique);'
+          'result': 'create table "test" ("number" integer unique)'
         },
         "table.integer('number').nullable.unique": {
           'action': () => Schema.createSql(
               'test', (t) => t.integer('number').nullable.unique),
-          'result': 'create table "test" ("number" integer unique null);'
+          'result': 'create table "test" ("number" integer unique null)'
         },
         "table.integer('number').autoIncrement.unique": {
           'action': () => Schema.createSql(
               'test', (t) => t.integer('number').autoIncrement.unique),
-          'result': 'create table "test" ("number" serial unique);'
+          'result': 'create table "test" ("number" serial unique)'
         },
         "table.integer('number').index()": {
           'action': () =>
@@ -142,27 +142,27 @@ main() {
         "table.bigInteger('number')": {
           'action': () =>
               Schema.createSql('test', (t) => t.bigInteger('number')),
-          'result': 'create table "test" ("number" bigint);'
+          'result': 'create table "test" ("number" bigint)'
         },
         "table.bigInteger('number').defaultValue(12)": {
           'action': () => Schema.createSql(
               'test', (t) => t.bigInteger('number').defaultValue(12)),
-          'result': 'create table "test" ("number" bigint default 12);'
+          'result': 'create table "test" ("number" bigint default 12)'
         },
         "table.bigInteger('number').unique": {
           'action': () =>
               Schema.createSql('test', (t) => t.bigInteger('number').unique),
-          'result': 'create table "test" ("number" bigint unique);'
+          'result': 'create table "test" ("number" bigint unique)'
         },
         "table.bigInteger('number').nullable.unique": {
           'action': () => Schema.createSql(
               'test', (t) => t.bigInteger('number').nullable.unique),
-          'result': 'create table "test" ("number" bigint unique null);'
+          'result': 'create table "test" ("number" bigint unique null)'
         },
         "table.bigInteger('number').autoIncrement.unique": {
           'action': () => Schema.createSql(
               'test', (t) => t.bigInteger('number').autoIncrement.unique),
-          'result': 'create table "test" ("number" bigserial unique);'
+          'result': 'create table "test" ("number" bigserial unique)'
         },
         "table.bigInteger('number').index()": {
           'action': () =>
@@ -188,27 +188,27 @@ main() {
         "table.smallInteger('number')": {
           'action': () =>
               Schema.createSql('test', (t) => t.smallInteger('number')),
-          'result': 'create table "test" ("number" smallint);'
+          'result': 'create table "test" ("number" smallint)'
         },
         "table.smallInteger('number').defaultValue(12)": {
           'action': () => Schema.createSql(
               'test', (t) => t.smallInteger('number').defaultValue(12)),
-          'result': 'create table "test" ("number" smallint default 12);'
+          'result': 'create table "test" ("number" smallint default 12)'
         },
         "table.smallInteger('number').unique": {
           'action': () =>
               Schema.createSql('test', (t) => t.smallInteger('number').unique),
-          'result': 'create table "test" ("number" smallint unique);'
+          'result': 'create table "test" ("number" smallint unique)'
         },
         "table.smallInteger('number').nullable.unique": {
           'action': () => Schema.createSql(
               'test', (t) => t.smallInteger('number').nullable.unique),
-          'result': 'create table "test" ("number" smallint unique null);'
+          'result': 'create table "test" ("number" smallint unique null)'
         },
         "table.smallInteger('number').autoIncrement.unique": {
           'action': () => Schema.createSql(
               'test', (t) => t.smallInteger('number').autoIncrement.unique),
-          'result': 'create table "test" ("number" smallserial unique);'
+          'result': 'create table "test" ("number" smallserial unique)'
         },
         "table.smallInteger('number').index()": {
           'action': () =>
@@ -233,43 +233,42 @@ main() {
       var decimalTestCases = {
         "table.decimal('number') -> defaults to decimal(12, 2)": {
           'action': () => Schema.createSql('test', (t) => t.decimal('number')),
-          'result': 'create table "test" ("number" decimal(12, 2));'
+          'result': 'create table "test" ("number" decimal(12, 2))'
         },
         "table.decimal('number').defaultValue(10.2)": {
           'action': () => Schema.createSql(
               'test', (t) => t.decimal('number').defaultValue(10.2)),
-          'result':
-              'create table "test" ("number" decimal(12, 2) default 10.2);'
+          'result': 'create table "test" ("number" decimal(12, 2) default 10.2)'
         },
         "table.decimal('number', precision: 20) -> decimal(20, 2)": {
           'action': () => Schema.createSql(
               'test', (t) => t.decimal('number', precision: 20)),
-          'result': 'create table "test" ("number" decimal(20, 2));'
+          'result': 'create table "test" ("number" decimal(20, 2))'
         },
         "table.decimal('number', precision: 20, scale: 5) -> decimal(20, 5)": {
           'action': () => Schema.createSql(
               'test', (t) => t.decimal('number', precision: 20, scale: 5)),
-          'result': 'create table "test" ("number" decimal(20, 5));'
+          'result': 'create table "test" ("number" decimal(20, 5))'
         },
         "table.decimal('number', scale: 5) -> decimal(12, 5)": {
           'action': () =>
               Schema.createSql('test', (t) => t.decimal('number', scale: 5)),
-          'result': 'create table "test" ("number" decimal(12, 5));'
+          'result': 'create table "test" ("number" decimal(12, 5))'
         },
         "table.decimal('number').unique": {
           'action': () =>
               Schema.createSql('test', (t) => t.decimal('number').unique),
-          'result': 'create table "test" ("number" decimal(12, 2) unique);'
+          'result': 'create table "test" ("number" decimal(12, 2) unique)'
         },
         "table.decimal('number').nullable.unique": {
           'action': () => Schema.createSql(
               'test', (t) => t.decimal('number').nullable.unique),
-          'result': 'create table "test" ("number" decimal(12, 2) unique null);'
+          'result': 'create table "test" ("number" decimal(12, 2) unique null)'
         },
         "table.decimal('number').autoIncrement.unique": {
           'action': () => Schema.createSql(
               'test', (t) => t.decimal('number').autoIncrement.unique),
-          'result': 'create table "test" ("number" decimal(12, 2) unique);'
+          'result': 'create table "test" ("number" decimal(12, 2) unique)'
         },
         "table.decimal('number').index()": {
           'action': () =>
@@ -294,22 +293,22 @@ main() {
       var booleanTestCases = {
         "table.boolean('name')": {
           'action': () => Schema.createSql('test', (t) => t.boolean('name')),
-          'result': 'create table "test" ("name" boolean);'
+          'result': 'create table "test" ("name" boolean)'
         },
         "table.boolean('name').defaultValue(true)": {
           'action': () => Schema.createSql(
               'test', (t) => t.boolean('name').defaultValue(true)),
-          'result': 'create table "test" ("name" boolean default true);'
+          'result': 'create table "test" ("name" boolean default true)'
         },
         "table.boolean('name').unique": {
           'action': () =>
               Schema.createSql('test', (t) => t.boolean('name').unique),
-          'result': 'create table "test" ("name" boolean unique);'
+          'result': 'create table "test" ("name" boolean unique)'
         },
         "table.boolean('name').nullable.unique": {
           'action': () => Schema.createSql(
               'test', (t) => t.boolean('name').nullable.unique),
-          'result': 'create table "test" ("name" boolean unique null);'
+          'result': 'create table "test" ("name" boolean unique null)'
         },
         "table.boolean('name').index()": {
           'action': () =>
@@ -335,48 +334,47 @@ main() {
         "table.timestamp('created_at')": {
           'action': () =>
               Schema.createSql('test', (t) => t.timestamp('created_at')),
-          'result': 'create table "test" ("created_at" timestamp);'
+          'result': 'create table "test" ("created_at" timestamp)'
         },
         "table.timestamp('created_at').defaultToNow() -> defaults to precision 6":
             {
           'action': () => Schema.createSql(
               'test', (t) => t.timestamp('created_at').defaultToNow()),
           'result':
-              'create table "test" ("created_at" timestamp default current_timestamp(6));'
+              'create table "test" ("created_at" timestamp default current_timestamp(6))'
         },
         "table.timestamp('created_at').defaultToNow(3)": {
           'action': () => Schema.createSql(
               'test', (t) => t.timestamp('created_at').defaultToNow(3)),
           'result':
-              'create table "test" ("created_at" timestamp default current_timestamp(3));'
+              'create table "test" ("created_at" timestamp default current_timestamp(3))'
         },
         "table.timestamp('created_at').defaultToCurrent()": {
           'action': () => Schema.createSql(
               'test', (t) => t.timestamp('created_at').defaultToCurrent()),
           'result':
-              'create table "test" ("created_at" timestamp default current_timestamp(6));'
+              'create table "test" ("created_at" timestamp default current_timestamp(6))'
         },
         "table.timestamp('created_at').useCurrent()": {
           'action': () => Schema.createSql(
               'test', (t) => t.timestamp('created_at').useCurrent()),
           'result':
-              'create table "test" ("created_at" timestamp default current_timestamp(6));'
+              'create table "test" ("created_at" timestamp default current_timestamp(6))'
         },
         "table.timestamp('created_at').defaultRaw('now()') runs accordingly": {
           'action': () => Schema.createSql(
               'test', (t) => t.timestamp('created_at').defaultRaw('now()')),
-          'result':
-              'create table "test" ("created_at" timestamp default now());'
+          'result': 'create table "test" ("created_at" timestamp default now())'
         },
         "table.timestamp('created_at').unique": {
           'action': () =>
               Schema.createSql('test', (t) => t.timestamp('created_at').unique),
-          'result': 'create table "test" ("created_at" timestamp unique);'
+          'result': 'create table "test" ("created_at" timestamp unique)'
         },
         "table.timestamp('created_at').nullable.unique": {
           'action': () => Schema.createSql(
               'test', (t) => t.timestamp('created_at').nullable.unique),
-          'result': 'create table "test" ("created_at" timestamp unique null);'
+          'result': 'create table "test" ("created_at" timestamp unique null)'
         },
         "table.timestamp('created_at').index()": {
           'action': () => Schema.createSql(
@@ -402,42 +400,41 @@ main() {
         "table.dateTime('created_at')": {
           'action': () =>
               Schema.createSql('test', (t) => t.dateTime('created_at')),
-          'result': 'create table "test" ("created_at" timestamp);'
+          'result': 'create table "test" ("created_at" timestamp)'
         },
         "table.dateTime('created_at').defaultToNow() -> defaults to precision 6":
             {
           'action': () => Schema.createSql(
               'test', (t) => t.dateTime('created_at').defaultToNow()),
           'result':
-              'create table "test" ("created_at" timestamp default current_timestamp(6));'
+              'create table "test" ("created_at" timestamp default current_timestamp(6))'
         },
         "table.dateTime('created_at').defaultToCurrent()": {
           'action': () => Schema.createSql(
               'test', (t) => t.dateTime('created_at').defaultToCurrent()),
           'result':
-              'create table "test" ("created_at" timestamp default current_timestamp(6));'
+              'create table "test" ("created_at" timestamp default current_timestamp(6))'
         },
         "table.dateTime('created_at').useCurrent()": {
           'action': () => Schema.createSql(
               'test', (t) => t.dateTime('created_at').useCurrent()),
           'result':
-              'create table "test" ("created_at" timestamp default current_timestamp(6));'
+              'create table "test" ("created_at" timestamp default current_timestamp(6))'
         },
         "table.dateTime('created_at').defaultRaw('NOW()') runs accordingly": {
           'action': () => Schema.createSql(
               'test', (t) => t.dateTime('created_at').defaultRaw('NOW()')),
-          'result':
-              'create table "test" ("created_at" timestamp default NOW());'
+          'result': 'create table "test" ("created_at" timestamp default NOW())'
         },
         "table.dateTime('created_at').unique": {
           'action': () =>
               Schema.createSql('test', (t) => t.dateTime('created_at').unique),
-          'result': 'create table "test" ("created_at" timestamp unique);'
+          'result': 'create table "test" ("created_at" timestamp unique)'
         },
         "table.dateTime('created_at').nullable.unique": {
           'action': () => Schema.createSql(
               'test', (t) => t.dateTime('created_at').nullable.unique),
-          'result': 'create table "test" ("created_at" timestamp unique null);'
+          'result': 'create table "test" ("created_at" timestamp unique null)'
         },
         "table.dateTime('created_at').index()": {
           'action': () =>
@@ -462,40 +459,40 @@ main() {
       var dateTestCases = {
         "table.date('created_at')": {
           'action': () => Schema.createSql('test', (t) => t.date('created_at')),
-          'result': 'create table "test" ("created_at" date);'
+          'result': 'create table "test" ("created_at" date)'
         },
         "table.date('created_at').defaultToNow(3)": {
           'action': () => Schema.createSql(
               'test', (t) => t.date('created_at').defaultToNow(3)),
           'result':
-              'create table "test" ("created_at" date default current_timestamp(3));'
+              'create table "test" ("created_at" date default current_timestamp(3))'
         },
         "table.date('created_at').defaultToCurrent(3)": {
           'action': () => Schema.createSql(
               'test', (t) => t.date('created_at').defaultToCurrent(3)),
           'result':
-              'create table "test" ("created_at" date default current_timestamp(3));'
+              'create table "test" ("created_at" date default current_timestamp(3))'
         },
         "table.date('created_at').useCurrent(3)": {
           'action': () => Schema.createSql(
               'test', (t) => t.date('created_at').useCurrent(3)),
           'result':
-              'create table "test" ("created_at" date default current_timestamp(3));'
+              'create table "test" ("created_at" date default current_timestamp(3))'
         },
         "table.date('created_at').defaultRaw('NOW()')": {
           'action': () => Schema.createSql(
               'test', (t) => t.date('created_at').defaultRaw('NOW()')),
-          'result': 'create table "test" ("created_at" date default NOW());'
+          'result': 'create table "test" ("created_at" date default NOW())'
         },
         "table.date('created_at').unique": {
           'action': () =>
               Schema.createSql('test', (t) => t.date('created_at').unique),
-          'result': 'create table "test" ("created_at" date unique);'
+          'result': 'create table "test" ("created_at" date unique)'
         },
         "table.date('created_at').nullable.unique": {
           'action': () => Schema.createSql(
               'test', (t) => t.date('created_at').nullable.unique),
-          'result': 'create table "test" ("created_at" date unique null);'
+          'result': 'create table "test" ("created_at" date unique null)'
         },
         "table.date('created_at').index()": {
           'action': () =>
@@ -520,17 +517,17 @@ main() {
       var jsonTestCases = {
         "table.json('address')": {
           'action': () => Schema.createSql('test', (t) => t.json('address')),
-          'result': 'create table "test" ("address" json);'
+          'result': 'create table "test" ("address" json)'
         },
         "table.json('address').defaultValue('[]')": {
           'action': () => Schema.createSql(
               'test', (t) => t.json('address').defaultValue('[]')),
-          'result': 'create table "test" ("address" json default \'[]\');'
+          'result': 'create table "test" ("address" json default \'[]\')'
         },
         "table.json('address').nullable": {
           'action': () =>
               Schema.createSql('test', (t) => t.json('address').nullable),
-          'result': 'create table "test" ("address" json null);'
+          'result': 'create table "test" ("address" json null)'
         },
       };
 
@@ -549,17 +546,17 @@ main() {
       var jsonbTestCases = {
         "table.jsonb('address')": {
           'action': () => Schema.createSql('test', (t) => t.jsonb('address')),
-          'result': 'create table "test" ("address" jsonb);'
+          'result': 'create table "test" ("address" jsonb)'
         },
         "table.jsonb('address').defaultValue('[]')": {
           'action': () => Schema.createSql(
               'test', (t) => t.jsonb('address').defaultValue('[]')),
-          'result': 'create table "test" ("address" jsonb default \'[]\');'
+          'result': 'create table "test" ("address" jsonb default \'[]\')'
         },
         "table.jsonb('address').nullable": {
           'action': () =>
               Schema.createSql('test', (t) => t.jsonb('address').nullable),
-          'result': 'create table "test" ("address" jsonb null);'
+          'result': 'create table "test" ("address" jsonb null)'
         },
       };
 
@@ -579,21 +576,21 @@ main() {
         // ID
         "table.id() generates bigserial primary key": {
           'action': () => Schema.createSql('test', (t) => t.id()),
-          'result': 'create table "test" ("id" bigserial primary key);'
+          'result': 'create table "test" ("id" bigserial primary key)'
         },
         "table.id(name)": {
           'action': () => Schema.createSql('test', (t) => t.id('mid')),
-          'result': 'create table "test" ("mid" bigserial primary key);'
+          'result': 'create table "test" ("mid" bigserial primary key)'
         },
 
         // String ID
         "table.stringId() generates varchar(16) primary key": {
           'action': () => Schema.createSql('test', (t) => t.stringId()),
-          'result': 'create table "test" ("id" varchar(16) primary key);'
+          'result': 'create table "test" ("id" varchar(16) primary key)'
         },
         "table.stringId(name)": {
           'action': () => Schema.createSql('test', (t) => t.stringId('msid')),
-          'result': 'create table "test" ("msid" varchar(16) primary key);'
+          'result': 'create table "test" ("msid" varchar(16) primary key)'
         },
 
         // Timestamps
@@ -601,7 +598,7 @@ main() {
           'action': () => Schema.createSql('test', (t) => t.timestamps()),
           'result': 'create table "test" ('
               '"created_at" timestamp not null default current_timestamp(6), '
-              '"updated_at" timestamp not null default current_timestamp(6));'
+              '"updated_at" timestamp not null default current_timestamp(6))'
         },
         "table.timestamps(createdColumn: 'createdAt', updatedColumn: 'updatedAt')":
             {
@@ -611,14 +608,14 @@ main() {
                   createdColumn: 'createdAt', updatedColumn: 'updatedAt')),
           'result': 'create table "test" ('
               '"createdAt" timestamp not null default current_timestamp(6), '
-              '"updatedAt" timestamp not null default current_timestamp(6));'
+              '"updatedAt" timestamp not null default current_timestamp(6))'
         },
         "table.timestamps(camelCase: true)": {
           'action': () =>
               Schema.createSql('test', (t) => t.timestamps(camelCase: true)),
           'result': 'create table "test" ('
               '"createdAt" timestamp not null default current_timestamp(6), '
-              '"updatedAt" timestamp not null default current_timestamp(6));'
+              '"updatedAt" timestamp not null default current_timestamp(6))'
         },
         "table.timestamps(camelCase: true, updatedColumn: 'updatedDate')": {
           'action': () => Schema.createSql(
@@ -627,18 +624,18 @@ main() {
                   t.timestamps(camelCase: true, updatedColumn: 'updatedDate')),
           'result': 'create table "test" ('
               '"createdAt" timestamp not null default current_timestamp(6), '
-              '"updatedDate" timestamp not null default current_timestamp(6));'
+              '"updatedDate" timestamp not null default current_timestamp(6))'
         },
 
         // Soft Deletes
         "table.softDeletes()": {
           'action': () => Schema.createSql('test', (t) => t.softDeletes()),
-          'result': 'create table "test" ("deleted_at" timestamp null);'
+          'result': 'create table "test" ("deleted_at" timestamp null)'
         },
         "table.softDeletes('deletedAt')": {
           'action': () =>
               Schema.createSql('test', (t) => t.softDeletes('deletedAt')),
-          'result': 'create table "test" ("deletedAt" timestamp null);'
+          'result': 'create table "test" ("deletedAt" timestamp null)'
         },
       };
 

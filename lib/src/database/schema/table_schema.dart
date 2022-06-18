@@ -8,7 +8,7 @@ class TableSchema {
   final DatabaseConnection connection;
   final List<ColumnSchema> columns = [];
   final List<IndexSchema> indexes = [];
-  final List<ColumnSchema> droppings = [];
+  final List<dynamic> droppings = [];
 
   TableSchema(this.name, this.connection);
 
@@ -68,9 +68,7 @@ class TableSchema {
       _add(name, DataType.timestamp).nullable;
 
   void index({required String column, String? name = null}) {
-    // 'CREATE INDEX $indexName ON $table ($columnName)'
-    var index = IndexSchema(column: column, table: this.name, name: name);
-    indexes.add(index);
+    indexes.add(IndexSchema(column: column, table: this.name, name: name));
   }
 
   void dropColumn(String column) {
@@ -102,8 +100,15 @@ class TableSchema {
     // droppings.add('ALTER TABLE "$name" DROP CONSTRAINT "$key"');
   }
 
-  void dropIndex(String key) {
-    // droppings.add('DROP INDEX "$key"');
+  void dropIndex({String? column, String? name}) {
+    droppings
+        .add(IndexSchema(column: column ?? '', table: this.name, name: name));
+  }
+
+  void dropIndexes(
+      {List<String> columns = const [], List<String> names = const []}) {
+    columns.forEach((column) => dropIndex(column: column));
+    names.forEach((name) => dropIndex(name: name));
   }
 
   ColumnSchema _add(String name, String datatype, [int length = 255]) {

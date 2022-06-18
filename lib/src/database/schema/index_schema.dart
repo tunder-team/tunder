@@ -10,4 +10,6 @@ class IndexSchema {
     this.columns = const [],
     name,
   }) : this.name = name ?? '${table}_${column}_index';
+
+  toString() => name;
 }

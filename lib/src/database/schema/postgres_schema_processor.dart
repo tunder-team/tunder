@@ -7,20 +7,22 @@ import 'package:tunder/src/database/schema/schema_processor.dart';
 import 'package:tunder/src/database/schema/table_schema.dart';
 import 'package:tunder/src/exceptions/unknown_data_type_exception.dart';
 
-class PostgresSchemaProcessor implements SchemaProcessor {
+class PostgresSchemaProcessor
+    with SchemaProcessorMethods
+    implements SchemaProcessor {
   String createSql(TableSchema table) {
     var columns = compileColumnsForCreate(table);
     var indexes = compileIndexesForCreate(table);
     var createTableSql = 'create table "${table.name}" ($columns)';
 
-    return '$createTableSql; $indexes'.trim();
+    return '$createTableSql; $indexes'.trimWith(';');
   }
 
   String updateSql(TableSchema table) {
     var columns = compileColumnsForUpdate(table);
-    // var indexes = compileIndexesForUpdate(table);
+    var indexes = compileIndexesForUpdate(table);
 
-    return columns;
+    return '$columns; $indexes'.trimWith(';');
   }
 
   String compileColumnsForCreate(TableSchema table) {
@@ -61,9 +63,15 @@ class PostgresSchemaProcessor implements SchemaProcessor {
       return getChanges(column);
     }).flatten();
 
-    var droppings = table.droppings.map((column) {
-      return 'alter table "${table.name}" drop column "${column.name}"';
-    }).toList();
+    var droppingColumns = table.droppings
+        .where(isColumn)
+        .map((column) => 'alter table "${table.name}" drop column "${column}"')
+        .toList();
+    var droppingIndexes = table.droppings
+        .where(isIndex)
+        .map((index) => 'drop index "${index}"')
+        .toList();
+    var droppings = droppingColumns + droppingIndexes;
 
     var columnIndexes = table.columns
         .where((column) => column.addIndex != null)
@@ -71,7 +79,7 @@ class PostgresSchemaProcessor implements SchemaProcessor {
         .toList();
 
     return [
-      parsedColumns + droppings + columnIndexes + table.indexes,
+      parsedColumns + droppings + columnIndexes,
     ].flatten().unique().join('; ');
   }
 
@@ -151,6 +159,10 @@ class PostgresSchemaProcessor implements SchemaProcessor {
     var indexes = columnIndexes + table.indexes;
 
     return indexes.map(_compileCreateIndex).join('; ');
+  }
+
+  String compileIndexesForUpdate(TableSchema table) {
+    return table.indexes.map(_compileCreateIndex).join('; ');
   }
 
   String _compileCreateIndex(IndexSchema index) {

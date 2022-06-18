@@ -38,7 +38,7 @@ extension TunderString on String {
     RegExp leading = RegExp('^[$pattern]*');
     RegExp trailing = RegExp('/*[${pattern}]\$');
 
-    return trim().replaceAll(leading, '').replaceAll(trailing, '');
+    return trim().replaceAll(leading, '').replaceAll(trailing, '').trim();
   }
 
   String shuffle() {
