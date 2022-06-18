@@ -54,7 +54,17 @@ class PostgresSchemaProcessor
   }
 
   String compileColumnsForUpdate(TableSchema table) {
-    List parsedColumns = table.columns.map((column) {
+    List<dynamic> parsedColumns = getUpdateColumnCommands(table);
+    List<String> droppings = getDroppingCommands(table);
+    List<String> columnIndexes = getCreateIndexCommands(table);
+
+    return [
+      parsedColumns + droppings + columnIndexes,
+    ].flatten().unique().join('; ');
+  }
+
+  List<dynamic> getUpdateColumnCommands(TableSchema table) {
+    return table.columns.map((column) {
       if (!column.isUpdating) {
         var createColumn = _compileCreateColumn(column);
         return ['alter table "${table.name}" add column $createColumn'];
@@ -62,25 +72,45 @@ class PostgresSchemaProcessor
 
       return getChanges(column);
     }).flatten();
+  }
 
-    var droppingColumns = table.droppings
-        .where(isColumn)
-        .map((column) => 'alter table "${table.name}" drop column "${column}"')
+  List<String> getCreateIndexCommands(TableSchema table) {
+    return table.columns
+        .where((column) => column.addIndex != null)
+        .map((column) => _compileCreateIndex(column.addIndex!))
         .toList();
+  }
+
+  List<String> getDroppingCommands(TableSchema table) {
+    List<String> droppingColumns = getDroppingColumnCommands(table);
+    List<String> droppingIndexes = getDroppingIndexCommands(table);
+    List<String> droppingUnique = getDroppingUniqueCommands(table);
+
+    return droppingColumns + droppingIndexes + droppingUnique;
+  }
+
+  List<String> getDroppingUniqueCommands(TableSchema table) {
+    var droppingUniqueConstraints = table.droppings
+        .where(isUniqueConstraint)
+        .map((unique) => 'alter table "${table}" drop constraint "${unique}"')
+        .toList();
+    return droppingUniqueConstraints;
+  }
+
+  List<String> getDroppingIndexCommands(TableSchema table) {
     var droppingIndexes = table.droppings
         .where(isIndex)
         .map((index) => 'drop index "${index}"')
         .toList();
-    var droppings = droppingColumns + droppingIndexes;
+    return droppingIndexes;
+  }
 
-    var columnIndexes = table.columns
-        .where((column) => column.addIndex != null)
-        .map((column) => _compileCreateIndex(column.addIndex!))
+  List<String> getDroppingColumnCommands(TableSchema table) {
+    var droppingColumns = table.droppings
+        .where(isColumn)
+        .map((column) => 'alter table "${table}" drop column "${column}"')
         .toList();
-
-    return [
-      parsedColumns + droppings + columnIndexes,
-    ].flatten().unique().join('; ');
+    return droppingColumns;
   }
 
   List<String> getChanges(ColumnSchema column) {

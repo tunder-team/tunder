@@ -146,6 +146,23 @@ main() {
           'drop index "custom_name_2"',
         );
       });
+
+      test('dropUnique(column, name) / dropUniques(columns, names)', () {
+        expect(
+          Schema.updateSql('test', (table) {
+            table.dropUnique(column: 'name');
+            table.dropUniques(columns: ['second', 'third']);
+            table.dropUnique(name: 'custom_name');
+            table.dropUniques(names: ['custom_name_1', 'custom_name_2']);
+          }),
+          'alter table "test" drop constraint "test_name_unique"; '
+          'alter table "test" drop constraint "test_second_unique"; '
+          'alter table "test" drop constraint "test_third_unique"; '
+          'alter table "test" drop constraint "custom_name"; '
+          'alter table "test" drop constraint "custom_name_1"; '
+          'alter table "test" drop constraint "custom_name_2"',
+        );
+      });
     });
   });
 }

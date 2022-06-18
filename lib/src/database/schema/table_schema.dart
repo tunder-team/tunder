@@ -1,5 +1,6 @@
 import 'package:tunder/database.dart';
 import 'package:tunder/src/database/schema/column_schema.dart';
+import 'package:tunder/src/database/schema/constraints.dart';
 import 'package:tunder/src/database/schema/data_type.dart';
 import 'package:tunder/src/database/schema/index_schema.dart';
 
@@ -96,10 +97,6 @@ class TableSchema {
 
   void dropSoftDeletes([String name = 'deleted_at']) => dropColumn(name);
 
-  void dropUnique(String key) {
-    // droppings.add('ALTER TABLE "$name" DROP CONSTRAINT "$key"');
-  }
-
   void dropIndex({String? column, String? name}) {
     droppings
         .add(IndexSchema(column: column ?? '', table: this.name, name: name));
@@ -109,6 +106,17 @@ class TableSchema {
       {List<String> columns = const [], List<String> names = const []}) {
     columns.forEach((column) => dropIndex(column: column));
     names.forEach((name) => dropIndex(name: name));
+  }
+
+  void dropUnique({String? column, String? name}) {
+    droppings
+        .add(UniqueConstraint(column: column, table: this.name, name: name));
+  }
+
+  void dropUniques(
+      {List<String> columns = const [], List<String> names = const []}) {
+    columns.forEach((column) => dropUnique(column: column));
+    names.forEach((name) => dropUnique(name: name));
   }
 
   ColumnSchema _add(String name, String datatype, [int length = 255]) {
