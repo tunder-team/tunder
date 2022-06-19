@@ -4,6 +4,7 @@ import 'package:tunder/src/database/schema/column_schema.dart';
 import 'package:tunder/src/database/schema/constraints.dart';
 import 'package:tunder/src/database/schema/data_type.dart';
 import 'package:tunder/src/database/schema/index_schema.dart';
+import 'package:tunder/src/database/schema/renames.dart';
 import 'package:tunder/src/database/schema/schema_processor.dart';
 import 'package:tunder/src/database/schema/table_schema.dart';
 import 'package:tunder/src/exceptions/unknown_data_type_exception.dart';
@@ -84,9 +85,10 @@ class PostgresSchemaProcessor
     List<String> droppings = getDroppingCommands(table);
     List<String> columnIndexes = getCreateIndexCommands(table);
     List<String> constraints = getAddConstraintCommands(table);
+    List<String> renames = getRenameCommands(table);
 
     return [
-      parsedColumns + droppings + columnIndexes + constraints,
+      parsedColumns + droppings + columnIndexes + constraints + renames,
     ].flatten().unique().join('; ');
   }
 
@@ -110,6 +112,15 @@ class PostgresSchemaProcessor
 
   List<String> getAddConstraintCommands(TableSchema table) {
     return table.constraints.map(_compileAddConstraint).toList();
+  }
+
+  List<String> getRenameCommands(TableSchema table) {
+    return table.renames.map((rename) {
+      if (rename is RenameIndex)
+        return 'alter index "${rename.from}" rename to "${rename.to}"';
+
+      return 'alter table "$table" rename column "${rename.from}" to "${rename.to}"';
+    }).toList();
   }
 
   List<String> getDroppingCommands(TableSchema table) {
@@ -300,5 +311,10 @@ class PostgresSchemaProcessor
     }
 
     return '';
+  }
+
+  @override
+  String renameSql(String from, String to) {
+    return 'alter table "$from" rename to "$to"';
   }
 }

@@ -3,6 +3,7 @@ import 'package:tunder/src/database/schema/column_schema.dart';
 import 'package:tunder/src/database/schema/constraints.dart';
 import 'package:tunder/src/database/schema/data_type.dart';
 import 'package:tunder/src/database/schema/index_schema.dart';
+import 'package:tunder/src/database/schema/renames.dart';
 
 class TableSchema {
   final String name;
@@ -11,6 +12,7 @@ class TableSchema {
   final List<IndexSchema> indexes = [];
   final List<dynamic> droppings = [];
   final List<Constraint> constraints = [];
+  final List<Rename> renames = [];
 
   TableSchema(this.name, this.connection);
 
@@ -141,6 +143,14 @@ class TableSchema {
         name: name,
       ),
     );
+  }
+
+  void renameColumn(String from, String to) {
+    renames.add(RenameColumn(from, to));
+  }
+
+  void renameIndex(String from, String to) {
+    renames.add(RenameIndex(from, to));
   }
 
   ColumnSchema _add(String name, String datatype, [int length = 255]) {

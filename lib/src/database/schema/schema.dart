@@ -32,6 +32,13 @@ class Schema {
     return SchemaProcessor.forDatabase(DB.driver).updateSql(table);
   }
 
+  static Future<int> rename(String from, String to) =>
+      DB.execute(renameSql(from, to));
+
+  static String renameSql(String from, String to) {
+    return SchemaProcessor.forDatabase(DB.driver).renameSql(from, to);
+  }
+
   static Future<int> drop(String table) async => DB.execute(dropSql(table));
   static String dropSql(String tableName) => 'drop table "$tableName"';
 

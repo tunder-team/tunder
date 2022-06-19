@@ -17,6 +17,7 @@ abstract class SchemaProcessor {
 
   String createSql(TableSchema table);
   String updateSql(TableSchema table);
+  String renameSql(String from, String to);
 }
 
 mixin SchemaProcessorMethods {

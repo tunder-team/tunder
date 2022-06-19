@@ -198,5 +198,43 @@ main() {
         expect(sql, 'alter table "test" drop constraint "custom_pkey_name"');
       });
     });
+
+    group('renames', () {
+      setUp(() async {
+        await Schema.create('test', (table) {
+          table.id();
+          table.string('name').index();
+          table.timestamps();
+          table.softDeletes();
+        });
+      });
+
+      test('Schema.rename(from, to) renames a table', () async {
+        var sql = Schema.renameSql('test', 'test_new');
+        expect(sql, 'alter table "test" rename to "test_new"');
+
+        expect(await DB.execute(sql), isNotNull);
+        expect(await DB.tableExists('test_new'), isTrue);
+
+        await Schema.rename('test_new', 'test');
+        expect(await DB.tableExists('test'), isTrue);
+      });
+
+      test('table.renameColumn(from, to) renames a column', () async {
+        var sql = Schema.updateSql('test', (table) {
+          table.renameColumn('name', 'email');
+        });
+        expect(sql, 'alter table "test" rename column "name" to "email"');
+        expect(await DB.execute(sql), isNotNull);
+      });
+
+      test('table.renameIndex(from, to) renames an index', () async {
+        var sql = Schema.updateSql('test', (table) {
+          table.renameIndex('test_name_index', 'email_index');
+        });
+        expect(sql, 'alter index "test_name_index" rename to "email_index"');
+        expect(await DB.execute(sql), isNotNull);
+      });
+    });
   });
 }
