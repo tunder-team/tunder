@@ -1,6 +1,7 @@
 import 'package:tunder/_common.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/src/database/schema/column_schema.dart';
+import 'package:tunder/src/database/schema/constraints.dart';
 import 'package:tunder/src/database/schema/data_type.dart';
 import 'package:tunder/src/database/schema/index_schema.dart';
 import 'package:tunder/src/database/schema/schema_processor.dart';
@@ -13,7 +14,7 @@ class PostgresSchemaProcessor
   String createSql(TableSchema table) {
     var columns = compileColumnsForCreate(table);
     var indexes = compileIndexesForCreate(table);
-    var createTableSql = 'create table "${table.name}" ($columns)';
+    var createTableSql = 'create table "$table" ($columns)';
 
     return '$createTableSql; $indexes'.trimWith(';');
   }
@@ -32,34 +33,60 @@ class PostgresSchemaProcessor
   }
 
   String _compileCreateColumn(ColumnSchema column) {
-    var datatype = _parseDatatype(column);
-    String sql = '"${column.name}" $datatype'.removeExtraSpaces;
+    var datatype = compileDatatype(column);
+    String sql = '"$column" $datatype'.removeExtraSpaces;
 
-    if (column.isPrimary) sql = getPrimarySql(column);
+    sql += compileConstraintsForCreate(column);
     if (column.isUnique == true) sql += ' unique';
-    if (column.isAutoIncrement) {
-      if (column.datatype == DataType.integer)
-        sql = sql.replaceAll(datatype, 'serial');
-      if (column.datatype == DataType.bigInteger)
-        sql = sql.replaceAll(datatype, 'bigserial');
-      if (column.datatype == DataType.smallInteger)
-        sql = sql.replaceAll(datatype, 'smallserial');
-    }
     if (column.isNullable == true) sql += ' null';
     if (column.isNullable == false) sql += ' not null';
     sql += _getDefaultValue(column);
-    if (column.isUnsigned) sql += ' check ("${column.name}" >= 0)';
+    if (column.isUnsigned) sql += ' check ("$column" >= 0)';
 
-    return sql;
+    return sql.removeExtraSpaces.trim();
+  }
+
+  String compileConstraintsForCreate(ColumnSchema column) {
+    var primaryConstraints = compilePrimaryForCreate(column);
+    // TODO:
+    // var foreignConstraints = compileForeignForCreate(column);
+    // var uniqueConstraints = compileUniqueForCreate(column);
+    // var checkConstraints = compileCheckForCreate(column);
+    // var notNullConstraints = compileNotNullForCreate(column);
+
+    return ' $primaryConstraints'.removeExtraSpaces;
+  }
+
+  String compilePrimaryForCreate(ColumnSchema column) {
+    return column.constraints.whereType<PrimaryConstraint>().isNotEmpty
+        ? 'primary key'
+        : '';
+  }
+
+  String compileConstraint(Constraint constraint) {
+    var constraintSql = constraint.name != null
+        ? ' constraint "${constraint.name}" ${constraint.type}'
+        : ' ${constraint.type}';
+
+    if (constraint.columns.isNotEmpty) {
+      var columns = constraint.columns.map((c) => '"$c"').join(', ');
+      return ' $constraintSql ($columns)';
+    }
+
+    if (constraint.expression != null)
+      return ' $constraintSql (${constraint.expression})';
+
+    return ' $constraintSql';
   }
 
   String compileColumnsForUpdate(TableSchema table) {
     List<dynamic> parsedColumns = getUpdateColumnCommands(table);
     List<String> droppings = getDroppingCommands(table);
     List<String> columnIndexes = getCreateIndexCommands(table);
+    List<String> constraints = getAddConstraintCommands(table);
 
     return [
-      parsedColumns + droppings + columnIndexes,
+      parsedColumns + droppings + columnIndexes + constraints,
     ].flatten().unique().join('; ');
   }
 
@@ -67,7 +94,7 @@ class PostgresSchemaProcessor
     return table.columns.map((column) {
       if (!column.isUpdating) {
         var createColumn = _compileCreateColumn(column);
-        return ['alter table "${table.name}" add column $createColumn'];
+        return ['alter table "$table" add column $createColumn'];
       }
 
       return getChanges(column);
@@ -81,26 +108,41 @@ class PostgresSchemaProcessor
         .toList();
   }
 
+  List<String> getAddConstraintCommands(TableSchema table) {
+    return table.constraints.map(_compileAddConstraint).toList();
+  }
+
   List<String> getDroppingCommands(TableSchema table) {
     List<String> droppingColumns = getDroppingColumnCommands(table);
     List<String> droppingIndexes = getDroppingIndexCommands(table);
     List<String> droppingUnique = getDroppingUniqueCommands(table);
+    List<String> droppingPrimary = getDroppingPrimaryCommands(table);
 
-    return droppingColumns + droppingIndexes + droppingUnique;
+    return droppingColumns + droppingIndexes + droppingUnique + droppingPrimary;
   }
 
   List<String> getDroppingUniqueCommands(TableSchema table) {
     var droppingUniqueConstraints = table.droppings
         .where(isUniqueConstraint)
-        .map((unique) => 'alter table "${table}" drop constraint "${unique}"')
+        .map(
+            (unique) => 'alter table "$table" drop constraint "${unique.name}"')
         .toList();
     return droppingUniqueConstraints;
+  }
+
+  List<String> getDroppingPrimaryCommands(TableSchema table) {
+    var droppingPrimaryConstraints = table.droppings
+        .whereType<PrimaryConstraint>()
+        .map((primary) =>
+            'alter table "$table" drop constraint "${primary.name}"')
+        .toList();
+    return droppingPrimaryConstraints;
   }
 
   List<String> getDroppingIndexCommands(TableSchema table) {
     var droppingIndexes = table.droppings
         .where(isIndex)
-        .map((index) => 'drop index "${index}"')
+        .map((index) => 'drop index "$index"')
         .toList();
     return droppingIndexes;
   }
@@ -108,7 +150,7 @@ class PostgresSchemaProcessor
   List<String> getDroppingColumnCommands(TableSchema table) {
     var droppingColumns = table.droppings
         .where(isColumn)
-        .map((column) => 'alter table "${table}" drop column "${column}"')
+        .map((column) => 'alter table "$table" drop column "$column"')
         .toList();
     return droppingColumns;
   }
@@ -116,7 +158,7 @@ class PostgresSchemaProcessor
   List<String> getChanges(ColumnSchema column) {
     final changes = <String>[];
     final table = column.table;
-    final parsedDatatype = _parseDatatype(column);
+    final parsedDatatype = compileDatatype(column);
     final castUsing = _getCastFor(column);
 
     changes.add(
@@ -125,9 +167,9 @@ class PostgresSchemaProcessor
     if (column.isAutoIncrement)
       changes
         ..add(
-            'create sequence "${table}_${column}_seq" owned by "${table}"."${column}"')
+            'create sequence "${table}_${column}_seq" owned by "$table"."$column"')
         ..add(
-            'select setval(\'"${table}_${column}_seq"\', (select max("${column}") from "${table}"), false)');
+            'select setval(\'"${table}_${column}_seq"\', (select max("$column") from "$table"), false)');
 
     if (column.isNullable == true)
       changes.add('alter table "$table" alter column "$column" drop not null');
@@ -151,17 +193,6 @@ class PostgresSchemaProcessor
     }
 
     return changes;
-  }
-
-  String getPrimarySql(ColumnSchema column) {
-    var columnName = '"${column.name}"';
-
-    if (column.datatype == DataType.integer)
-      return '$columnName bigserial primary key';
-    if (column.datatype == DataType.string)
-      return '$columnName varchar(${column.length}) primary key';
-
-    return columnName;
   }
 
   String _getDefaultValue(ColumnSchema column) {
@@ -201,14 +232,26 @@ class PostgresSchemaProcessor
     return 'create index "${index.name}" on "${index.table}" (${columns.join(', ')})';
   }
 
-  String _parseDatatype(ColumnSchema column) {
+  String _compileAddConstraint(Constraint constraint) {
+    var compiledConstraint = compileConstraint(constraint).trim();
+
+    return 'alter table "${constraint.table}" add $compiledConstraint';
+  }
+
+  String compileDatatype(ColumnSchema column) {
     switch (column.datatype) {
       case DataType.integer:
-        return 'integer';
+        return column.isAutoIncrement && !column.isUpdating
+            ? 'serial'
+            : 'integer';
       case DataType.bigInteger:
-        return 'bigint';
+        return column.isAutoIncrement && !column.isUpdating
+            ? 'bigserial'
+            : 'bigint';
       case DataType.smallInteger:
-        return 'smallint';
+        return column.isAutoIncrement && !column.isUpdating
+            ? 'smallserial'
+            : 'smallint';
       case DataType.decimal:
         return 'decimal(${column.precision}, ${column.scale})';
       case DataType.string:

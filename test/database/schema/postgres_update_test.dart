@@ -30,15 +30,15 @@ main() {
           'result': 'alter table "test" alter column "name" type varchar(255); '
               'alter table "test" alter column "name" set default \'inactive\''
         },
-        "table.string('name').primary.change()": {
+        "table.string('name').primary().change()": {
           'action': () => Schema.updateSql(
-              'test', (t) => t.string('name').primary.change()),
+              'test', (t) => t.string('name').primary().change()),
           'result': 'alter table "test" alter column "name" type varchar(255); '
               'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
-        "table.string('name').primary.nullable.change()": {
+        "table.string('name').primary().nullable.change()": {
           'action': () => Schema.updateSql(
-              'test', (t) => t.string('name').primary.nullable.change()),
+              'test', (t) => t.string('name').primary().nullable.change()),
           'result': 'alter table "test" alter column "name" type varchar(255); '
               'alter table "test" alter column "name" drop not null; '
               'alter table "test" add constraint "test_name_pkey" primary key ("name")'
@@ -99,15 +99,15 @@ main() {
           'result': 'alter table "test" alter column "name" type text; '
               'alter table "test" alter column "name" set default \'inactive\''
         },
-        "table.text('name').primary.change()": {
-          'action': () =>
-              Schema.updateSql('test', (t) => t.text('name').primary.change()),
+        "table.text('name').primary().change()": {
+          'action': () => Schema.updateSql(
+              'test', (t) => t.text('name').primary().change()),
           'result': 'alter table "test" alter column "name" type text; '
               'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
-        "table.text('name').primary.nullable.change()": {
+        "table.text('name').primary().nullable.change()": {
           'action': () => Schema.updateSql(
-              'test', (t) => t.text('name').primary.nullable.change()),
+              'test', (t) => t.text('name').primary().nullable.change()),
           'result': 'alter table "test" alter column "name" type text; '
               'alter table "test" alter column "name" drop not null; '
               'alter table "test" add constraint "test_name_pkey" primary key ("name")'
@@ -168,16 +168,16 @@ main() {
               'alter table "test" alter column "name" type integer using (trim("name")::integer); '
                   'alter table "test" alter column "name" set default 123'
         },
-        "table.integer('name').primary.change()": {
+        "table.integer('name').primary().change()": {
           'action': () => Schema.updateSql(
-              'test', (t) => t.integer('name').primary.change()),
+              'test', (t) => t.integer('name').primary().change()),
           'result':
               'alter table "test" alter column "name" type integer using (trim("name")::integer); '
                   'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
-        "table.integer('name').primary.nullable.change()": {
+        "table.integer('name').primary().nullable.change()": {
           'action': () => Schema.updateSql(
-              'test', (t) => t.integer('name').primary.nullable.change()),
+              'test', (t) => t.integer('name').primary().nullable.change()),
           'result':
               'alter table "test" alter column "name" type integer using (trim("name")::integer); '
                   'alter table "test" alter column "name" drop not null; '
@@ -252,16 +252,16 @@ main() {
               'alter table "test" alter column "name" type bigint using (trim("name")::bigint); '
                   'alter table "test" alter column "name" set default 123'
         },
-        "table.bigInteger('name').primary.change()": {
+        "table.bigInteger('name').primary().change()": {
           'action': () => Schema.updateSql(
-              'test', (t) => t.bigInteger('name').primary.change()),
+              'test', (t) => t.bigInteger('name').primary().change()),
           'result':
               'alter table "test" alter column "name" type bigint using (trim("name")::bigint); '
                   'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
-        "table.bigInteger('name').primary.nullable.change()": {
+        "table.bigInteger('name').primary().nullable.change()": {
           'action': () => Schema.updateSql(
-              'test', (t) => t.bigInteger('name').primary.nullable.change()),
+              'test', (t) => t.bigInteger('name').primary().nullable.change()),
           'result':
               'alter table "test" alter column "name" type bigint using (trim("name")::bigint); '
                   'alter table "test" alter column "name" drop not null; '
@@ -337,16 +337,16 @@ main() {
               'alter table "test" alter column "name" type smallint using (trim("name")::smallint); '
                   'alter table "test" alter column "name" set default 123'
         },
-        "table.smallInteger('name').primary.change()": {
+        "table.smallInteger('name').primary().change()": {
           'action': () => Schema.updateSql(
-              'test', (t) => t.smallInteger('name').primary.change()),
+              'test', (t) => t.smallInteger('name').primary().change()),
           'result':
               'alter table "test" alter column "name" type smallint using (trim("name")::smallint); '
                   'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
-        "table.smallInteger('name').primary.nullable.change()": {
-          'action': () => Schema.updateSql(
-              'test', (t) => t.smallInteger('name').primary.nullable.change()),
+        "table.smallInteger('name').primary().nullable.change()": {
+          'action': () => Schema.updateSql('test',
+              (t) => t.smallInteger('name').primary().nullable.change()),
           'result':
               'alter table "test" alter column "name" type smallint using (trim("name")::smallint); '
                   'alter table "test" alter column "name" drop not null; '
@@ -423,16 +423,16 @@ main() {
               'alter table "test" alter column "name" type decimal(12, 2) using (trim("name")::decimal); '
                   'alter table "test" alter column "name" set default 12.3'
         },
-        "table.decimal('name').primary.change()": {
+        "table.decimal('name').primary().change()": {
           'action': () => Schema.updateSql(
-              'test', (t) => t.decimal('name').primary.change()),
+              'test', (t) => t.decimal('name').primary().change()),
           'result':
               'alter table "test" alter column "name" type decimal(12, 2) using (trim("name")::decimal); '
                   'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
-        "table.decimal('name').primary.nullable.change()": {
+        "table.decimal('name').primary().nullable.change()": {
           'action': () => Schema.updateSql(
-              'test', (t) => t.decimal('name').primary.nullable.change()),
+              'test', (t) => t.decimal('name').primary().nullable.change()),
           'result':
               'alter table "test" alter column "name" type decimal(12, 2) using (trim("name")::decimal); '
                   'alter table "test" alter column "name" drop not null; '
@@ -834,7 +834,7 @@ main() {
       );
     });
 
-    group('compound types -> ', () {
+    group('compound types ->', () {
       var compoundTestCases = {
         // ID
         "table.id() generates bigserial primary key not null": {

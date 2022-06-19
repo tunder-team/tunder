@@ -55,6 +55,35 @@ main() {
       expect(await DB.tableExists('testing_table'), isTrue);
     });
 
+    group('constraints', () {
+      setUp(() async {
+        await Schema.create('test', (table) {
+          table.integer('id');
+        });
+      });
+
+      test('index(name)', () async {
+        var updateSql = Schema.updateSql('test', (table) {
+          table.index(column: 'id');
+          table.index(column: 'id', name: 'custom_name');
+        });
+        expect(
+          updateSql,
+          'create index "test_id_index" on "test" ("id"); '
+          'create index "custom_name" on "test" ("id")',
+        );
+        expect(await DB.execute(updateSql), isNotNull);
+      });
+      test('table.primary(column)', () async {
+        var sql = Schema.updateSql('test', (table) {
+          table.primary(column: 'id');
+        });
+
+        expect(sql, 'alter table "test" add primary key ("id")');
+        expect(await DB.execute(sql), isNotNull);
+      });
+    });
+
     group('droppings', () {
       setUp(() async {
         await Schema.create('test', (table) {
@@ -119,17 +148,6 @@ main() {
         );
       });
 
-      test('index(name)', () {
-        expect(
-          Schema.updateSql('test', (table) {
-            table.index(column: 'name');
-            table.index(column: 'name', name: 'custom_name');
-          }),
-          'create index "test_name_index" on "test" ("name"); '
-          'create index "custom_name" on "test" ("name")',
-        );
-      });
-
       test('dropIndex(column, name) / dropIndexes(columns, names)', () {
         expect(
           Schema.updateSql('test', (table) {
@@ -162,6 +180,22 @@ main() {
           'alter table "test" drop constraint "custom_name_1"; '
           'alter table "test" drop constraint "custom_name_2"',
         );
+      });
+
+      test('dropPrimary()', () async {
+        // Act and Assert
+        var sql = Schema.updateSql('test', (table) {
+          table.dropPrimary();
+        });
+        expect(sql, 'alter table "test" drop constraint "test_pkey"');
+        expect(await DB.execute(sql), isNotNull);
+      });
+      test('dropPrimary(name)', () async {
+        // Act and Assert
+        var sql = Schema.updateSql('test', (table) {
+          table.dropPrimary('custom_pkey_name');
+        });
+        expect(sql, 'alter table "test" drop constraint "custom_pkey_name"');
       });
     });
   });

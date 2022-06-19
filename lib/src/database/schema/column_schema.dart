@@ -1,3 +1,4 @@
+import 'package:tunder/src/database/schema/constraints.dart';
 import 'package:tunder/src/database/schema/index_schema.dart';
 import 'package:tunder/src/database/schema/table_schema.dart';
 
@@ -5,9 +6,10 @@ class ColumnSchema {
   final String name;
   final String datatype;
   final TableSchema table;
+  final List<Constraint> constraints = [];
   IndexSchema? addIndex;
   bool isUpdating = false;
-  bool isPrimary = false;
+  bool get isPrimary => constraints.any((c) => c is PrimaryConstraint);
   bool? isNullable;
   bool? isUnique;
   bool isUnsigned = false;
@@ -21,7 +23,11 @@ class ColumnSchema {
 
   ColumnSchema(this.name, this.datatype, this.table, [this.length = 255]);
 
-  ColumnSchema get primary => this..isPrimary = true;
+  ColumnSchema primary({String? name}) => this
+    ..constraints.add(
+      PrimaryConstraint(table: table.name, columns: [this.name], name: name),
+    );
+
   ColumnSchema get notNull => this..isNullable = false;
   ColumnSchema get nullable => this..isNullable = true;
   ColumnSchema get unique => this..isUnique = true;

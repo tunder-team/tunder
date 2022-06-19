@@ -10,19 +10,22 @@ class TableSchema {
   final List<ColumnSchema> columns = [];
   final List<IndexSchema> indexes = [];
   final List<dynamic> droppings = [];
+  final List<Constraint> constraints = [];
 
   TableSchema(this.name, this.connection);
 
   /**
    * Generates a string primary key column with 16 characters long.
    */
-  void stringId([String name = 'id']) =>
-      _add(name, DataType.string).primary..length = 16;
+  void stringId([String columnName = 'id']) =>
+      _add(columnName, DataType.string).primary()..length = 16;
 
   /**
    * Generates a serial big integer primary key column with auto incement.
    */
-  void id([String name = 'id']) => _add(name, DataType.integer).primary;
+  void id([String columnName = 'id']) {
+    _add(columnName, DataType.bigInteger).primary().autoIncrement;
+  }
 
   ColumnSchema string(String name, [int length = 255]) =>
       _add(name, DataType.string, length);
@@ -72,16 +75,21 @@ class TableSchema {
     indexes.add(IndexSchema(column: column, table: this.name, name: name));
   }
 
+  void primary({String? column, List<String>? columns}) {
+    if (columns != null)
+      return constraints
+          .add(PrimaryConstraint(columns: columns, table: this.name));
+
+    if (column != null)
+      constraints.add(PrimaryConstraint(table: this.name, columns: [column]));
+  }
+
   void dropColumn(String column) {
     droppings.add(ColumnSchema(column, DataType.string, this));
   }
 
   void dropColumns(List<String> columns) {
     columns.forEach((column) => dropColumn(column));
-  }
-
-  void dropPrimary(String key) {
-    throw UnimplementedError();
   }
 
   void dropTimestamps({
@@ -109,14 +117,30 @@ class TableSchema {
   }
 
   void dropUnique({String? column, String? name}) {
-    droppings
-        .add(UniqueConstraint(column: column, table: this.name, name: name));
+    name ??= '${this.name}_${column!}_unique';
+
+    droppings.add(UniqueConstraint(
+      columns: column != null ? [column] : [],
+      table: this.name,
+      name: name,
+    ));
   }
 
   void dropUniques(
       {List<String> columns = const [], List<String> names = const []}) {
     columns.forEach((column) => dropUnique(column: column));
     names.forEach((name) => dropUnique(name: name));
+  }
+
+  void dropPrimary([String? name]) {
+    name ??= '${this.name}_pkey';
+
+    droppings.add(
+      PrimaryConstraint(
+        table: this.name,
+        name: name,
+      ),
+    );
   }
 
   ColumnSchema _add(String name, String datatype, [int length = 255]) {
