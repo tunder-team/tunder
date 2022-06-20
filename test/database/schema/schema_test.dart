@@ -27,10 +27,10 @@ main() {
           ..id('custom_id')
           ..string('name')
           ..integer('age').unsigned
-          ..text('body').nullable
-          ..timestamp('published_at').nullable
-          ..boolean('is_active').nullable
-          ..double('price').nullable
+          ..text('body').nullable()
+          ..timestamp('published_at').nullable()
+          ..boolean('is_active').nullable()
+          ..double('price').nullable()
           ..timestamps()
           ..softDeletes();
       });
@@ -44,8 +44,8 @@ main() {
 
       await Schema.create('testing_table', (table) {
         table.id('custom_id');
-        table.string('name').notNull;
-        table.text('body').nullable;
+        table.string('name').notNullable();
+        table.text('body').nullable();
         table.timestamp('published_at');
         table.boolean('is_active');
         table.timestamps();

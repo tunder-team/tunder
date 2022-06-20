@@ -48,7 +48,7 @@ main() {
     // });
 
     // test('Adding unique constraint to an existing column', () async {
-    //   table.string('email').notNull.unique.change();
+    //   table.string('email').notNull().unique.change();
     //   expect(
     //     table.alterSql(),
     //     'ALTER TABLE "test" ALTER COLUMN "email" SET NOT NULL; '
@@ -60,7 +60,7 @@ main() {
     // });
 
     // test('Adding not null constraint', () async {
-    //   table.string('email').notNull.update();
+    //   table.string('email').notNull().update();
 
     //   expect(
     //     table.alterSql(),
@@ -72,8 +72,8 @@ main() {
     // });
 
     // test('Removing not null constraint', () async {
-    //   table.string('email').nullable.update();
-    //   table.string('email').nullable.update();
+    //   table.string('email').nullable().update();
+    //   table.string('email').nullable().update();
     //   expect(
     //     table.alterSql(),
     //     'ALTER TABLE "test" ALTER COLUMN "email" DROP NOT NULL; '

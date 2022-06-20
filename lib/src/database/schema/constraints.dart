@@ -27,6 +27,16 @@ class UniqueConstraint extends Constraint {
         );
 }
 
+class NotNullConstraint extends Constraint {
+  NotNullConstraint({required String table, required String column})
+      : super(ConstraintType.notNull, table: table, columns: [column]);
+}
+
+class NullableConstraint extends Constraint {
+  NullableConstraint({required String table, required String column})
+      : super(ConstraintType.nullable, table: table, columns: [column]);
+}
+
 class PrimaryConstraint extends Constraint {
   PrimaryConstraint({
     required String table,
@@ -42,6 +52,7 @@ class PrimaryConstraint extends Constraint {
 
 class ConstraintType {
   static const String notNull = 'not null';
+  static const String nullable = 'null';
   static const String unique = 'unique';
   static const String primary = 'primary key';
   static const String foreign = 'foreign key';

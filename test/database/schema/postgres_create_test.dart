@@ -12,6 +12,11 @@ main() {
           'action': () => Schema.createSql('test', (t) => t.string('name')),
           'result': 'create table "test" ("name" varchar(255))'
         },
+        "table.string('name').notNullable()": {
+          'action': () =>
+              Schema.createSql('test', (t) => t.string('name').notNullable()),
+          'result': 'create table "test" ("name" varchar(255) not null)'
+        },
         "table.string('status').defaultValue('active')": {
           'action': () => Schema.createSql(
               'test', (t) => t.string('status').defaultValue('active')),
@@ -23,10 +28,10 @@ main() {
               Schema.createSql('test', (t) => t.string('name').unique),
           'result': 'create table "test" ("name" varchar(255) unique)'
         },
-        "table.string('name').nullable.unique": {
+        "table.string('name').nullable()": {
           'action': () =>
-              Schema.createSql('test', (t) => t.string('name').nullable.unique),
-          'result': 'create table "test" ("name" varchar(255) unique null)'
+              Schema.createSql('test', (t) => t.string('name').nullable()),
+          'result': 'create table "test" ("name" varchar(255) null)'
         },
         "table.string('name', 123)": {
           'action': () =>
@@ -68,10 +73,10 @@ main() {
               Schema.createSql('test', (t) => t.text('name').unique),
           'result': 'create table "test" ("name" text unique)'
         },
-        "table.text('name').nullable.unique": {
+        "table.text('name').nullable()": {
           'action': () =>
-              Schema.createSql('test', (t) => t.text('name').nullable.unique),
-          'result': 'create table "test" ("name" text unique null)'
+              Schema.createSql('test', (t) => t.text('name').nullable()),
+          'result': 'create table "test" ("name" text null)'
         },
         "table.text('name').index()": {
           'action': () =>
@@ -108,10 +113,10 @@ main() {
               Schema.createSql('test', (t) => t.integer('number').unique),
           'result': 'create table "test" ("number" integer unique)'
         },
-        "table.integer('number').nullable.unique": {
-          'action': () => Schema.createSql(
-              'test', (t) => t.integer('number').nullable.unique),
-          'result': 'create table "test" ("number" integer unique null)'
+        "table.integer('number').nullable()": {
+          'action': () =>
+              Schema.createSql('test', (t) => t.integer('number').nullable()),
+          'result': 'create table "test" ("number" integer null)'
         },
         "table.integer('number').autoIncrement.unique": {
           'action': () => Schema.createSql(
@@ -154,10 +159,10 @@ main() {
               Schema.createSql('test', (t) => t.bigInteger('number').unique),
           'result': 'create table "test" ("number" bigint unique)'
         },
-        "table.bigInteger('number').nullable.unique": {
+        "table.bigInteger('number').nullable()": {
           'action': () => Schema.createSql(
-              'test', (t) => t.bigInteger('number').nullable.unique),
-          'result': 'create table "test" ("number" bigint unique null)'
+              'test', (t) => t.bigInteger('number').nullable()),
+          'result': 'create table "test" ("number" bigint null)'
         },
         "table.bigInteger('number').autoIncrement.unique": {
           'action': () => Schema.createSql(
@@ -200,10 +205,10 @@ main() {
               Schema.createSql('test', (t) => t.smallInteger('number').unique),
           'result': 'create table "test" ("number" smallint unique)'
         },
-        "table.smallInteger('number').nullable.unique": {
+        "table.smallInteger('number').nullable()": {
           'action': () => Schema.createSql(
-              'test', (t) => t.smallInteger('number').nullable.unique),
-          'result': 'create table "test" ("number" smallint unique null)'
+              'test', (t) => t.smallInteger('number').nullable()),
+          'result': 'create table "test" ("number" smallint null)'
         },
         "table.smallInteger('number').autoIncrement.unique": {
           'action': () => Schema.createSql(
@@ -260,10 +265,10 @@ main() {
               Schema.createSql('test', (t) => t.decimal('number').unique),
           'result': 'create table "test" ("number" decimal(12, 2) unique)'
         },
-        "table.decimal('number').nullable.unique": {
-          'action': () => Schema.createSql(
-              'test', (t) => t.decimal('number').nullable.unique),
-          'result': 'create table "test" ("number" decimal(12, 2) unique null)'
+        "table.decimal('number').nullable()": {
+          'action': () =>
+              Schema.createSql('test', (t) => t.decimal('number').nullable()),
+          'result': 'create table "test" ("number" decimal(12, 2) null)'
         },
         "table.decimal('number').autoIncrement.unique": {
           'action': () => Schema.createSql(
@@ -305,10 +310,10 @@ main() {
               Schema.createSql('test', (t) => t.boolean('name').unique),
           'result': 'create table "test" ("name" boolean unique)'
         },
-        "table.boolean('name').nullable.unique": {
-          'action': () => Schema.createSql(
-              'test', (t) => t.boolean('name').nullable.unique),
-          'result': 'create table "test" ("name" boolean unique null)'
+        "table.boolean('name').nullable()": {
+          'action': () =>
+              Schema.createSql('test', (t) => t.boolean('name').nullable()),
+          'result': 'create table "test" ("name" boolean null)'
         },
         "table.boolean('name').index()": {
           'action': () =>
@@ -371,10 +376,10 @@ main() {
               Schema.createSql('test', (t) => t.timestamp('created_at').unique),
           'result': 'create table "test" ("created_at" timestamp unique)'
         },
-        "table.timestamp('created_at').nullable.unique": {
+        "table.timestamp('created_at').nullable()": {
           'action': () => Schema.createSql(
-              'test', (t) => t.timestamp('created_at').nullable.unique),
-          'result': 'create table "test" ("created_at" timestamp unique null)'
+              'test', (t) => t.timestamp('created_at').nullable()),
+          'result': 'create table "test" ("created_at" timestamp null)'
         },
         "table.timestamp('created_at').index()": {
           'action': () => Schema.createSql(
@@ -431,10 +436,10 @@ main() {
               Schema.createSql('test', (t) => t.dateTime('created_at').unique),
           'result': 'create table "test" ("created_at" timestamp unique)'
         },
-        "table.dateTime('created_at').nullable.unique": {
+        "table.dateTime('created_at').nullable()": {
           'action': () => Schema.createSql(
-              'test', (t) => t.dateTime('created_at').nullable.unique),
-          'result': 'create table "test" ("created_at" timestamp unique null)'
+              'test', (t) => t.dateTime('created_at').nullable()),
+          'result': 'create table "test" ("created_at" timestamp null)'
         },
         "table.dateTime('created_at').index()": {
           'action': () =>
@@ -489,10 +494,10 @@ main() {
               Schema.createSql('test', (t) => t.date('created_at').unique),
           'result': 'create table "test" ("created_at" date unique)'
         },
-        "table.date('created_at').nullable.unique": {
-          'action': () => Schema.createSql(
-              'test', (t) => t.date('created_at').nullable.unique),
-          'result': 'create table "test" ("created_at" date unique null)'
+        "table.date('created_at').nullable()": {
+          'action': () =>
+              Schema.createSql('test', (t) => t.date('created_at').nullable()),
+          'result': 'create table "test" ("created_at" date null)'
         },
         "table.date('created_at').index()": {
           'action': () =>
@@ -526,7 +531,7 @@ main() {
         },
         "table.json('address').nullable": {
           'action': () =>
-              Schema.createSql('test', (t) => t.json('address').nullable),
+              Schema.createSql('test', (t) => t.json('address').nullable()),
           'result': 'create table "test" ("address" json null)'
         },
       };
@@ -555,7 +560,7 @@ main() {
         },
         "table.jsonb('address').nullable": {
           'action': () =>
-              Schema.createSql('test', (t) => t.jsonb('address').nullable),
+              Schema.createSql('test', (t) => t.jsonb('address').nullable()),
           'result': 'create table "test" ("address" jsonb null)'
         },
       };

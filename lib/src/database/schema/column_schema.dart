@@ -10,7 +10,8 @@ class ColumnSchema {
   IndexSchema? addIndex;
   bool isUpdating = false;
   bool get isPrimary => constraints.any((c) => c is PrimaryConstraint);
-  bool? isNullable;
+  bool get isNullable => constraints.any((c) => c is NullableConstraint);
+  bool get isNotNullable => constraints.any((c) => c is NotNullConstraint);
   bool? isUnique;
   bool isUnsigned = false;
   bool isAutoIncrement = false;
@@ -28,8 +29,10 @@ class ColumnSchema {
       PrimaryConstraint(table: table.name, columns: [this.name], name: name),
     );
 
-  ColumnSchema get notNull => this..isNullable = false;
-  ColumnSchema get nullable => this..isNullable = true;
+  ColumnSchema notNullable() =>
+      this..constraints.add(NotNullConstraint(table: table.name, column: name));
+  ColumnSchema nullable() => this
+    ..constraints.add(NullableConstraint(table: table.name, column: name));
   ColumnSchema get unique => this..isUnique = true;
   ColumnSchema get notUnique => this..isUnique = false;
   ColumnSchema get unsigned => this..isUnsigned = true;

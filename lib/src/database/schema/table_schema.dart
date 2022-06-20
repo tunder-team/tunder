@@ -60,18 +60,18 @@ class TableSchema {
                     ? (createdColumn ?? 'createdAt')
                     : (createdColumn ?? 'created_at'),
                 DataType.timestamp)
-            .notNull
+            .notNullable()
             .useCurrent()
         .._add(
                 camelCase
                     ? (updatedColumn ?? 'updatedAt')
                     : (updatedColumn ?? 'updated_at'),
                 DataType.timestamp)
-            .notNull
+            .notNullable()
             .useCurrent();
 
   void softDeletes([String name = 'deleted_at']) =>
-      _add(name, DataType.timestamp).nullable;
+      _add(name, DataType.timestamp).nullable();
 
   void index({required String column, String? name = null}) {
     indexes.add(IndexSchema(column: column, table: this.name, name: name));

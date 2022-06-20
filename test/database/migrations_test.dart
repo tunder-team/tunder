@@ -23,7 +23,7 @@ main() {
       });
       expect(await DB.tableExists('test'), isTrue);
       await Schema.update('test', (table) {
-        table.string('name').nullable.update();
+        table.string('name').nullable().update();
       });
       var insertQuery = 'INSERT INTO test (id) VALUES (1)';
       expect(await DB.execute(insertQuery), 1);

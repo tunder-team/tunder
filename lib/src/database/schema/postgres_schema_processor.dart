@@ -39,8 +39,6 @@ class PostgresSchemaProcessor
 
     sql += compileConstraintsForCreate(column);
     if (column.isUnique == true) sql += ' unique';
-    if (column.isNullable == true) sql += ' null';
-    if (column.isNullable == false) sql += ' not null';
     sql += _getDefaultValue(column);
     if (column.isUnsigned) sql += ' check ("$column" >= 0)';
 
@@ -48,19 +46,27 @@ class PostgresSchemaProcessor
   }
 
   String compileConstraintsForCreate(ColumnSchema column) {
-    var primaryConstraints = compilePrimaryForCreate(column);
-    // TODO:
-    // var foreignConstraints = compileForeignForCreate(column);
-    // var uniqueConstraints = compileUniqueForCreate(column);
-    // var checkConstraints = compileCheckForCreate(column);
-    // var notNullConstraints = compileNotNullForCreate(column);
+    var allConstraints =
+        column.constraints.map((constraint) => constraint.type).join(' ');
 
-    return ' $primaryConstraints'.removeExtraSpaces;
+    return ' $allConstraints'.removeExtraSpaces;
   }
 
   String compilePrimaryForCreate(ColumnSchema column) {
     return column.constraints.whereType<PrimaryConstraint>().isNotEmpty
         ? 'primary key'
+        : '';
+  }
+
+  String compileNotNullForCreate(ColumnSchema column) {
+    return column.constraints.whereType<NotNullConstraint>().isNotEmpty
+        ? 'not null'
+        : '';
+  }
+
+  String compileNullableForCreate(ColumnSchema column) {
+    return column.constraints.whereType<NullableConstraint>().isNotEmpty
+        ? 'null'
         : '';
   }
 
@@ -182,9 +188,9 @@ class PostgresSchemaProcessor
         ..add(
             'select setval(\'"${table}_${column}_seq"\', (select max("$column") from "$table"), false)');
 
-    if (column.isNullable == true)
+    if (column.isNullable)
       changes.add('alter table "$table" alter column "$column" drop not null');
-    if (column.isNullable == false)
+    if (column.isNotNullable)
       changes.add('alter table "$table" alter column "$column" set not null');
 
     if (column.isUnique == true)
