@@ -1,5 +1,4 @@
 import 'package:tunder/_common.dart';
-import 'package:tunder/database.dart';
 import 'package:tunder/src/database/schema/column_schema.dart';
 import 'package:tunder/src/database/schema/constraints.dart';
 import 'package:tunder/src/database/schema/data_type.dart';
@@ -7,7 +6,6 @@ import 'package:tunder/src/database/schema/index_schema.dart';
 import 'package:tunder/src/database/schema/renames.dart';
 import 'package:tunder/src/database/schema/schema_processor.dart';
 import 'package:tunder/src/database/schema/table_schema.dart';
-import 'package:tunder/src/exceptions/unknown_data_type_exception.dart';
 
 class PostgresSchemaProcessor
     with SchemaProcessorMethods
@@ -15,7 +13,10 @@ class PostgresSchemaProcessor
   String createSql(TableSchema table) {
     var columns = compileColumnsForCreate(table);
     var indexes = compileIndexesForCreate(table);
-    var createTableSql = 'create table "$table" ($columns)';
+    var constraints = compileTableConstraintsForCreate(table);
+    var createTableSql = constraints.isEmpty
+        ? 'create table "$table" ($columns)'
+        : 'create table "$table" ($columns, $constraints)';
 
     return '$createTableSql; $indexes'.trimWith(';');
   }
@@ -38,36 +39,52 @@ class PostgresSchemaProcessor
     String sql = '"$column" $datatype'.removeExtraSpaces;
 
     sql += compileConstraintsForCreate(column);
-    if (column.isUnique == true) sql += ' unique';
+    // if (column.isUnique == true) sql += ' unique';
     sql += _getDefaultValue(column);
     if (column.isUnsigned) sql += ' check ("$column" >= 0)';
 
     return sql.removeExtraSpaces.trim();
   }
 
+  void toIdentity(c) => '"$c"';
+
+  String compileTableConstraintsForCreate(TableSchema table) {
+    return table.constraints
+        .map((constraint) {
+          if (constraint is UniqueConstraint)
+            return compileConstraintForUnique(constraint, table);
+
+          return ' constraint "${constraint.name}" ${constraint.type} (${constraint.columns.map(toIdentity).join(', ')})';
+        })
+        .join(', ')
+        .removeExtraSpaces
+        .trim();
+  }
+
+  String compileConstraintForUnique(
+      UniqueConstraint constraint, TableSchema table) {
+    var columns = constraint.columns;
+    var name = constraint.name ?? '${table}_${columns.join('_')}_unique';
+
+    return 'constraint "$name" unique (${columns.map(toIdentity).join(', ')})';
+  }
+
   String compileConstraintsForCreate(ColumnSchema column) {
-    var allConstraints =
-        column.constraints.map((constraint) => constraint.type).join(' ');
+    var primaryConstraint = column.isPrimary ? 'primary key' : '';
+    var notNullConstraint = column.isNotNullable ? 'not null' : '';
+    var nullConstraint = column.isNullable ? 'null' : '';
+    var uniqueConstraint = compileUniqueFromColumn(column);
 
-    return ' $allConstraints'.removeExtraSpaces;
+    return ' $primaryConstraint $notNullConstraint $nullConstraint $uniqueConstraint'
+        .removeExtraSpaces;
   }
 
-  String compilePrimaryForCreate(ColumnSchema column) {
-    return column.constraints.whereType<PrimaryConstraint>().isNotEmpty
-        ? 'primary key'
-        : '';
-  }
+  String compileUniqueFromColumn(ColumnSchema column) {
+    if (!column.isUnique) return '';
 
-  String compileNotNullForCreate(ColumnSchema column) {
-    return column.constraints.whereType<NotNullConstraint>().isNotEmpty
-        ? 'not null'
-        : '';
-  }
+    var constraint = column.constraints.whereType<UniqueConstraint>().first;
 
-  String compileNullableForCreate(ColumnSchema column) {
-    return column.constraints.whereType<NullableConstraint>().isNotEmpty
-        ? 'null'
-        : '';
+    return compileUniqueConstraint(constraint, isCreate: true);
   }
 
   String compileConstraint(Constraint constraint) {
@@ -84,6 +101,19 @@ class PostgresSchemaProcessor
       return ' $constraintSql (${constraint.expression})';
 
     return ' $constraintSql';
+  }
+
+  String compileUniqueConstraint(
+    UniqueConstraint constraint, {
+    bool isCreate = false,
+  }) {
+    var columns = constraint.columns.map(toIdentity).join(', ');
+    var name = constraint.name ??
+        '${constraint.table}_${constraint.columns.join('_')}_unique';
+
+    return isCreate
+        ? 'constraint "$name" unique'
+        : 'constraint "$name" unique ($columns)';
   }
 
   String compileColumnsForUpdate(TableSchema table) {
@@ -117,7 +147,7 @@ class PostgresSchemaProcessor
   }
 
   List<String> getAddConstraintCommands(TableSchema table) {
-    return table.constraints.map(_compileAddConstraint).toList();
+    return table.constraints.map(compileConstraintForUpdate).toList();
   }
 
   List<String> getRenameCommands(TableSchema table) {
@@ -193,15 +223,14 @@ class PostgresSchemaProcessor
     if (column.isNotNullable)
       changes.add('alter table "$table" alter column "$column" set not null');
 
-    if (column.isUnique == true)
-      changes.add(
-          'alter table "$table" add constraint "${table}_${column}_unique" unique ("$column")');
+    if (column.isUnique) {
+      var compiled = compileUniqueConstraint(
+          column.constraints.whereType<UniqueConstraint>().first);
+      changes.add('alter table "$table" add $compiled');
+    }
     if (column.isPrimary)
       changes.add(
           'alter table "$table" add constraint "${table}_${column}_pkey" primary key ("$column")');
-    if (column.isUnique == false)
-      changes.add(
-          'alter table "$table" drop constraint "${table}_${column}_unique"');
 
     var defaultValue = _getDefaultValue(column).trim();
     if (defaultValue.isNotEmpty) {
@@ -249,8 +278,12 @@ class PostgresSchemaProcessor
     return 'create index "${index.name}" on "${index.table}" (${columns.join(', ')})';
   }
 
-  String _compileAddConstraint(Constraint constraint) {
+  String compileConstraintForUpdate(Constraint constraint) {
+    // Generic constraint compilation
     var compiledConstraint = compileConstraint(constraint).trim();
+
+    if (constraint is UniqueConstraint)
+      compiledConstraint = compileUniqueConstraint(constraint).trim();
 
     return 'alter table "${constraint.table}" add $compiledConstraint';
   }
@@ -290,7 +323,7 @@ class PostgresSchemaProcessor
         return 'jsonb';
     }
 
-    throw UnknownDataTypeException(column.datatype, DatabaseDriver.postgres);
+    return column.datatype;
   }
 
   String _getCastFor(ColumnSchema column) {

@@ -77,6 +77,11 @@ class TableSchema {
     indexes.add(IndexSchema(column: column, table: this.name, name: name));
   }
 
+  void unique(List<String> columns, {String? name}) {
+    constraints
+        .add(UniqueConstraint(columns: columns, table: this.name, name: name));
+  }
+
   void primary({String? column, List<String>? columns}) {
     if (columns != null)
       return constraints

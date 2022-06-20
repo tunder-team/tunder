@@ -17,7 +17,7 @@ class Constraint {
 class UniqueConstraint extends Constraint {
   UniqueConstraint({
     required String table,
-    required List<String> columns,
+    List<String> columns = const [],
     String? name,
   }) : super(
           ConstraintType.unique,

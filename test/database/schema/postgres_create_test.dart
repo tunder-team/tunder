@@ -23,10 +23,17 @@ main() {
           'result':
               'create table "test" ("status" varchar(255) default \'active\')'
         },
-        "table.string('name').unique": {
+        "table.string('name').unique()": {
           'action': () =>
-              Schema.createSql('test', (t) => t.string('name').unique),
-          'result': 'create table "test" ("name" varchar(255) unique)'
+              Schema.createSql('test', (t) => t.string('name').unique()),
+          'result':
+              'create table "test" ("name" varchar(255) constraint "test_name_unique" unique)'
+        },
+        "table.string('name').unique('custom_name')": {
+          'action': () => Schema.createSql(
+              'test', (t) => t.string('name').unique('custom_name')),
+          'result':
+              'create table "test" ("name" varchar(255) constraint "custom_name" unique)'
         },
         "table.string('name').nullable()": {
           'action': () =>
@@ -68,10 +75,11 @@ main() {
               'test', (t) => t.text('name').defaultValue('jetete')),
           'result': 'create table "test" ("name" text default \'jetete\')'
         },
-        "table.text('name').unique": {
+        "table.text('name').unique()": {
           'action': () =>
-              Schema.createSql('test', (t) => t.text('name').unique),
-          'result': 'create table "test" ("name" text unique)'
+              Schema.createSql('test', (t) => t.text('name').unique()),
+          'result':
+              'create table "test" ("name" text constraint "test_name_unique" unique)'
         },
         "table.text('name').nullable()": {
           'action': () =>
@@ -108,20 +116,22 @@ main() {
               'test', (t) => t.integer('number').defaultValue(12)),
           'result': 'create table "test" ("number" integer default 12)'
         },
-        "table.integer('number').unique": {
+        "table.integer('number').unique()": {
           'action': () =>
-              Schema.createSql('test', (t) => t.integer('number').unique),
-          'result': 'create table "test" ("number" integer unique)'
+              Schema.createSql('test', (t) => t.integer('number').unique()),
+          'result':
+              'create table "test" ("number" integer constraint "test_number_unique" unique)'
         },
         "table.integer('number').nullable()": {
           'action': () =>
               Schema.createSql('test', (t) => t.integer('number').nullable()),
           'result': 'create table "test" ("number" integer null)'
         },
-        "table.integer('number').autoIncrement.unique": {
+        "table.integer('number').autoIncrement.unique()": {
           'action': () => Schema.createSql(
-              'test', (t) => t.integer('number').autoIncrement.unique),
-          'result': 'create table "test" ("number" serial unique)'
+              'test', (t) => t.integer('number').autoIncrement.unique()),
+          'result':
+              'create table "test" ("number" serial constraint "test_number_unique" unique)'
         },
         "table.integer('number').index()": {
           'action': () =>
@@ -154,20 +164,22 @@ main() {
               'test', (t) => t.bigInteger('number').defaultValue(12)),
           'result': 'create table "test" ("number" bigint default 12)'
         },
-        "table.bigInteger('number').unique": {
+        "table.bigInteger('number').unique()": {
           'action': () =>
-              Schema.createSql('test', (t) => t.bigInteger('number').unique),
-          'result': 'create table "test" ("number" bigint unique)'
+              Schema.createSql('test', (t) => t.bigInteger('number').unique()),
+          'result':
+              'create table "test" ("number" bigint constraint "test_number_unique" unique)'
         },
         "table.bigInteger('number').nullable()": {
           'action': () => Schema.createSql(
               'test', (t) => t.bigInteger('number').nullable()),
           'result': 'create table "test" ("number" bigint null)'
         },
-        "table.bigInteger('number').autoIncrement.unique": {
+        "table.bigInteger('number').autoIncrement.unique()": {
           'action': () => Schema.createSql(
-              'test', (t) => t.bigInteger('number').autoIncrement.unique),
-          'result': 'create table "test" ("number" bigserial unique)'
+              'test', (t) => t.bigInteger('number').autoIncrement.unique()),
+          'result':
+              'create table "test" ("number" bigserial constraint "test_number_unique" unique)'
         },
         "table.bigInteger('number').index()": {
           'action': () =>
@@ -200,20 +212,22 @@ main() {
               'test', (t) => t.smallInteger('number').defaultValue(12)),
           'result': 'create table "test" ("number" smallint default 12)'
         },
-        "table.smallInteger('number').unique": {
-          'action': () =>
-              Schema.createSql('test', (t) => t.smallInteger('number').unique),
-          'result': 'create table "test" ("number" smallint unique)'
+        "table.smallInteger('number').unique()": {
+          'action': () => Schema.createSql(
+              'test', (t) => t.smallInteger('number').unique()),
+          'result':
+              'create table "test" ("number" smallint constraint "test_number_unique" unique)'
         },
         "table.smallInteger('number').nullable()": {
           'action': () => Schema.createSql(
               'test', (t) => t.smallInteger('number').nullable()),
           'result': 'create table "test" ("number" smallint null)'
         },
-        "table.smallInteger('number').autoIncrement.unique": {
+        "table.smallInteger('number').autoIncrement.unique()": {
           'action': () => Schema.createSql(
-              'test', (t) => t.smallInteger('number').autoIncrement.unique),
-          'result': 'create table "test" ("number" smallserial unique)'
+              'test', (t) => t.smallInteger('number').autoIncrement.unique()),
+          'result':
+              'create table "test" ("number" smallserial constraint "test_number_unique" unique)'
         },
         "table.smallInteger('number').index()": {
           'action': () =>
@@ -260,20 +274,22 @@ main() {
               Schema.createSql('test', (t) => t.decimal('number', scale: 5)),
           'result': 'create table "test" ("number" decimal(12, 5))'
         },
-        "table.decimal('number').unique": {
+        "table.decimal('number').unique()": {
           'action': () =>
-              Schema.createSql('test', (t) => t.decimal('number').unique),
-          'result': 'create table "test" ("number" decimal(12, 2) unique)'
+              Schema.createSql('test', (t) => t.decimal('number').unique()),
+          'result':
+              'create table "test" ("number" decimal(12, 2) constraint "test_number_unique" unique)'
         },
         "table.decimal('number').nullable()": {
           'action': () =>
               Schema.createSql('test', (t) => t.decimal('number').nullable()),
           'result': 'create table "test" ("number" decimal(12, 2) null)'
         },
-        "table.decimal('number').autoIncrement.unique": {
+        "table.decimal('number').autoIncrement.unique()": {
           'action': () => Schema.createSql(
-              'test', (t) => t.decimal('number').autoIncrement.unique),
-          'result': 'create table "test" ("number" decimal(12, 2) unique)'
+              'test', (t) => t.decimal('number').autoIncrement.unique()),
+          'result':
+              'create table "test" ("number" decimal(12, 2) constraint "test_number_unique" unique)'
         },
         "table.decimal('number').index()": {
           'action': () =>
@@ -305,10 +321,11 @@ main() {
               'test', (t) => t.boolean('name').defaultValue(true)),
           'result': 'create table "test" ("name" boolean default true)'
         },
-        "table.boolean('name').unique": {
+        "table.boolean('name').unique()": {
           'action': () =>
-              Schema.createSql('test', (t) => t.boolean('name').unique),
-          'result': 'create table "test" ("name" boolean unique)'
+              Schema.createSql('test', (t) => t.boolean('name').unique()),
+          'result':
+              'create table "test" ("name" boolean constraint "test_name_unique" unique)'
         },
         "table.boolean('name').nullable()": {
           'action': () =>
@@ -371,10 +388,11 @@ main() {
               'test', (t) => t.timestamp('created_at').defaultRaw('now()')),
           'result': 'create table "test" ("created_at" timestamp default now())'
         },
-        "table.timestamp('created_at').unique": {
-          'action': () =>
-              Schema.createSql('test', (t) => t.timestamp('created_at').unique),
-          'result': 'create table "test" ("created_at" timestamp unique)'
+        "table.timestamp('created_at').unique()": {
+          'action': () => Schema.createSql(
+              'test', (t) => t.timestamp('created_at').unique()),
+          'result':
+              'create table "test" ("created_at" timestamp constraint "test_created_at_unique" unique)'
         },
         "table.timestamp('created_at').nullable()": {
           'action': () => Schema.createSql(
@@ -431,10 +449,11 @@ main() {
               'test', (t) => t.dateTime('created_at').defaultRaw('NOW()')),
           'result': 'create table "test" ("created_at" timestamp default NOW())'
         },
-        "table.dateTime('created_at').unique": {
-          'action': () =>
-              Schema.createSql('test', (t) => t.dateTime('created_at').unique),
-          'result': 'create table "test" ("created_at" timestamp unique)'
+        "table.dateTime('created_at').unique()": {
+          'action': () => Schema.createSql(
+              'test', (t) => t.dateTime('created_at').unique()),
+          'result':
+              'create table "test" ("created_at" timestamp constraint "test_created_at_unique" unique)'
         },
         "table.dateTime('created_at').nullable()": {
           'action': () => Schema.createSql(
@@ -489,10 +508,11 @@ main() {
               'test', (t) => t.date('created_at').defaultRaw('NOW()')),
           'result': 'create table "test" ("created_at" date default NOW())'
         },
-        "table.date('created_at').unique": {
+        "table.date('created_at').unique()": {
           'action': () =>
-              Schema.createSql('test', (t) => t.date('created_at').unique),
-          'result': 'create table "test" ("created_at" date unique)'
+              Schema.createSql('test', (t) => t.date('created_at').unique()),
+          'result':
+              'create table "test" ("created_at" date constraint "test_created_at_unique" unique)'
         },
         "table.date('created_at').nullable()": {
           'action': () =>

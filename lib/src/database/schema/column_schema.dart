@@ -12,7 +12,7 @@ class ColumnSchema {
   bool get isPrimary => constraints.any((c) => c is PrimaryConstraint);
   bool get isNullable => constraints.any((c) => c is NullableConstraint);
   bool get isNotNullable => constraints.any((c) => c is NotNullConstraint);
-  bool? isUnique;
+  bool get isUnique => constraints.any((c) => c is UniqueConstraint);
   bool isUnsigned = false;
   bool isAutoIncrement = false;
   bool defaultsToNow = false;
@@ -33,8 +33,9 @@ class ColumnSchema {
       this..constraints.add(NotNullConstraint(table: table.name, column: name));
   ColumnSchema nullable() => this
     ..constraints.add(NullableConstraint(table: table.name, column: name));
-  ColumnSchema get unique => this..isUnique = true;
-  ColumnSchema get notUnique => this..isUnique = false;
+  ColumnSchema unique([String? name]) => this
+    ..constraints.add(
+        UniqueConstraint(table: table.name, columns: [this.name], name: name));
   ColumnSchema get unsigned => this..isUnsigned = true;
   ColumnSchema get autoIncrement => this..isAutoIncrement = true;
   ColumnSchema defaultValue(value) => this..realDefaultValue = value;

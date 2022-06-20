@@ -48,7 +48,7 @@ main() {
     // });
 
     // test('Adding unique constraint to an existing column', () async {
-    //   table.string('email').notNull().unique.change();
+    //   table.string('email').notNull().unique().change();
     //   expect(
     //     table.alterSql(),
     //     'ALTER TABLE "test" ALTER COLUMN "email" SET NOT NULL; '
@@ -84,7 +84,7 @@ main() {
     // });
 
     // test('Removing unique constraint', () async {
-    //   table.string('email').unique.change();
+    //   table.string('email').unique().change();
     //   table.dropUnique('test_email_unique');
 
     //   expect(
@@ -98,8 +98,8 @@ main() {
     // });
 
     // test('Alternative way to remove a unique constraint', () async {
-    //   table.string('email').unique.update();
-    //   table.string('email').unique.update();
+    //   table.string('email').unique().update();
+    //   table.string('email').unique().update();
     //   table.string('email').notUnique.change();
 
     //   expect(
