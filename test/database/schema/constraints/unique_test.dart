@@ -38,7 +38,7 @@ main() {
             table.unique(['name']);
           });
           expect(sql,
-              'create table "test" ("id" bigserial primary key, "name" varchar(255), constraint "test_name_unique" unique ("name"))');
+              'create table "test" ("id" bigserial constraint "test_id_pkey" primary key not null, "name" varchar(255), constraint "test_name_unique" unique ("name"))');
           expect(await DB.execute(sql), isNotNull);
         });
         test('table.unique(columns) with multiple columns', () async {
@@ -48,7 +48,7 @@ main() {
             table.unique(['id', 'name']);
           });
           expect(sql,
-              'create table "test" ("id" bigserial primary key, "name" varchar(255), constraint "test_id_name_unique" unique ("id", "name"))');
+              'create table "test" ("id" bigserial constraint "test_id_pkey" primary key not null, "name" varchar(255), constraint "test_id_name_unique" unique ("id", "name"))');
           expect(await DB.execute(sql), isNotNull);
         });
       });

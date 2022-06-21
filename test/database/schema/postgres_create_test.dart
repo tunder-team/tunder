@@ -127,9 +127,9 @@ main() {
               Schema.createSql('test', (t) => t.integer('number').nullable()),
           'result': 'create table "test" ("number" integer null)'
         },
-        "table.integer('number').autoIncrement.unique()": {
+        "table.integer('number').autoIncrement().unique()": {
           'action': () => Schema.createSql(
-              'test', (t) => t.integer('number').autoIncrement.unique()),
+              'test', (t) => t.integer('number').autoIncrement().unique()),
           'result':
               'create table "test" ("number" serial constraint "test_number_unique" unique)'
         },
@@ -175,9 +175,9 @@ main() {
               'test', (t) => t.bigInteger('number').nullable()),
           'result': 'create table "test" ("number" bigint null)'
         },
-        "table.bigInteger('number').autoIncrement.unique()": {
+        "table.bigInteger('number').autoIncrement().unique()": {
           'action': () => Schema.createSql(
-              'test', (t) => t.bigInteger('number').autoIncrement.unique()),
+              'test', (t) => t.bigInteger('number').autoIncrement().unique()),
           'result':
               'create table "test" ("number" bigserial constraint "test_number_unique" unique)'
         },
@@ -223,9 +223,9 @@ main() {
               'test', (t) => t.smallInteger('number').nullable()),
           'result': 'create table "test" ("number" smallint null)'
         },
-        "table.smallInteger('number').autoIncrement.unique()": {
+        "table.smallInteger('number').autoIncrement().unique()": {
           'action': () => Schema.createSql(
-              'test', (t) => t.smallInteger('number').autoIncrement.unique()),
+              'test', (t) => t.smallInteger('number').autoIncrement().unique()),
           'result':
               'create table "test" ("number" smallserial constraint "test_number_unique" unique)'
         },
@@ -285,9 +285,9 @@ main() {
               Schema.createSql('test', (t) => t.decimal('number').nullable()),
           'result': 'create table "test" ("number" decimal(12, 2) null)'
         },
-        "table.decimal('number').autoIncrement.unique()": {
+        "table.decimal('number').autoIncrement().unique()": {
           'action': () => Schema.createSql(
-              'test', (t) => t.decimal('number').autoIncrement.unique()),
+              'test', (t) => t.decimal('number').autoIncrement().unique()),
           'result':
               'create table "test" ("number" decimal(12, 2) constraint "test_number_unique" unique)'
         },
@@ -601,21 +601,25 @@ main() {
         // ID
         "table.id() generates bigserial primary key": {
           'action': () => Schema.createSql('test', (t) => t.id()),
-          'result': 'create table "test" ("id" bigserial primary key)'
+          'result':
+              'create table "test" ("id" bigserial constraint "test_id_pkey" primary key not null)'
         },
         "table.id(name)": {
           'action': () => Schema.createSql('test', (t) => t.id('mid')),
-          'result': 'create table "test" ("mid" bigserial primary key)'
+          'result':
+              'create table "test" ("mid" bigserial constraint "test_mid_pkey" primary key not null)'
         },
 
         // String ID
         "table.stringId() generates varchar(16) primary key": {
           'action': () => Schema.createSql('test', (t) => t.stringId()),
-          'result': 'create table "test" ("id" varchar(16) primary key)'
+          'result':
+              'create table "test" ("id" varchar(16) constraint "test_id_pkey" primary key not null)'
         },
         "table.stringId(name)": {
           'action': () => Schema.createSql('test', (t) => t.stringId('msid')),
-          'result': 'create table "test" ("msid" varchar(16) primary key)'
+          'result':
+              'create table "test" ("msid" varchar(16) constraint "test_msid_pkey" primary key not null)'
         },
 
         // Timestamps

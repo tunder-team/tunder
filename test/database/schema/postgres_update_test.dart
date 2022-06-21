@@ -165,21 +165,21 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.integer('name').defaultValue(123).change()),
           'result':
-              'alter table "test" alter column "name" type integer using (trim("name")::integer); '
+              'alter table "test" alter column "name" type integer using ("name"::integer); '
                   'alter table "test" alter column "name" set default 123'
         },
         "table.integer('name').primary().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.integer('name').primary().change()),
           'result':
-              'alter table "test" alter column "name" type integer using (trim("name")::integer); '
+              'alter table "test" alter column "name" type integer using ("name"::integer); '
                   'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
         "table.integer('name').primary().nullable().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.integer('name').primary().nullable().change()),
           'result':
-              'alter table "test" alter column "name" type integer using (trim("name")::integer); '
+              'alter table "test" alter column "name" type integer using ("name"::integer); '
                   'alter table "test" alter column "name" drop not null; '
                   'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
@@ -187,14 +187,14 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.integer('name').unique().change()),
           'result':
-              'alter table "test" alter column "name" type integer using (trim("name")::integer); '
+              'alter table "test" alter column "name" type integer using ("name"::integer); '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
         "table.integer('name').nullable().unique().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.integer('name').nullable().unique().change()),
           'result':
-              'alter table "test" alter column "name" type integer using (trim("name")::integer); '
+              'alter table "test" alter column "name" type integer using ("name"::integer); '
                   'alter table "test" alter column "name" drop not null; '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
@@ -202,20 +202,20 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.integer('name').index().change()),
           'result':
-              'alter table "test" alter column "name" type integer using (trim("name")::integer); '
+              'alter table "test" alter column "name" type integer using ("name"::integer); '
                   'create index "test_name_index" on "test" ("name")'
         },
         "table.integer('name').index('custom_index_name').change()": {
           'action': () => Schema.updateSql('test',
               (t) => t.integer('name').index('custom_index_name').change()),
           'result':
-              'alter table "test" alter column "name" type integer using (trim("name")::integer); '
+              'alter table "test" alter column "name" type integer using ("name"::integer); '
                   'create index "custom_index_name" on "test" ("name")'
         },
-        "table.integer('name').autoIncrement.unique().change()": {
-          'action': () => Schema.updateSql(
-              'test', (t) => t.integer('name').autoIncrement.unique().change()),
-          'result': 'alter table "test" alter column "name" type integer using (trim("name")::integer); '
+        "table.integer('name').autoIncrement().unique().change()": {
+          'action': () => Schema.updateSql('test',
+              (t) => t.integer('name').autoIncrement().unique().change()),
+          'result': 'alter table "test" alter column "name" type integer using ("name"::integer); '
               'create sequence "test_name_seq" owned by "test"."name"; '
               'select setval(\'"test_name_seq"\', (select max("name") from "test"), false); '
               'alter table "test" add constraint "test_name_unique" unique ("name")'
@@ -249,21 +249,21 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.bigInteger('name').defaultValue(123).change()),
           'result':
-              'alter table "test" alter column "name" type bigint using (trim("name")::bigint); '
+              'alter table "test" alter column "name" type bigint using ("name"::bigint); '
                   'alter table "test" alter column "name" set default 123'
         },
         "table.bigInteger('name').primary().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.bigInteger('name').primary().change()),
           'result':
-              'alter table "test" alter column "name" type bigint using (trim("name")::bigint); '
+              'alter table "test" alter column "name" type bigint using ("name"::bigint); '
                   'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
         "table.bigInteger('name').primary().nullable().change()": {
           'action': () => Schema.updateSql('test',
               (t) => t.bigInteger('name').primary().nullable().change()),
           'result':
-              'alter table "test" alter column "name" type bigint using (trim("name")::bigint); '
+              'alter table "test" alter column "name" type bigint using ("name"::bigint); '
                   'alter table "test" alter column "name" drop not null; '
                   'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
@@ -271,14 +271,14 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.bigInteger('name').unique().change()),
           'result':
-              'alter table "test" alter column "name" type bigint using (trim("name")::bigint); '
+              'alter table "test" alter column "name" type bigint using ("name"::bigint); '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
         "table.bigInteger('name').nullable().unique().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.bigInteger('name').nullable().unique().change()),
           'result':
-              'alter table "test" alter column "name" type bigint using (trim("name")::bigint); '
+              'alter table "test" alter column "name" type bigint using ("name"::bigint); '
                   'alter table "test" alter column "name" drop not null; '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
@@ -286,20 +286,20 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.bigInteger('name').index().change()),
           'result':
-              'alter table "test" alter column "name" type bigint using (trim("name")::bigint); '
+              'alter table "test" alter column "name" type bigint using ("name"::bigint); '
                   'create index "test_name_index" on "test" ("name")'
         },
         "table.bigInteger('name').index('custom_index_name').change()": {
           'action': () => Schema.updateSql('test',
               (t) => t.bigInteger('name').index('custom_index_name').change()),
           'result':
-              'alter table "test" alter column "name" type bigint using (trim("name")::bigint); '
+              'alter table "test" alter column "name" type bigint using ("name"::bigint); '
                   'create index "custom_index_name" on "test" ("name")'
         },
-        "table.bigInteger('name').autoIncrement.unique().change()": {
+        "table.bigInteger('name').autoIncrement().unique().change()": {
           'action': () => Schema.updateSql('test',
-              (t) => t.bigInteger('name').autoIncrement.unique().change()),
-          'result': 'alter table "test" alter column "name" type bigint using (trim("name")::bigint); '
+              (t) => t.bigInteger('name').autoIncrement().unique().change()),
+          'result': 'alter table "test" alter column "name" type bigint using ("name"::bigint); '
               'create sequence "test_name_seq" owned by "test"."name"; '
               'select setval(\'"test_name_seq"\', (select max("name") from "test"), false); '
               'alter table "test" add constraint "test_name_unique" unique ("name")'
@@ -334,21 +334,21 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.smallInteger('name').defaultValue(123).change()),
           'result':
-              'alter table "test" alter column "name" type smallint using (trim("name")::smallint); '
+              'alter table "test" alter column "name" type smallint using ("name"::smallint); '
                   'alter table "test" alter column "name" set default 123'
         },
         "table.smallInteger('name').primary().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.smallInteger('name').primary().change()),
           'result':
-              'alter table "test" alter column "name" type smallint using (trim("name")::smallint); '
+              'alter table "test" alter column "name" type smallint using ("name"::smallint); '
                   'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
         "table.smallInteger('name').primary().nullable().change()": {
           'action': () => Schema.updateSql('test',
               (t) => t.smallInteger('name').primary().nullable().change()),
           'result':
-              'alter table "test" alter column "name" type smallint using (trim("name")::smallint); '
+              'alter table "test" alter column "name" type smallint using ("name"::smallint); '
                   'alter table "test" alter column "name" drop not null; '
                   'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
@@ -356,14 +356,14 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.smallInteger('name').unique().change()),
           'result':
-              'alter table "test" alter column "name" type smallint using (trim("name")::smallint); '
+              'alter table "test" alter column "name" type smallint using ("name"::smallint); '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
         "table.smallInteger('name').nullable().unique().change()": {
           'action': () => Schema.updateSql('test',
               (t) => t.smallInteger('name').nullable().unique().change()),
           'result':
-              'alter table "test" alter column "name" type smallint using (trim("name")::smallint); '
+              'alter table "test" alter column "name" type smallint using ("name"::smallint); '
                   'alter table "test" alter column "name" drop not null; '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
@@ -371,7 +371,7 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.smallInteger('name').index().change()),
           'result':
-              'alter table "test" alter column "name" type smallint using (trim("name")::smallint); '
+              'alter table "test" alter column "name" type smallint using ("name"::smallint); '
                   'create index "test_name_index" on "test" ("name")'
         },
         "table.smallInteger('name').index('custom_index_name').change()": {
@@ -380,13 +380,13 @@ main() {
               (t) =>
                   t.smallInteger('name').index('custom_index_name').change()),
           'result':
-              'alter table "test" alter column "name" type smallint using (trim("name")::smallint); '
+              'alter table "test" alter column "name" type smallint using ("name"::smallint); '
                   'create index "custom_index_name" on "test" ("name")'
         },
-        "table.smallInteger('name').autoIncrement.unique().change()": {
+        "table.smallInteger('name').autoIncrement().unique().change()": {
           'action': () => Schema.updateSql('test',
-              (t) => t.smallInteger('name').autoIncrement.unique().change()),
-          'result': 'alter table "test" alter column "name" type smallint using (trim("name")::smallint); '
+              (t) => t.smallInteger('name').autoIncrement().unique().change()),
+          'result': 'alter table "test" alter column "name" type smallint using ("name"::smallint); '
               'create sequence "test_name_seq" owned by "test"."name"; '
               'select setval(\'"test_name_seq"\', (select max("name") from "test"), false); '
               'alter table "test" add constraint "test_name_unique" unique ("name")'
@@ -420,21 +420,21 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.decimal('name').defaultValue(12.3).change()),
           'result':
-              'alter table "test" alter column "name" type decimal(12, 2) using (trim("name")::decimal); '
+              'alter table "test" alter column "name" type decimal(12, 2) using ("name"::decimal); '
                   'alter table "test" alter column "name" set default 12.3'
         },
         "table.decimal('name').primary().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.decimal('name').primary().change()),
           'result':
-              'alter table "test" alter column "name" type decimal(12, 2) using (trim("name")::decimal); '
+              'alter table "test" alter column "name" type decimal(12, 2) using ("name"::decimal); '
                   'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
         "table.decimal('name').primary().nullable().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.decimal('name').primary().nullable().change()),
           'result':
-              'alter table "test" alter column "name" type decimal(12, 2) using (trim("name")::decimal); '
+              'alter table "test" alter column "name" type decimal(12, 2) using ("name"::decimal); '
                   'alter table "test" alter column "name" drop not null; '
                   'alter table "test" add constraint "test_name_pkey" primary key ("name")'
         },
@@ -442,14 +442,14 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.decimal('name').unique().change()),
           'result':
-              'alter table "test" alter column "name" type decimal(12, 2) using (trim("name")::decimal); '
+              'alter table "test" alter column "name" type decimal(12, 2) using ("name"::decimal); '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
         "table.decimal('name').nullable().unique().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.decimal('name').nullable().unique().change()),
           'result':
-              'alter table "test" alter column "name" type decimal(12, 2) using (trim("name")::decimal); '
+              'alter table "test" alter column "name" type decimal(12, 2) using ("name"::decimal); '
                   'alter table "test" alter column "name" drop not null; '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
@@ -457,14 +457,14 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.decimal('name').index().change()),
           'result':
-              'alter table "test" alter column "name" type decimal(12, 2) using (trim("name")::decimal); '
+              'alter table "test" alter column "name" type decimal(12, 2) using ("name"::decimal); '
                   'create index "test_name_index" on "test" ("name")'
         },
         "table.decimal('name').index('custom_index_name').change()": {
           'action': () => Schema.updateSql('test',
               (t) => t.decimal('name').index('custom_index_name').change()),
           'result':
-              'alter table "test" alter column "name" type decimal(12, 2) using (trim("name")::decimal); '
+              'alter table "test" alter column "name" type decimal(12, 2) using ("name"::decimal); '
                   'create index "custom_index_name" on "test" ("name")'
         },
         "table.decimal('name', precision: 14, scale: 3).index('custom_index_name').change()":
@@ -476,7 +476,7 @@ main() {
                   .index('custom_index_name')
                   .change()),
           'result':
-              'alter table "test" alter column "name" type decimal(14, 3) using (trim("name")::decimal); '
+              'alter table "test" alter column "name" type decimal(14, 3) using ("name"::decimal); '
                   'create index "custom_index_name" on "test" ("name")'
         },
       };
@@ -498,27 +498,27 @@ main() {
           'action': () =>
               Schema.updateSql('test', (t) => t.boolean('name').change()),
           'result':
-              'alter table "test" alter column "name" type boolean using (trim("name")::boolean)'
+              'alter table "test" alter column "name" type boolean using ("name"::boolean)'
         },
         "table.boolean('name').defaultValue(true).change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.boolean('name').defaultValue(true).change()),
           'result':
-              'alter table "test" alter column "name" type boolean using (trim("name")::boolean); '
+              'alter table "test" alter column "name" type boolean using ("name"::boolean); '
                   'alter table "test" alter column "name" set default true'
         },
         "table.boolean('name').unique().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.boolean('name').unique().change()),
           'result':
-              'alter table "test" alter column "name" type boolean using (trim("name")::boolean); '
+              'alter table "test" alter column "name" type boolean using ("name"::boolean); '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
         "table.boolean('name').nullable().unique().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.boolean('name').nullable().unique().change()),
           'result':
-              'alter table "test" alter column "name" type boolean using (trim("name")::boolean); '
+              'alter table "test" alter column "name" type boolean using ("name"::boolean); '
                   'alter table "test" alter column "name" drop not null; '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
@@ -526,7 +526,7 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.boolean('name').index().change()),
           'result':
-              'alter table "test" alter column "name" type boolean using (trim("name")::boolean); '
+              'alter table "test" alter column "name" type boolean using ("name"::boolean); '
                   'create index "test_name_index" on "test" ("name")'
         },
       };
@@ -548,55 +548,55 @@ main() {
           'action': () =>
               Schema.updateSql('test', (t) => t.timestamp('name').change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp)'
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp)'
         },
         "table.timestamp('name').defaultToNow().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.timestamp('name').defaultToNow().change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" alter column "name" set default current_timestamp(6)'
         },
         "table.timestamp('name').defaultToNow(3).change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.timestamp('name').defaultToNow(3).change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" alter column "name" set default current_timestamp(3)'
         },
         "table.timestamp('name').defaultToCurrent().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.timestamp('name').defaultToCurrent().change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" alter column "name" set default current_timestamp(6)'
         },
         "table.timestamp('name').useCurrent().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.timestamp('name').useCurrent().change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" alter column "name" set default current_timestamp(6)'
         },
         "table.timestamp('name').defaultRaw('NOW()').change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.timestamp('name').defaultRaw('NOW()').change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" alter column "name" set default NOW()'
         },
         "table.timestamp('name').unique().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.timestamp('name').unique().change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
         "table.timestamp('name').nullable().unique().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.timestamp('name').nullable().unique().change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" alter column "name" drop not null; '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
@@ -604,7 +604,7 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.timestamp('name').index().change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'create index "test_name_index" on "test" ("name")'
         },
       };
@@ -626,28 +626,28 @@ main() {
           'action': () =>
               Schema.updateSql('test', (t) => t.dateTime('name').change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp)'
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp)'
         },
         "table.dateTime('name').defaultToNow().change() -> defaults to precision 6":
             {
           'action': () => Schema.updateSql(
               'test', (t) => t.dateTime('name').defaultToNow().change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" alter column "name" set default current_timestamp(6)'
         },
         "table.dateTime('name').defaultToCurrent().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.dateTime('name').defaultToCurrent().change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" alter column "name" set default current_timestamp(6)'
         },
         "table.dateTime('name').useCurrent().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.dateTime('name').useCurrent().change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" alter column "name" set default current_timestamp(6)'
         },
         "table.dateTime('name').defaultRaw('NOW()').change() runs accordingly":
@@ -655,21 +655,21 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.dateTime('name').defaultRaw('NOW()').change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" alter column "name" set default NOW()'
         },
         "table.dateTime('name').unique().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.dateTime('name').unique().change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
         "table.dateTime('name').nullable().unique().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.dateTime('name').nullable().unique().change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'alter table "test" alter column "name" drop not null; '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
@@ -677,7 +677,7 @@ main() {
           'action': () => Schema.updateSql(
               'test', (t) => t.dateTime('name').index().change()),
           'result':
-              'alter table "test" alter column "name" type timestamp using (trim("name")::timestamp); '
+              'alter table "test" alter column "name" type timestamp using ("name"::timestamp); '
                   'create index "test_name_index" on "test" ("name")'
         },
       };
@@ -699,48 +699,48 @@ main() {
           'action': () =>
               Schema.updateSql('test', (t) => t.date('name').change()),
           'result':
-              'alter table "test" alter column "name" type date using (trim("name")::date)'
+              'alter table "test" alter column "name" type date using ("name"::date)'
         },
         "table.date('name').defaultToNow(3).change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.date('name').defaultToNow(3).change()),
           'result':
-              'alter table "test" alter column "name" type date using (trim("name")::date); '
+              'alter table "test" alter column "name" type date using ("name"::date); '
                   'alter table "test" alter column "name" set default current_timestamp(3)'
         },
         "table.date('name').defaultToCurrent(3).change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.date('name').defaultToCurrent(3).change()),
           'result':
-              'alter table "test" alter column "name" type date using (trim("name")::date); '
+              'alter table "test" alter column "name" type date using ("name"::date); '
                   'alter table "test" alter column "name" set default current_timestamp(3)'
         },
         "table.date('name').useCurrent(3).change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.date('name').useCurrent(3).change()),
           'result':
-              'alter table "test" alter column "name" type date using (trim("name")::date); '
+              'alter table "test" alter column "name" type date using ("name"::date); '
                   'alter table "test" alter column "name" set default current_timestamp(3)'
         },
         "table.date('name').defaultRaw('NOW()').change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.date('name').defaultRaw('NOW()').change()),
           'result':
-              'alter table "test" alter column "name" type date using (trim("name")::date); '
+              'alter table "test" alter column "name" type date using ("name"::date); '
                   'alter table "test" alter column "name" set default NOW()'
         },
         "table.date('name').unique().change()": {
           'action': () =>
               Schema.updateSql('test', (t) => t.date('name').unique().change()),
           'result':
-              'alter table "test" alter column "name" type date using (trim("name")::date); '
+              'alter table "test" alter column "name" type date using ("name"::date); '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
         "table.date('name').nullable().unique().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.date('name').nullable().unique().change()),
           'result':
-              'alter table "test" alter column "name" type date using (trim("name")::date); '
+              'alter table "test" alter column "name" type date using ("name"::date); '
                   'alter table "test" alter column "name" drop not null; '
                   'alter table "test" add constraint "test_name_unique" unique ("name")'
         },
@@ -748,7 +748,7 @@ main() {
           'action': () =>
               Schema.updateSql('test', (t) => t.date('name').index().change()),
           'result':
-              'alter table "test" alter column "name" type date using (trim("name")::date); '
+              'alter table "test" alter column "name" type date using ("name"::date); '
                   'create index "test_name_index" on "test" ("name")'
         },
       };
@@ -770,20 +770,20 @@ main() {
           'action': () =>
               Schema.updateSql('test', (t) => t.json('name').change()),
           'result':
-              'alter table "test" alter column "name" type json using (trim("name")::json)'
+              'alter table "test" alter column "name" type json using ("name"::json)'
         },
         "table.json('name').defaultValue('[]').change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.json('name').defaultValue('[]').change()),
           'result':
-              'alter table "test" alter column "name" type json using (trim("name")::json); '
+              'alter table "test" alter column "name" type json using ("name"::json); '
                   'alter table "test" alter column "name" set default \'[]\''
         },
         "table.json('name').nullable().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.json('name').nullable().change()),
           'result':
-              'alter table "test" alter column "name" type json using (trim("name")::json); '
+              'alter table "test" alter column "name" type json using ("name"::json); '
                   'alter table "test" alter column "name" drop not null'
         },
       };
@@ -805,20 +805,20 @@ main() {
           'action': () =>
               Schema.updateSql('test', (t) => t.jsonb('name').change()),
           'result':
-              'alter table "test" alter column "name" type jsonb using (trim("name")::jsonb)'
+              'alter table "test" alter column "name" type jsonb using ("name"::jsonb)'
         },
         "table.jsonb('name').defaultValue('[]').change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.jsonb('name').defaultValue('[]').change()),
           'result':
-              'alter table "test" alter column "name" type jsonb using (trim("name")::jsonb); '
+              'alter table "test" alter column "name" type jsonb using ("name"::jsonb); '
                   'alter table "test" alter column "name" set default \'[]\''
         },
         "table.jsonb('name').nullable().change()": {
           'action': () => Schema.updateSql(
               'test', (t) => t.jsonb('name').nullable().change()),
           'result':
-              'alter table "test" alter column "name" type jsonb using (trim("name")::jsonb); '
+              'alter table "test" alter column "name" type jsonb using ("name"::jsonb); '
                   'alter table "test" alter column "name" drop not null'
         },
       };
@@ -839,22 +839,25 @@ main() {
         // ID
         "table.id() generates bigserial primary key not null": {
           'action': () => Schema.updateSql('test', (t) => t.id()),
-          'result': 'alter table "test" add column "id" bigserial primary key'
+          'result':
+              'alter table "test" add column "id" bigserial constraint "test_id_pkey" primary key not null'
         },
         "table.id(name)": {
           'action': () => Schema.updateSql('test', (t) => t.id('mid')),
-          'result': 'alter table "test" add column "mid" bigserial primary key'
+          'result':
+              'alter table "test" add column "mid" bigserial constraint "test_mid_pkey" primary key not null'
         },
 
         // String ID
         "table.stringId() generates varchar(16) primary key not null": {
           'action': () => Schema.updateSql('test', (t) => t.stringId()),
-          'result': 'alter table "test" add column "id" varchar(16) primary key'
+          'result':
+              'alter table "test" add column "id" varchar(16) constraint "test_id_pkey" primary key not null'
         },
         "table.stringId(name)": {
           'action': () => Schema.updateSql('test', (t) => t.stringId('msid')),
           'result':
-              'alter table "test" add column "msid" varchar(16) primary key'
+              'alter table "test" add column "msid" varchar(16) constraint "test_msid_pkey" primary key not null'
         },
 
         // Timestamps

@@ -10,7 +10,7 @@ main() {
     test('.createSql(table, define) returns the table schema for creation',
         () async {
       final expectedSql = '''
-        create table "testing_table" ("custom_id" bigserial primary key,
+        create table "testing_table" ("custom_id" bigserial constraint "testing_table_custom_id_pkey" primary key not null,
           "name" varchar(255),
           "age" integer check ("age" >= 0),
           "body" text null,
@@ -76,10 +76,11 @@ main() {
       });
       test('table.primary(column)', () async {
         var sql = Schema.updateSql('test', (table) {
-          table.primary(column: 'id');
+          table.primary(['id']);
         });
 
-        expect(sql, 'alter table "test" add primary key ("id")');
+        expect(sql,
+            'alter table "test" add constraint "test_id_pkey" primary key ("id")');
         expect(await DB.execute(sql), isNotNull);
       });
     });
@@ -185,15 +186,15 @@ main() {
       test('dropPrimary()', () async {
         // Act and Assert
         var sql = Schema.updateSql('test', (table) {
-          table.dropPrimary();
+          table.dropPrimary(columns: ['id']);
         });
-        expect(sql, 'alter table "test" drop constraint "test_pkey"');
+        expect(sql, 'alter table "test" drop constraint "test_id_pkey"');
         expect(await DB.execute(sql), isNotNull);
       });
       test('dropPrimary(name)', () async {
         // Act and Assert
         var sql = Schema.updateSql('test', (table) {
-          table.dropPrimary('custom_pkey_name');
+          table.dropPrimary(name: 'custom_pkey_name');
         });
         expect(sql, 'alter table "test" drop constraint "custom_pkey_name"');
       });

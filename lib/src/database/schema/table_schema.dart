@@ -20,14 +20,13 @@ class TableSchema {
    * Generates a string primary key column with 16 characters long.
    */
   void stringId([String columnName = 'id']) =>
-      _add(columnName, DataType.string).primary()..length = 16;
+      string(columnName).primary().notNullable()..length = 16;
 
   /**
    * Generates a serial big integer primary key column with auto incement.
    */
-  void id([String columnName = 'id']) {
-    _add(columnName, DataType.bigInteger).primary().autoIncrement;
-  }
+  void id([String columnName = 'id']) =>
+      bigInteger(columnName).primary().notNullable().autoIncrement();
 
   ColumnSchema string(String name, [int length = 255]) =>
       _add(name, DataType.string, length);
@@ -77,19 +76,11 @@ class TableSchema {
     indexes.add(IndexSchema(column: column, table: this.name, name: name));
   }
 
-  void unique(List<String> columns, {String? name}) {
-    constraints
-        .add(UniqueConstraint(columns: columns, table: this.name, name: name));
-  }
+  void unique(List<String> columns, {String? name}) => constraints
+      .add(UniqueConstraint(columns: columns, table: this.name, name: name));
 
-  void primary({String? column, List<String>? columns}) {
-    if (columns != null)
-      return constraints
-          .add(PrimaryConstraint(columns: columns, table: this.name));
-
-    if (column != null)
-      constraints.add(PrimaryConstraint(table: this.name, columns: [column]));
-  }
+  void primary(List<String> columns, {String? name}) => constraints
+      .add(PrimaryConstraint(columns: columns, table: this.name, name: name));
 
   void dropColumn(String column) {
     droppings.add(ColumnSchema(column, DataType.string, this));
@@ -139,14 +130,10 @@ class TableSchema {
     names.forEach((name) => dropUnique(name: name));
   }
 
-  void dropPrimary([String? name]) {
-    name ??= '${this.name}_pkey';
-
+  void dropPrimary({List<String>? columns, String? name}) {
+    name ??= '${this.name}_${columns!.join('_')}_pkey';
     droppings.add(
-      PrimaryConstraint(
-        table: this.name,
-        name: name,
-      ),
+      PrimaryConstraint(table: this.name, name: name, columns: columns ?? []),
     );
   }
 

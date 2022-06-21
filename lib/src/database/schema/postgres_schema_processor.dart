@@ -52,7 +52,9 @@ class PostgresSchemaProcessor
     return table.constraints
         .map((constraint) {
           if (constraint is UniqueConstraint)
-            return compileConstraintForUnique(constraint, table);
+            return compileUniqueConstraint(constraint, withColumns: true);
+          if (constraint is PrimaryConstraint)
+            return compilePrimaryConstraint(constraint, withColumns: true);
 
           return ' constraint "${constraint.name}" ${constraint.type} (${constraint.columns.map(toIdentity).join(', ')})';
         })
@@ -61,30 +63,20 @@ class PostgresSchemaProcessor
         .trim();
   }
 
-  String compileConstraintForUnique(
-      UniqueConstraint constraint, TableSchema table) {
-    var columns = constraint.columns;
-    var name = constraint.name ?? '${table}_${columns.join('_')}_unique';
-
-    return 'constraint "$name" unique (${columns.map(toIdentity).join(', ')})';
-  }
-
   String compileConstraintsForCreate(ColumnSchema column) {
-    var primaryConstraint = column.isPrimary ? 'primary key' : '';
+    var primaryConstraint = column.isPrimary
+        ? compilePrimaryConstraint(
+            column.constraints.whereType<PrimaryConstraint>().first)
+        : '';
     var notNullConstraint = column.isNotNullable ? 'not null' : '';
     var nullConstraint = column.isNullable ? 'null' : '';
-    var uniqueConstraint = compileUniqueFromColumn(column);
+    var uniqueConstraint = column.isUnique
+        ? compileUniqueConstraint(
+            column.constraints.whereType<UniqueConstraint>().first)
+        : '';
 
     return ' $primaryConstraint $notNullConstraint $nullConstraint $uniqueConstraint'
         .removeExtraSpaces;
-  }
-
-  String compileUniqueFromColumn(ColumnSchema column) {
-    if (!column.isUnique) return '';
-
-    var constraint = column.constraints.whereType<UniqueConstraint>().first;
-
-    return compileUniqueConstraint(constraint, isCreate: true);
   }
 
   String compileConstraint(Constraint constraint) {
@@ -105,15 +97,29 @@ class PostgresSchemaProcessor
 
   String compileUniqueConstraint(
     UniqueConstraint constraint, {
-    bool isCreate = false,
+    bool withColumns = false,
   }) {
-    var columns = constraint.columns.map(toIdentity).join(', ');
+    var columns =
+        withColumns ? constraint.columns.map(toIdentity).join(', ') : null;
     var name = constraint.name ??
         '${constraint.table}_${constraint.columns.join('_')}_unique';
 
-    return isCreate
-        ? 'constraint "$name" unique'
-        : 'constraint "$name" unique ($columns)';
+    return withColumns
+        ? 'constraint "$name" unique ($columns)'
+        : 'constraint "$name" unique';
+  }
+
+  String compilePrimaryConstraint(
+    PrimaryConstraint constraint, {
+    bool withColumns = false,
+  }) {
+    var columns = constraint.columns.map(toIdentity).join(', ');
+    var name = constraint.name ??
+        '${constraint.table}_${constraint.columns.join('_')}_pkey';
+
+    return withColumns
+        ? 'constraint "$name" primary key ($columns)'
+        : 'constraint "$name" primary key';
   }
 
   String compileColumnsForUpdate(TableSchema table) {
@@ -225,13 +231,16 @@ class PostgresSchemaProcessor
 
     if (column.isUnique) {
       var compiled = compileUniqueConstraint(
-          column.constraints.whereType<UniqueConstraint>().first);
+          column.constraints.whereType<UniqueConstraint>().first,
+          withColumns: true);
       changes.add('alter table "$table" add $compiled');
     }
-    if (column.isPrimary)
-      changes.add(
-          'alter table "$table" add constraint "${table}_${column}_pkey" primary key ("$column")');
-
+    if (column.isPrimary) {
+      var compiled = compilePrimaryConstraint(
+          column.constraints.whereType<PrimaryConstraint>().first,
+          withColumns: true);
+      changes.add('alter table "$table" add $compiled');
+    }
     var defaultValue = _getDefaultValue(column).trim();
     if (defaultValue.isNotEmpty) {
       changes
@@ -283,7 +292,11 @@ class PostgresSchemaProcessor
     var compiledConstraint = compileConstraint(constraint).trim();
 
     if (constraint is UniqueConstraint)
-      compiledConstraint = compileUniqueConstraint(constraint).trim();
+      compiledConstraint =
+          compileUniqueConstraint(constraint, withColumns: true).trim();
+    if (constraint is PrimaryConstraint)
+      compiledConstraint =
+          compilePrimaryConstraint(constraint, withColumns: true).trim();
 
     return 'alter table "${constraint.table}" add $compiledConstraint';
   }
@@ -329,24 +342,24 @@ class PostgresSchemaProcessor
   String _getCastFor(ColumnSchema column) {
     switch (column.datatype) {
       case DataType.integer:
-        return 'using (trim("$column")::integer)';
+        return 'using ("$column"::integer)';
       case DataType.bigInteger:
-        return 'using (trim("$column")::bigint)';
+        return 'using ("$column"::bigint)';
       case DataType.smallInteger:
-        return 'using (trim("$column")::smallint)';
+        return 'using ("$column"::smallint)';
       case DataType.decimal:
-        return 'using (trim("$column")::decimal)';
+        return 'using ("$column"::decimal)';
       case DataType.boolean:
-        return 'using (trim("$column")::boolean)';
+        return 'using ("$column"::boolean)';
       case DataType.timestamp:
       case DataType.dateTime:
-        return 'using (trim("$column")::timestamp)';
+        return 'using ("$column"::timestamp)';
       case DataType.date:
-        return 'using (trim("$column")::date)';
+        return 'using ("$column"::date)';
       case DataType.json:
-        return 'using (trim("$column")::json)';
+        return 'using ("$column"::json)';
       case DataType.jsonb:
-        return 'using (trim("$column")::jsonb)';
+        return 'using ("$column"::jsonb)';
     }
 
     return '';

@@ -24,7 +24,7 @@ class ColumnSchema {
 
   ColumnSchema(this.name, this.datatype, this.table, [this.length = 255]);
 
-  ColumnSchema primary({String? name}) => this
+  ColumnSchema primary([String? name]) => this
     ..constraints.add(
       PrimaryConstraint(table: table.name, columns: [this.name], name: name),
     );
@@ -37,7 +37,7 @@ class ColumnSchema {
     ..constraints.add(
         UniqueConstraint(table: table.name, columns: [this.name], name: name));
   ColumnSchema get unsigned => this..isUnsigned = true;
-  ColumnSchema get autoIncrement => this..isAutoIncrement = true;
+  ColumnSchema autoIncrement() => this..isAutoIncrement = true;
   ColumnSchema defaultValue(value) => this..realDefaultValue = value;
   ColumnSchema defaultRaw(value) => this..rawDefaultValue = value;
 
