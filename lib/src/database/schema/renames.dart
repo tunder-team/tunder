@@ -12,3 +12,7 @@ class RenameColumn extends Rename {
 class RenameIndex extends Rename {
   RenameIndex(String from, String to) : super(from, to);
 }
+
+class RenamePrimary extends Rename {
+  RenamePrimary(String from, String to) : super(from, to);
+}

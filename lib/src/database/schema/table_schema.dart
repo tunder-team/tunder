@@ -145,6 +145,10 @@ class TableSchema {
     renames.add(RenameIndex(from, to));
   }
 
+  void renamePrimary(String from, String to) {
+    renames.add(RenamePrimary(from, to));
+  }
+
   ColumnSchema _add(String name, String datatype, [int length = 255]) {
     var column = ColumnSchema(name, datatype, this, length);
     columns.add(column);

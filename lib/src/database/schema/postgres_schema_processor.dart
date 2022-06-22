@@ -160,6 +160,8 @@ class PostgresSchemaProcessor
     return table.renames.map((rename) {
       if (rename is RenameIndex)
         return 'alter index "${rename.from}" rename to "${rename.to}"';
+      if (rename is RenamePrimary)
+        return 'alter table "$table" rename constraint "${rename.from}" to "${rename.to}"';
 
       return 'alter table "$table" rename column "${rename.from}" to "${rename.to}"';
     }).toList();

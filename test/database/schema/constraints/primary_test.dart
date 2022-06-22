@@ -177,6 +177,21 @@ main() {
       });
     });
 
+    group('Rename', () {
+      setUp(() => Schema.create('test', (table) {
+            table.id();
+          }));
+
+      test('table.renamePrimary(from, to)', () async {
+        var sql = Schema.updateSql('test', (table) {
+          table.renamePrimary('test_id_pkey', 'custom_pkey');
+        });
+        expect(sql,
+            'alter table "test" rename constraint "test_id_pkey" to "custom_pkey"');
+        expect(await DB.execute(sql), isNotNull);
+      });
+    });
+
     group('Integrations: ', () {
       setUp(() async {
         await Schema.create('test', (table) {
