@@ -8,9 +8,11 @@ class PostgresConnection implements DatabaseConnection {
   late String username;
   late String password;
   late Symbol driver;
+  int _transactionLevel = 0;
   Connection? _connection;
 
   String get url => 'postgres://$username:$password@$host:$port/$database';
+  String get _name => 'sp_$_transactionLevel';
 
   PostgresConnection({
     this.host = 'localhost',
@@ -56,10 +58,19 @@ class PostgresConnection implements DatabaseConnection {
   }
 
   @override
-  Future<T> transaction<T>(Future<T> Function() function) async {
+  Future<T> transaction<T>(Future<T> Function() operation) async {
     await open();
 
-    return _connection!.runInTransaction<T>(function);
+    try {
+      await begin();
+      var result = await operation();
+      await commit();
+
+      return result;
+    } catch (_) {
+      await rollback();
+      rethrow;
+    }
   }
 
   List<MappedRow> _transformedRows(List<Row> rows) {
@@ -70,16 +81,27 @@ class PostgresConnection implements DatabaseConnection {
 
   @override
   Future begin() async {
-    return execute('BEGIN');
+    var begin = _alreadyInTransaction ? 'savepoint $_name' : 'begin';
+    ++_transactionLevel;
+    return execute(begin);
   }
+
+  bool get _alreadyInTransaction => _transactionLevel > 0;
 
   @override
   Future commit() {
-    return execute('COMMIT');
+    --_transactionLevel;
+    var commit = _alreadyInTransaction ? 'release savepoint $_name' : 'commit';
+
+    return execute(commit);
   }
 
   @override
   Future rollback() {
-    return execute('ROLLBACK');
+    --_transactionLevel;
+    var rollback =
+        _alreadyInTransaction ? 'rollback to savepoint $_name' : 'rollback';
+
+    return execute(rollback);
   }
 }

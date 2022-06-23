@@ -1,17 +1,26 @@
 import 'package:test/test.dart';
 import 'package:tunder/database.dart';
-import 'package:tunder/src/database/schema/column_schema.dart';
-import 'package:tunder/src/database/schema/data_type.dart';
-import 'package:tunder/src/database/schema/table_schema.dart';
 import 'package:tunder/src/exceptions/unknown_database_driver_exception.dart';
 import 'package:tunder/src/providers/database_service_provider.dart';
+import 'package:tunder/test.dart';
 import 'package:tunder/utils.dart';
 
 import '../feature.dart';
 
 main() {
   group('DB', () {
+    useDatabaseTransactions();
+
     setUpAll(() => DatabaseServiceProvider().boot(app()));
+
+    setUp(() async {
+      await Schema.create('users', (table) {
+        table.id();
+        table.string('name').notNullable();
+      });
+      // var insertJose = 'insert into users (name) values ("Jose")';
+    });
+
     test('is an instance of DatabaseConnection', () async {
       expect(DB.connection, isA<DatabaseConnection>());
     });
@@ -33,7 +42,7 @@ main() {
           expect(results, isNotEmpty);
 
           results = await connection.query('SELECT * FROM users');
-          expect(results.length, 4);
+          expect(results.length, 2);
 
           throw SomeException('Some error');
         });
@@ -55,6 +64,7 @@ main() {
     });
 
     test('query returns a list of mapped rows', () async {
+      await DB.execute("INSERT INTO users (name) VALUES ('Marco')");
       var query = "SELECT * FROM users WHERE name = 'Marco'";
       var results = await DB.query(query);
       expect(results, isNotEmpty);

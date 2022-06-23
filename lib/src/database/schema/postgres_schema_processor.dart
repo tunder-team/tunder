@@ -57,6 +57,8 @@ class PostgresSchemaProcessor
             return compilePrimaryConstraint(constraint, withColumns: true);
           if (constraint is CheckConstraint)
             return compileCheckConstraint(constraint);
+          if (constraint is ForeignKeyConstraint)
+            return compileForeignConstraint(constraint);
 
           return compileConstraint(constraint);
         })
@@ -76,12 +78,15 @@ class PostgresSchemaProcessor
         ? compileUniqueConstraint(
             column.constraints.whereType<UniqueConstraint>().first)
         : '';
+    var foreignConstraint = column.hasForeignKey
+        ? compileForeignConstraint(column.foreignKey!, inLine: true)
+        : '';
     var checkConstraint = column.constraints
         .whereType<CheckConstraint>()
         .map(compileCheckConstraint)
         .join(', ');
 
-    return ' $primaryConstraint $notNullConstraint $nullConstraint $uniqueConstraint $checkConstraint'
+    return ' $primaryConstraint $notNullConstraint $nullConstraint $uniqueConstraint $foreignConstraint $checkConstraint'
         .removeExtraSpaces;
   }
 
@@ -137,6 +142,28 @@ class PostgresSchemaProcessor
     return 'constraint "$name" check (${constraint.expression})';
   }
 
+  String compileForeignConstraint(
+    ForeignKeyConstraint constraint, {
+    bool inLine = false,
+  }) {
+    var name = constraint.name ??
+        '${constraint.table}_${constraint.columns.join('_')}_fkey';
+
+    var onDelete = constraint.onDeleteAction != null
+        ? ' on delete ${constraint.onDeleteAction}'
+        : '';
+
+    var onUpdate = constraint.onUpdateAction != null
+        ? ' on update ${constraint.onUpdateAction}'
+        : '';
+
+    return inLine
+        ? 'constraint "$name" references "${constraint.referencedTable}"("${constraint.referencedColumn}") $onDelete $onUpdate'
+            .removeExtraSpaces
+        : 'constraint "$name" foreign key (${constraint.columns.map(toIdentity).join(', ')}) references "${constraint.referencedTable}"("${constraint.referencedColumn}") $onDelete $onUpdate'
+            .removeExtraSpaces;
+  }
+
   String compileColumnsForUpdate(TableSchema table) {
     List<dynamic> parsedColumns = getUpdateColumnCommands(table);
     List<String> droppings = getDroppingCommands(table);
@@ -188,12 +215,14 @@ class PostgresSchemaProcessor
     List<String> droppingUnique = getDroppingUniqueCommands(table);
     List<String> droppingPrimary = getDroppingPrimaryCommands(table);
     List<String> droppingChecks = getDroppingCheckCommands(table);
+    List<String> droppingForeign = getDroppingForeignCommands(table);
 
     return droppingColumns +
         droppingIndexes +
         droppingUnique +
         droppingPrimary +
-        droppingChecks;
+        droppingChecks +
+        droppingForeign;
   }
 
   List<String> getDroppingUniqueCommands(TableSchema table) {
@@ -220,6 +249,15 @@ class PostgresSchemaProcessor
         .map((check) => 'alter table "$table" drop constraint "${check.name}"')
         .toList();
     return droppingCheckConstraints;
+  }
+
+  List<String> getDroppingForeignCommands(TableSchema table) {
+    var droppingForeignConstraints = table.droppings
+        .whereType<ForeignKeyConstraint>()
+        .map((foreign) =>
+            'alter table "$table" drop constraint "${foreign.name}"')
+        .toList();
+    return droppingForeignConstraints;
   }
 
   List<String> getDroppingIndexCommands(TableSchema table) {
@@ -282,6 +320,11 @@ class PostgresSchemaProcessor
           .add('alter table "$table" alter column "$column" set $defaultValue');
     }
 
+    if (column.hasForeignKey) {
+      var compiled = compileForeignConstraint(column.foreignKey!);
+      changes.add('alter table "$table" add $compiled');
+    }
+
     return changes;
   }
 
@@ -334,6 +377,8 @@ class PostgresSchemaProcessor
           compilePrimaryConstraint(constraint, withColumns: true).trim();
     if (constraint is CheckConstraint)
       compiledConstraint = compileCheckConstraint(constraint).trim();
+    if (constraint is ForeignKeyConstraint)
+      compiledConstraint = compileForeignConstraint(constraint).trim();
 
     return 'alter table "${constraint.table}" add $compiledConstraint';
   }

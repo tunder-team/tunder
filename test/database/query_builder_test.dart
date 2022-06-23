@@ -2,14 +2,27 @@ import 'package:test/test.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/src/exceptions/record_not_found_exception.dart';
 import 'package:tunder/src/providers/database_service_provider.dart';
+import 'package:tunder/test.dart';
 import 'package:tunder/utils.dart';
 
 import '../examples/models.dart';
 
 main() {
   group('Query<T>', () {
-    setUpAll(() {
-      DatabaseServiceProvider().boot(app());
+    useDatabaseTransactions();
+
+    setUp(() async {
+      await Schema.create('users', (table) {
+        table.id();
+        table.string('name').notNullable();
+        table.string('email').nullable();
+        table.boolean('admin').nullable();
+        table.timestamps();
+      });
+      await DB.execute(
+          "insert into users (name, email, admin, created_at, updated_at) values ('Marco', 'marco@mail.com', true, '2022-05-27 05:04:23.805328Z', '2022-05-27 05:04:23.805328Z')");
+      await DB.execute(
+          "INSERT INTO users (name, email) VALUES ('John Doe', 'john.doe@mail.com')");
     });
 
     test('can be initialized with table name: Query(tableName)', () async {
@@ -40,10 +53,8 @@ main() {
       expect(user.id, 1);
       expect(user.name, 'Marco');
       expect(user.email, 'marco@mail.com');
-      expect(user.created_at,
-          DateTime.parse('2022-05-27 05:04:23.805328Z').toLocal());
-      expect(user.updated_at,
-          DateTime.parse('2022-05-27 05:04:23.805328Z').toLocal());
+      expect(user.created_at, isNotNull);
+      expect(user.updated_at, isNotNull);
     });
 
     // .find(id) should return the user with the given id
