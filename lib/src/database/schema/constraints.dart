@@ -50,6 +50,21 @@ class PrimaryConstraint extends Constraint {
         );
 }
 
+class CheckConstraint extends Constraint {
+  CheckConstraint({
+    required String table,
+    required String expression,
+    String? column,
+    String? name,
+  }) : super(
+          ConstraintType.check,
+          table: table,
+          expression: expression,
+          columns: column != null ? [column] : [],
+          name: name,
+        );
+}
+
 class ConstraintType {
   static const String notNull = 'not null';
   static const String nullable = 'null';

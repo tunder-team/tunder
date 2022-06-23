@@ -13,6 +13,7 @@ class ColumnSchema {
   bool get isNullable => constraints.any((c) => c is NullableConstraint);
   bool get isNotNullable => constraints.any((c) => c is NotNullConstraint);
   bool get isUnique => constraints.any((c) => c is UniqueConstraint);
+  bool get hasCheck => constraints.any((c) => c is CheckConstraint);
   bool isUnsigned = false;
   bool isAutoIncrement = false;
   bool defaultsToNow = false;
@@ -27,6 +28,16 @@ class ColumnSchema {
   ColumnSchema primary([String? name]) => this
     ..constraints.add(
       PrimaryConstraint(table: table.name, columns: [this.name], name: name),
+    );
+
+  ColumnSchema check(String expression, {String? name}) => this
+    ..constraints.add(
+      CheckConstraint(
+        expression: expression,
+        column: this.name,
+        table: table.name,
+        name: name,
+      ),
     );
 
   ColumnSchema notNullable() =>

@@ -55,8 +55,10 @@ class PostgresSchemaProcessor
             return compileUniqueConstraint(constraint, withColumns: true);
           if (constraint is PrimaryConstraint)
             return compilePrimaryConstraint(constraint, withColumns: true);
+          if (constraint is CheckConstraint)
+            return compileCheckConstraint(constraint);
 
-          return ' constraint "${constraint.name}" ${constraint.type} (${constraint.columns.map(toIdentity).join(', ')})';
+          return compileConstraint(constraint);
         })
         .join(', ')
         .removeExtraSpaces
@@ -74,8 +76,12 @@ class PostgresSchemaProcessor
         ? compileUniqueConstraint(
             column.constraints.whereType<UniqueConstraint>().first)
         : '';
+    var checkConstraint = column.constraints
+        .whereType<CheckConstraint>()
+        .map(compileCheckConstraint)
+        .join(', ');
 
-    return ' $primaryConstraint $notNullConstraint $nullConstraint $uniqueConstraint'
+    return ' $primaryConstraint $notNullConstraint $nullConstraint $uniqueConstraint $checkConstraint'
         .removeExtraSpaces;
   }
 
@@ -85,7 +91,7 @@ class PostgresSchemaProcessor
         : ' ${constraint.type}';
 
     if (constraint.columns.isNotEmpty) {
-      var columns = constraint.columns.map((c) => '"$c"').join(', ');
+      var columns = constraint.columns.map(toIdentity).join(', ');
       return ' $constraintSql ($columns)';
     }
 
@@ -120,6 +126,15 @@ class PostgresSchemaProcessor
     return withColumns
         ? 'constraint "$name" primary key ($columns)'
         : 'constraint "$name" primary key';
+  }
+
+  String compileCheckConstraint(CheckConstraint constraint) {
+    var defaultName = constraint.columns.isEmpty
+        ? '${constraint.table}_check'
+        : '${constraint.table}_${constraint.columns.join('_')}_check';
+    var name = constraint.name ?? defaultName;
+
+    return 'constraint "$name" check (${constraint.expression})';
   }
 
   String compileColumnsForUpdate(TableSchema table) {
@@ -172,8 +187,13 @@ class PostgresSchemaProcessor
     List<String> droppingIndexes = getDroppingIndexCommands(table);
     List<String> droppingUnique = getDroppingUniqueCommands(table);
     List<String> droppingPrimary = getDroppingPrimaryCommands(table);
+    List<String> droppingChecks = getDroppingCheckCommands(table);
 
-    return droppingColumns + droppingIndexes + droppingUnique + droppingPrimary;
+    return droppingColumns +
+        droppingIndexes +
+        droppingUnique +
+        droppingPrimary +
+        droppingChecks;
   }
 
   List<String> getDroppingUniqueCommands(TableSchema table) {
@@ -192,6 +212,14 @@ class PostgresSchemaProcessor
             'alter table "$table" drop constraint "${primary.name}"')
         .toList();
     return droppingPrimaryConstraints;
+  }
+
+  List<String> getDroppingCheckCommands(TableSchema table) {
+    var droppingCheckConstraints = table.droppings
+        .whereType<CheckConstraint>()
+        .map((check) => 'alter table "$table" drop constraint "${check.name}"')
+        .toList();
+    return droppingCheckConstraints;
   }
 
   List<String> getDroppingIndexCommands(TableSchema table) {
@@ -241,6 +269,11 @@ class PostgresSchemaProcessor
       var compiled = compilePrimaryConstraint(
           column.constraints.whereType<PrimaryConstraint>().first,
           withColumns: true);
+      changes.add('alter table "$table" add $compiled');
+    }
+    if (column.hasCheck) {
+      var compiled = compileCheckConstraint(
+          column.constraints.whereType<CheckConstraint>().first);
       changes.add('alter table "$table" add $compiled');
     }
     var defaultValue = _getDefaultValue(column).trim();
@@ -299,6 +332,8 @@ class PostgresSchemaProcessor
     if (constraint is PrimaryConstraint)
       compiledConstraint =
           compilePrimaryConstraint(constraint, withColumns: true).trim();
+    if (constraint is CheckConstraint)
+      compiledConstraint = compileCheckConstraint(constraint).trim();
 
     return 'alter table "${constraint.table}" add $compiledConstraint';
   }

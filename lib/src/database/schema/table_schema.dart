@@ -82,6 +82,9 @@ class TableSchema {
   void primary(List<String> columns, {String? name}) => constraints
       .add(PrimaryConstraint(columns: columns, table: this.name, name: name));
 
+  void check(String expression, {String? name}) => constraints.add(
+      CheckConstraint(expression: expression, table: this.name, name: name));
+
   void dropColumn(String column) {
     droppings.add(ColumnSchema(column, DataType.string, this));
   }
@@ -135,6 +138,21 @@ class TableSchema {
     droppings.add(
       PrimaryConstraint(table: this.name, name: name, columns: columns ?? []),
     );
+  }
+
+  void dropCheck(
+      {List<String> columns = const [], List<String> names = const []}) {
+    columns.forEach((column) {
+      var name = '${this.name}_${column}_check';
+      droppings.add(
+        CheckConstraint(expression: '', table: this.name, name: name),
+      );
+    });
+    names.forEach((name) {
+      droppings.add(
+        CheckConstraint(expression: '', table: this.name, name: name),
+      );
+    });
   }
 
   void renameColumn(String from, String to) {
