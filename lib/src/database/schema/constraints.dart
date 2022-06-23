@@ -14,6 +14,15 @@ class Constraint {
   });
 }
 
+class ConstraintType {
+  static const String notNull = 'not null';
+  static const String nullable = 'null';
+  static const String unique = 'unique';
+  static const String primary = 'primary key';
+  static const String foreign = 'foreign key';
+  static const String check = 'check';
+}
+
 class UniqueConstraint extends Constraint {
   UniqueConstraint({
     required String table,
@@ -65,11 +74,29 @@ class CheckConstraint extends Constraint {
         );
 }
 
-class ConstraintType {
-  static const String notNull = 'not null';
-  static const String nullable = 'null';
-  static const String unique = 'unique';
-  static const String primary = 'primary key';
-  static const String foreign = 'foreign key';
-  static const String check = 'check';
+class ForeignKeyConstraint extends Constraint {
+  late String referencedColumn;
+  late String referencedTable;
+  String? onDeleteAction;
+  String? onUpdateAction;
+
+  ForeignKeyConstraint({
+    required String table,
+    required String column,
+    String? name,
+  }) : super(
+          ConstraintType.foreign,
+          table: table,
+          columns: [column],
+          name: name,
+        );
+
+  ForeignKeyConstraint references(String referencedColumn) =>
+      this..referencedColumn = referencedColumn;
+
+  ForeignKeyConstraint on(String referencedTable) =>
+      this..referencedTable = referencedTable;
+
+  ForeignKeyConstraint onDelete(String action) => this..onDeleteAction = action;
+  ForeignKeyConstraint onUpdate(String action) => this..onUpdateAction = action;
 }

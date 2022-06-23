@@ -7,6 +7,7 @@ class ColumnSchema {
   final String datatype;
   final TableSchema table;
   final List<Constraint> constraints = [];
+  ForeignKeyConstraint? foreignKey;
   IndexSchema? addIndex;
   bool isUpdating = false;
   bool get isPrimary => constraints.any((c) => c is PrimaryConstraint);
@@ -14,6 +15,7 @@ class ColumnSchema {
   bool get isNotNullable => constraints.any((c) => c is NotNullConstraint);
   bool get isUnique => constraints.any((c) => c is UniqueConstraint);
   bool get hasCheck => constraints.any((c) => c is CheckConstraint);
+  bool get hasForeignKey => foreignKey != null;
   bool isUnsigned = false;
   bool isAutoIncrement = false;
   bool defaultsToNow = false;
@@ -62,6 +64,19 @@ class ColumnSchema {
 
   ColumnSchema index([String? name]) => this
     ..addIndex = IndexSchema(column: this.name, table: table.name, name: name);
+
+  ColumnSchema references(String foreignColumn) => this
+    ..foreignKey = ForeignKeyConstraint(
+      table: table.name,
+      column: this.name,
+    ).references(foreignColumn);
+
+  ColumnSchema on(String foreignTable) => this..foreignKey!.on(foreignTable);
+  ColumnSchema onDelete(String expression) =>
+      this..foreignKey!.onDelete(expression);
+  ColumnSchema onUpdate(String expression) =>
+      this..foreignKey!.onUpdate(expression);
+
   /**
    * Use this method to indicate that this is a column change operation.
    */

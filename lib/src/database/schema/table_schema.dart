@@ -82,6 +82,17 @@ class TableSchema {
   void primary(List<String> columns, {String? name}) => constraints
       .add(PrimaryConstraint(columns: columns, table: this.name, name: name));
 
+  ForeignKeyConstraint foreign(String column, {String? name}) {
+    final constraint = ForeignKeyConstraint(
+      table: this.name,
+      column: column,
+      name: name,
+    );
+    constraints.add(constraint);
+
+    return constraint;
+  }
+
   void check(String expression, {String? name}) => constraints.add(
       CheckConstraint(expression: expression, table: this.name, name: name));
 
@@ -151,6 +162,29 @@ class TableSchema {
     names.forEach((name) {
       droppings.add(
         CheckConstraint(expression: '', table: this.name, name: name),
+      );
+    });
+  }
+
+  void dropForeign(
+      {List<String> columns = const [], List<String> names = const []}) {
+    columns.forEach((column) {
+      var name = '${this.name}_${column}_fkey';
+      droppings.add(
+        ForeignKeyConstraint(
+          table: this.name,
+          column: column,
+          name: name,
+        ),
+      );
+    });
+    names.forEach((name) {
+      droppings.add(
+        ForeignKeyConstraint(
+          table: this.name,
+          column: '',
+          name: name,
+        ),
       );
     });
   }
