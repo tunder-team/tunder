@@ -8,5 +8,10 @@ main() {
       expect('abc; '.trimWith(';'), 'abc');
       expect(' ; abc ; '.trimWith(';'), 'abc');
     });
+
+    test('.shuffle() randomizes a string', () {
+      var str = 'abcdefghijklmnopqrstuvwxyz';
+      expect(str.shuffle(), isNot(str));
+    });
   });
 }

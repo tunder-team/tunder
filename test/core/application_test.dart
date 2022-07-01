@@ -1,12 +1,10 @@
 import 'package:tunder/http.dart';
-import 'package:tunder/src/core/application.dart';
 import 'package:tunder/src/core/binding_resolution_exception.dart';
 import 'package:tunder/src/core/container.dart';
-// import 'package:tunder/src/contracts/http/kernel.dart';
 import 'package:tunder/contracts.dart' as Contract;
-import 'package:tunder/src/http/kernel.dart';
 import 'package:tunder/src/console/console_kernel.dart';
 import 'package:test/test.dart';
+import 'package:tunder/tunder.dart';
 
 class A {
   A();
@@ -183,5 +181,35 @@ main() {
       Contract.HttpKernelContract kernel = app.get(Contract.HttpKernelContract);
       expect(kernel, TypeMatcher<Contract.HttpKernelContract>());
     });
+
+    test(
+        '.boot() -> it loads all service providers registered in the Http Kernel',
+        () {
+      var app = Application();
+      Kernel kernel = app.get(Kernel);
+      app.bind(Contract.HttpKernelContract, kernel);
+
+      kernel.providers.addAll([MyServiceProvider]);
+
+      app.boot();
+
+      expect(app.get('my.service'), 'it worked');
+    });
+
+    test('.flush() -> resets the singleton instance', () {
+      var app = Application();
+      var app2 = Application();
+      expect(identical(app, app2), true);
+      app.flush();
+      app2 = Application();
+      expect(identical(app, app2), false);
+    });
   });
+}
+
+class MyServiceProvider extends ServiceProvider {
+  @override
+  boot(Application app) {
+    app.bind('my.service', 'it worked');
+  }
 }

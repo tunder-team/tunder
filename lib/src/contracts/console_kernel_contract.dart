@@ -1,3 +1,3 @@
 abstract class ConsoleKernelContract {
-  handle(args);
+  Future<int> handle(List<String> args);
 }

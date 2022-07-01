@@ -4,7 +4,6 @@ import 'package:vm_service/vm_service.dart' show VmService;
 import 'package:vm_service/vm_service_io.dart' as vms;
 import 'package:vm_service/utils.dart' as vmutils;
 import 'package:watcher/watcher.dart';
-import 'package:path/path.dart' as p;
 
 // Recharge watches for changes in given path and reloads
 // VM on an event. It reports back this with the onReload

@@ -21,14 +21,14 @@ class Container {
     }
 
     if (binding == null) throw BindingResolutionException();
-    if (binding['resolved'] != null) return binding['resolved'];
+    if (binding['instance'] != null) return binding['instance'];
 
     var value = binding['value'];
 
     value = value is Function ? value(this) : value;
 
     if (value is Type) value = _resolveType(value);
-    if (binding['shared']) binding['resolved'] = value;
+    if (binding['shared']) binding['instance'] = value;
 
     return value;
   }

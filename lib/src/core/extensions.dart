@@ -75,14 +75,14 @@ extension Unique<E, Id> on List<E> {
    *
    * ```dart
    * var users = [User(1), User(2), User(1)];
-   * users.unique((u) => u.id);
+   * users.unique(by: (u) => u.id);
    * print(users); // [User(1), User(2)]
    * ```
    */
-  List<E> unique([Id Function(E element)? id, bool inplace = true]) {
+  List<E> unique({Id Function(E element)? by, bool inplace = true}) {
     final uniqueSet = Set();
     var list = inplace ? this : List<E>.from(this);
-    list.retainWhere((x) => uniqueSet.add(id != null ? id(x) : x as Id));
+    list.retainWhere((x) => uniqueSet.add(by != null ? by(x) : x as Id));
     return list;
   }
 }
