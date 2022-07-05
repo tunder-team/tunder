@@ -1,6 +1,4 @@
-import 'package:tunder/contracts.dart';
 import 'package:tunder/src/core/container.dart';
-import 'package:tunder/src/http/kernel.dart';
 import 'package:test/test.dart';
 
 class A {

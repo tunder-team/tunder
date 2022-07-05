@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dotenv/dotenv.dart';
 import 'package:tunder/tunder.dart';
 import 'package:tunder/contracts.dart';
 import 'package:tunder/src/http/router.dart';
@@ -8,10 +9,11 @@ import 'container.dart';
 
 class Application extends Container {
   static Application? _instance;
+  static HttpServer? server;
 
   factory Application({String? basePath, String? baseUrl}) {
     if (_instance == null) {
-      _instance = Application._();
+      _instance = create();
       _instance!
           .init(basePath: basePath ?? Directory.current.path, baseUrl: baseUrl);
     }
@@ -23,6 +25,31 @@ class Application extends Container {
 
   static Application create() {
     return Application._();
+  }
+
+  Future<HttpServer> serve({int port = 8000}) async {
+    final DotEnv dotenv = DotEnv();
+    var uri = Uri.parse(dotenv['APP_URL'] ?? 'http://localhost:$port');
+
+    if (server != null) {
+      await server!.close(force: true);
+    }
+
+    server = await HttpServer.bind(uri.host, uri.port);
+    var baseUrl = 'http://${server!.address.host}:${server!.port}';
+
+    setBaseUrl(baseUrl);
+    print('\n[Serving] at $baseUrl');
+    serveRequests(server!);
+
+    return server!;
+  }
+
+  void serveRequests(Stream<HttpRequest> requests) {
+    requests.listen((request) {
+      print('[Request] ${request.method} ${request.uri.path}');
+      handleRequest(request);
+    });
   }
 
   Future<void> handleRequest(HttpRequest baseRequest) async {

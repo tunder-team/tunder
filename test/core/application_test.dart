@@ -73,8 +73,29 @@ main() {
           Contract.HttpKernelContract, (app) => Kernel(app, app.get(Router)));
 
       Contract.HttpKernelContract kernel = app.get(Contract.HttpKernelContract);
+      Contract.HttpKernelContract kernel2 =
+          app.get(Contract.HttpKernelContract);
 
       expect(kernel, TypeMatcher<Contract.HttpKernelContract>());
+      expect(identical(kernel, kernel2), isTrue);
+      expect(kernel, kernel2);
+      expect(kernel == kernel2, isTrue);
+    });
+
+    test('Singleton with function', () {
+      var app = Application();
+      int count = 0;
+
+      app.singleton(Kernel, (_) {
+        count++;
+        return Kernel(app, app.get(Router));
+      });
+      var kernel = app.getSafe(Kernel);
+      var kernel2 = app.getSafe(Kernel);
+      expect(kernel, TypeMatcher<Kernel>());
+      expect(kernel, kernel2);
+      expect(kernel == kernel2, isTrue);
+      expect(count, 1);
     });
 
     group('.get() method', () {

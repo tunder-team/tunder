@@ -7,13 +7,12 @@ import 'package:tunder/src/exceptions/route_not_found_exception.dart';
 import 'package:tunder/src/http/route_entry.dart';
 import 'package:tunder/src/http/route_definitions.dart';
 import 'package:tunder/src/http/route_options.dart';
-import 'package:tunder/utils.dart';
 
 class Router implements RouteDefinitions {
   late Application app;
   List middlewares = [];
   Map<String, Type> aliasMiddleware = {};
-  List<RouteEntry> routes = [];
+  final List<RouteEntry> routes = [];
   final List<RouteOptions> _groupStack = [];
 
   Router(this.app);
@@ -104,15 +103,12 @@ class Router implements RouteDefinitions {
     Response response = Response.from(request);
     if (dynamicResponse is String) return response..body = dynamicResponse;
     if (dynamicResponse == null) return response..body = '';
-    if (hasMethod(dynamicResponse, 'toResponse')) {
-      return dynamicResponse.toResponse(request);
-    }
 
     throw UnsupportedError('Unsupported response type: $dynamicResponse');
   }
 
   flush() {
-    routes = [];
+    routes.clear();
     middlewares = [];
     aliasMiddleware = {};
   }

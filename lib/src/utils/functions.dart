@@ -1,5 +1,3 @@
-import 'dart:mirrors';
-
 import 'package:dotenv/dotenv.dart';
 import 'package:tunder/extensions.dart';
 import 'package:tunder/http.dart';
@@ -38,14 +36,4 @@ String route(name, [dynamic params]) {
   RouteEntry route = router.findRouteByName(name);
 
   return route.pathWith(params);
-}
-
-bool hasMethod(dynamic obj, String methodName) {
-  var mirror = reflect(obj);
-
-  return mirror.type.declarations.entries
-      .where((declaration) => declaration.value is MethodMirror)
-      .contains((MethodMirror method) {
-    return method.simpleName == Symbol(methodName);
-  });
 }

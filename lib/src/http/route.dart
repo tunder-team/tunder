@@ -9,13 +9,7 @@ class Route {
   final String? method;
   final List<String>? methods;
   final dynamic middleware;
-  static Router? _router;
-
-  static Router get router {
-    _router = _router ?? app(Router);
-
-    return _router!;
-  }
+  static Router get router => app(Router);
 
   static RouteEntry delete(String path, handler, [String? action]) {
     return router.delete(path, handler, action);
