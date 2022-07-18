@@ -1,5 +1,2 @@
-.dart_tool/
-.packages
-coverage/
-.env
 .vscode/
+.idea/

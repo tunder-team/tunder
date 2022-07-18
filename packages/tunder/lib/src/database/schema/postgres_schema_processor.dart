@@ -59,8 +59,6 @@ class PostgresSchemaProcessor
             return compileCheckConstraint(constraint);
           if (constraint is ForeignKeyConstraint)
             return compileForeignConstraint(constraint);
-
-          return compileConstraint(constraint);
         })
         .join(', ')
         .removeExtraSpaces
@@ -100,10 +98,7 @@ class PostgresSchemaProcessor
       return ' $constraintSql ($columns)';
     }
 
-    if (constraint.expression != null)
-      return ' $constraintSql (${constraint.expression})';
-
-    return ' $constraintSql';
+    return ' $constraintSql (${constraint.expression})';
   }
 
   String compileUniqueConstraint(
@@ -399,8 +394,6 @@ class PostgresSchemaProcessor
             : 'smallint';
       case DataType.decimal:
         return 'decimal(${column.precision}, ${column.scale})';
-      case DataType.string:
-        return 'varchar(${column.length})';
       case DataType.text:
         return 'text';
       case DataType.timestamp:
@@ -416,9 +409,9 @@ class PostgresSchemaProcessor
         return 'json';
       case DataType.jsonb:
         return 'jsonb';
+      default:
+        return 'varchar(${column.length})';
     }
-
-    return column.datatype;
   }
 
   String _getCastFor(ColumnSchema column) {

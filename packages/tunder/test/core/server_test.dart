@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:test/test.dart';
+import 'package:tunder/tunder.dart';
 
 main() {
   HttpServer? server;
@@ -22,6 +23,18 @@ main() {
   test('server', () async {
     var response = await get(Uri.parse(baseUrl!));
     expect(response.body, 'it worked');
+  });
+
+  test('Application.serve', () async {
+    server!.close(force: true);
+    server = await Application().serve(port: 1234);
+    var port = server!.port;
+    expect(server, TypeMatcher<HttpServer>());
+    expect(port, 1234);
+    var server2 = await Application().serve(port: 1235);
+
+    expect(port, isNot(server2.port));
+    expect(() => server!.port, throwsA(TypeMatcher<Exception>()));
   });
 }
 

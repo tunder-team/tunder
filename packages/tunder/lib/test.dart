@@ -1,8 +1,8 @@
 // coverage:ignore-file
-import 'package:test/test.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/src/providers/database_service_provider.dart';
 import 'package:tunder/utils.dart';
+import 'package:test/test.dart';
 
 void useDatabaseTransactions({bool debug = false}) {
   setUpAll(() => DatabaseServiceProvider().boot(app()));

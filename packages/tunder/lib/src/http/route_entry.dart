@@ -1,14 +1,11 @@
 import 'dart:mirrors';
 
-import 'package:tunder/extensions.dart';
 import 'package:tunder/http.dart';
 import 'package:tunder/src/core/container.dart';
 import 'package:tunder/src/http/route_definitions.dart';
 import 'package:tunder/src/http/route_options.dart';
 import 'package:tunder/utils.dart';
 import 'package:tunder/tunder.dart';
-import 'package:slugify/slugify.dart';
-import 'package:recase/recase.dart';
 
 class RouteEntry implements RouteDefinitions {
   late String path;
@@ -151,15 +148,10 @@ class RouteEntry implements RouteDefinitions {
           _getResourcePathFromControllerName(controllerMirror.simpleName);
 
       String routePath = conventionalRoute != null
-          ? conventionalRoute['path'] as String
-          : _getRoutePathFromSymbol(method.key);
-
-      if (conventionalRoute != null) {
-        routePath =
-            _resolveConventionalRouteParam(method.value, routePath, action);
-      } else {
-        routePath = _buildRoutePathWithRouteParams(method.value, routePath);
-      }
+          ? _resolveConventionalRouteParam(
+              method.value, conventionalRoute['path'] as String, action)
+          : _buildRoutePathWithRouteParams(
+              method.value, _getRoutePathFromSymbol(method.key));
 
       var fullPath = '$resource/$routePath';
 

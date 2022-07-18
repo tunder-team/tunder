@@ -47,7 +47,7 @@ class Application extends Container {
 
   void serveRequests(Stream<HttpRequest> requests) {
     requests.listen((request) {
-      print('[Request] ${request.method} ${request.uri.path}');
+      // print('[Request] ${request.method} ${request.uri.path}');
       handleRequest(request);
     });
   }

@@ -1,26 +1,25 @@
 import 'package:test/test.dart';
 import 'package:tunder/database.dart';
-import 'package:tunder/src/database/schema/table_schema.dart';
 import 'package:tunder/test.dart';
 
 main() {
   useDatabaseTransactions();
 
   group('TableSchema method', () {
-    late TableSchema table;
+    // late TableSchema table;
 
-    setUp(() async {
-      table = TableSchema('test', DB.connection);
-      await Schema.create('test', (tb) {
-        tb.id();
-        tb.string('name');
-        tb.string('email');
-        tb.integer('price').unsigned;
-        tb.timestamp('published_at');
-        tb.timestamps();
-        tb.softDeletes();
-      });
-    });
+    // setUp(() async {
+    //   table = TableSchema('test', DB.connection);
+    //   await Schema.create('test', (tb) {
+    //     tb.id();
+    //     tb.string('name');
+    //     tb.string('email');
+    //     tb.integer('price').unsigned;
+    //     tb.timestamp('published_at');
+    //     tb.timestamps();
+    //     tb.softDeletes();
+    //   });
+    // });
 
     // test('Removing a column', () async {
     //   table

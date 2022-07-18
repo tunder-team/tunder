@@ -121,6 +121,32 @@ main() {
           isEmpty);
     });
 
+    test(
+        'transaction(operation) should run a transaction and commit at the end',
+        () async {
+      // Arrange
+      var insertRobert = "INSERT INTO $testingTable (name) VALUES ('Robert')";
+      var deleteRobert = "DELETE FROM $testingTable WHERE name = 'Robert'";
+
+      // Act
+      var result =
+          await connection.transaction(() => connection.execute(insertRobert));
+      expect(result, 1);
+
+      // Assert
+      expect(
+          await DB.connection
+              .query("SELECT * from $testingTable where name = 'Robert'"),
+          isNotEmpty);
+
+      // Cleanup
+      await connection.execute(deleteRobert);
+      expect(
+          await DB.connection
+              .query("SELECT * from $testingTable where name = 'Robert'"),
+          isEmpty);
+    });
+
     test('close connection', () {
       connection.close();
     });

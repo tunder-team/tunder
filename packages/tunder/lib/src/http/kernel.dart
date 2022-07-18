@@ -41,7 +41,6 @@ class Kernel implements Contract.HttpKernelContract {
     } catch (e, s) {
       response.statusCode = 500;
       response.write('Error: $e\n Stack trace:\n$s');
-      rethrow;
     } finally {
       response.close(request);
     }

@@ -1,9 +1,10 @@
-import 'package:test/test.dart';
+import 'package:test/test.dart' as t;
 import 'package:tunder/database.dart';
 import 'package:tunder/test.dart';
+import 'package:test/test.dart';
 
 main() {
-  group('Aggregate functions', () {
+  t.group('Aggregate functions', () {
     useDatabaseTransactions();
 
     setUp(() async {
@@ -15,12 +16,12 @@ main() {
       await DB.execute("INSERT INTO users (name) VALUES ('Marco')");
     });
 
-    test('count', () async {
+    t.test('count', () async {
       int count = await Query('users')
           .add(Where('name').contains('marco').insensitive)
           .count();
 
-      expect(count, 1);
+      t.expect(count, 1);
     });
   });
 }
