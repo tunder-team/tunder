@@ -210,7 +210,7 @@ main() {
       Kernel kernel = app.get(Kernel);
       app.bind(Contract.HttpKernelContract, kernel);
 
-      kernel.providers.addAll([MyServiceProvider]);
+      kernel.providers.addAll([MyServiceProvider()]);
 
       app.boot();
 

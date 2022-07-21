@@ -11,9 +11,8 @@ import 'package:tunder/contracts.dart' as Contract;
 class Kernel implements Contract.HttpKernelContract {
   final Application app;
   final Router router;
-
-  List<Type> providers = [];
-  List middlewares = [];
+  final List<ServiceProvider> providers = [];
+  final List middlewares = [];
   Map<String, Type> routeMiddlewares = {};
 
   Kernel(this.app, this.router) {

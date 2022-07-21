@@ -135,4 +135,14 @@ class UserController extends Controller {
   show(Request request, int user) {
     return 'User id is $user.';
   }
+
+  index(Request request, SomeService service) {
+    return service.doSomething();
+  }
+}
+
+class SomeService {
+  doSomething() {
+    return 'doSomething worked';
+  }
 }

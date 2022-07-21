@@ -78,8 +78,7 @@ class Application extends Container {
 
   _bootProviders() {
     HttpKernelContract kernel = get(HttpKernelContract);
-    kernel.providers.forEach((providerType) {
-      var provider = get<ServiceProvider>(providerType);
+    kernel.providers.forEach((provider) {
       provider.boot(this);
     });
   }
