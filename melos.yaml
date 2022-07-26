@@ -1,0 +1,23 @@
+name: tunder
+repository: https://github.com/tunder-team/tunder
+
+packages:
+  - packages/**
+
+scripts:
+  analyze:
+    exec: dart analyze . --fatal-infos --fatal-warnings
+  test:
+    exec: dart run test
+  coverage:
+    exec: dart run tunder:test --coverage
+    select-package:
+      scope: tunder
+
+command:
+  version:
+    linkToCommits: true
+    workspaceChangelog: true
+  bootstrap:
+    usePubspecOverrides: true
+    runPubGetInParallel: false
