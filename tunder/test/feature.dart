@@ -8,7 +8,7 @@ import 'package:test/test.dart';
 
 feature() {
   final DotEnv dotenv = DotEnv();
-  dotenv.load();
+  dotenv.load(['.env', '.env.test']);
   late Application app;
 
   setUpAll(() async {

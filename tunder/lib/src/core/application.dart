@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dotenv/dotenv.dart';
-import 'package:tunder/tunder.dart';
 import 'package:tunder/contracts.dart';
 import 'package:tunder/src/http/router.dart';
 

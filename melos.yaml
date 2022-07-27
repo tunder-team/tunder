@@ -2,7 +2,8 @@ name: tunder
 repository: https://github.com/tunder-team/tunder
 
 packages:
-  - packages/**
+  - tunder
+  - tunder_cli
 
 scripts:
   analyze:
