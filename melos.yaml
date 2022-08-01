@@ -8,12 +8,16 @@ packages:
 scripts:
   analyze:
     exec: dart analyze . --fatal-infos --fatal-warnings
+  format:
+    exec: dart format --set-exit-if-changed lib
   test:
-    exec: dart run test
-  coverage:
-    exec: dart run tunder:test --coverage
-    select-package:
-      scope: tunder
+    run: |
+      dart pub global run coverage:test_with_coverage && $MELOS_ROOT_PATH/scripts/combine_coverage.sh
+    exec:
+      concurrency: 1
+  coverage: |
+    genhtml coverage/lcov.info -o coverage/html
+    open coverage/html/index.html
 
 command:
   version:
