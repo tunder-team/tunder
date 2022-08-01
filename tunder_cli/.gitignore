@@ -1,8 +1,8 @@
 # Files and directories created by pub.
-.dart_tool/
-.packages
+/.dart_tool/
+/.packages
 
 # Conventional directory for build output.
-build/
-coverage/
-templates/
+/build/
+/coverage/
+/templates/
