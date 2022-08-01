@@ -11,27 +11,25 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
 
       # Note: This workflow uses the latest stable version of the Dart SDK.
       # You can specify other versions if desired, see documentation here:
       # https://github.com/dart-lang/setup-dart/blob/main/README.md
-      # - uses: dart-lang/setup-dart@v1
-      - uses: dart-lang/setup-dart@9a04e6d73cca37bd455e0608d7e5092f881fd603
+      - uses: dart-lang/setup-dart@v1
 
       - name: Install globals
         run: |
-          dart pub global activate melos & dart pub global activate coverage & dart pub global activate pana
+          dart pub global activate melos & dart pub global activate coverage
 
       - name: Melos Bootstrap
         run: melos bootstrap
 
-      # - name: Analyze
-      #   run: melos analyze
-      # - name: Format
-      #   run: melos format
+      - name: Analyze
+        run: melos analyze
+      - name: Format
+        run: melos format
 
       - name: Test
         run: melos test
@@ -42,6 +40,30 @@ jobs:
           min_coverage: 95
           path: coverage/lcov.info
 
+  pana_tunder:
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+          working-directory: tunder
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1
+      - name: Install Dependencies
+        run: dart pub global activate pana
+      - name: PANA Score
+        run: ../tool/pana_score.sh 80
+  pana_tunder_cli:
+    runs-on: ubuntu-latest
+    defaults:
+        run:
+          working-directory: tunder_cli
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1
+      - name: Install Dependencies
+        run: dart pub global activate pana
+      - name: PANA Score
+        run: ../tool/pana_score.sh 80
   # analyze:
   #   timeout-minutes: 45
   #   runs-on: ubuntu-latest

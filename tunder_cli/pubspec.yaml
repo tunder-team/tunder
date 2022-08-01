@@ -1,6 +1,7 @@
 name: tunder_cli
 description: The Tunder Framework CLI.
-version: 1.0.0
+version: 1.0.0-pre.1
+repository: https://github.com/tunder-team/tunder
 
 environment:
   sdk: '>=2.17.6 <3.0.0'
