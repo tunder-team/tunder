@@ -28,8 +28,12 @@ jobs:
 
       - name: Analyze
         run: melos analyze
+
       - name: Format
         run: melos format
+
+      - name: Publish (dry run)
+        run: melos publish --dry-run -y
 
   tests:
     runs-on: ubuntu-latest
