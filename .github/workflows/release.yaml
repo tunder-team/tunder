@@ -1,0 +1,25 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  # workflow_run:
+  #   workflows:
+  #     - CI/CD
+  #   types:
+  #     - completed
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Install globals
+        run: dart pub global activate melos
+
+      - name: Melos Bootstrap
+        run: melos bootstrap
+
+      - name: Publish (dry run)
+        run: melos publish
