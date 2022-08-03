@@ -46,7 +46,5 @@ class MyClassMiddleware extends Middleware {
 @Controller(middleware: MyClassMiddleware)
 class ExampleController extends Controller {
   @Route(method: 'post', middleware: MyMiddleware)
-  someAction() {
-    return 'someAction worked';
-  }
+  someAction() => 'someAction worked';
 }

@@ -11,5 +11,5 @@ class IndexSchema {
     name,
   }) : this.name = name ?? '${table}_${column}_index';
 
-  toString() => name;
+  String toString() => name;
 }

@@ -10,21 +10,16 @@ class Application extends Container {
   static Application? _instance;
   static HttpServer? server;
 
-  factory Application({String? basePath, String? baseUrl}) {
-    if (_instance == null) {
-      _instance = create();
-      _instance!
-          .init(basePath: basePath ?? Directory.current.path, baseUrl: baseUrl);
-    }
-
-    return _instance!;
-  }
+  factory Application({String? basePath, String? baseUrl}) =>
+      _instance ??= create()
+        ..init(
+          basePath: basePath ?? Directory.current.path,
+          baseUrl: baseUrl,
+        );
 
   Application._();
 
-  static Application create() {
-    return Application._();
-  }
+  static Application create() => Application._();
 
   Future<HttpServer> serve({int port = 8000, DotEnv? dotenv}) async {
     dotenv ??= DotEnv();
@@ -48,12 +43,10 @@ class Application extends Container {
     return server!;
   }
 
-  void serveRequests(Stream<HttpRequest> requests) {
-    requests.listen((request) {
-      // print('[Request] ${request.method} ${request.uri.path}');
-      handleRequest(request);
-    });
-  }
+  serveRequests(Stream<HttpRequest> requests) => requests.listen((request) {
+        // print('[Request] ${request.method} ${request.uri.path}');
+        handleRequest(request);
+      });
 
   Future<void> handleRequest(HttpRequest baseRequest) async {
     HttpKernelContract kernel = get(HttpKernelContract);
@@ -66,13 +59,9 @@ class Application extends Container {
     _registerBaseSingletons();
   }
 
-  boot() {
-    _bootProviders();
-  }
+  boot() => _bootProviders();
 
-  flush() {
-    Application._instance = null;
-  }
+  flush() => Application._instance = null;
 
   _registerBaseSingletons() {
     singleton(Application, this);
@@ -99,7 +88,6 @@ class Application extends Container {
     bind('storage.path', "$basePath/storage");
   }
 
-  setBaseUrl(String? baseUrl) {
-    bind('app.url', baseUrl ?? 'http://localhost:8000');
-  }
+  setBaseUrl(String? baseUrl) =>
+      bind('app.url', baseUrl ?? 'http://localhost:8000');
 }

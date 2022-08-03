@@ -24,13 +24,9 @@ main() {
 }
 
 class UserController extends Controller {
-  index(Request request, SomeService service) {
-    return service.doSomething();
-  }
+  index(Request request, SomeService service) => service.doSomething();
 }
 
 class SomeService {
-  doSomething() {
-    return 'doSomething worked';
-  }
+  doSomething() => 'doSomething worked';
 }

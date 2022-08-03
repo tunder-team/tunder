@@ -8,29 +8,29 @@ import 'package:tunder/utils.dart';
 import 'package:tunder/tunder.dart';
 
 class RouteEntry implements RouteDefinitions {
-  late String path;
-  late List<String> methods;
-  late dynamic handler;
-  late Container container;
-  late Router router;
+  String path;
+  List<String> methods;
+  dynamic handler;
+  Container container;
+  Router router;
   RouteOptions? options;
 
   String? _name;
   String? action;
   List middlewares = [];
 
-  static const GET = 'GET';
   static const HEAD = 'HEAD';
-  static const PUT = 'PUT';
-  static const PATCH = 'PATCH';
+  static const GET = 'GET';
   static const POST = 'POST';
+  static const PUT = 'PUT';
   static const DELETE = 'DELETE';
+  static const PATCH = 'PATCH';
 
   Uri get uri => Uri.parse(url(path));
 
   RouteEntry({
-    required this.methods,
     required this.path,
+    required this.methods,
     required this.handler,
     required this.container,
     required this.router,
@@ -38,9 +38,7 @@ class RouteEntry implements RouteDefinitions {
     this.options,
   });
 
-  List<String> get parameters {
-    return uri.pathSegments.where(_isParameter).toList();
-  }
+  List<String> get parameters => uri.pathSegments.where(_isParameter).toList();
 
   RouteEntry name(String name) {
     _name = _name != null ? '$_name$name' : name;
@@ -49,13 +47,9 @@ class RouteEntry implements RouteDefinitions {
     return this;
   }
 
-  RouteEntry prefix(String prefix) {
-    return setOption(prefix: prefix);
-  }
+  RouteEntry prefix(String prefix) => setOption(prefix: prefix);
 
-  void group(routes) {
-    router.group(options ?? RouteOptions(), routes);
-  }
+  void group(routes) => router.group(options ?? RouteOptions(), routes);
 
   RouteEntry middleware(middleware) {
     setOption(middleware: middleware);
@@ -124,11 +118,10 @@ class RouteEntry implements RouteDefinitions {
     });
   }
 
-  Controller? _getAnnotationController(ClassMirror controller) {
-    return controller.metadata
-        .firstWhereOrNull((m) => m.reflectee is Controller)
-        ?.reflectee;
-  }
+  Controller? _getAnnotationController(ClassMirror controller) =>
+      controller.metadata
+          .firstWhereOrNull((m) => m.reflectee is Controller)
+          ?.reflectee;
 
   void _registerRoutesForMethods(
     List<MapEntry<Symbol, DeclarationMirror>> methods,
@@ -210,19 +203,14 @@ class RouteEntry implements RouteDefinitions {
     return metadata.methods ?? defaultVerbs;
   }
 
-  Route? _getAnnotationRouteFromMethod(DeclarationMirror method) {
-    return method.metadata
-        .firstWhereOrNull((m) => m.reflectee is Route)
-        ?.reflectee;
-  }
+  Route? _getAnnotationRouteFromMethod(DeclarationMirror method) =>
+      method.metadata.firstWhereOrNull((m) => m.reflectee is Route)?.reflectee;
 
-  String _getRoutePathFromSymbol(Symbol symbol) {
-    return MirrorSystem.getName(symbol).paramCase;
-  }
+  String _getRoutePathFromSymbol(Symbol symbol) =>
+      MirrorSystem.getName(symbol).paramCase;
 
-  String _getResourcePathFromControllerName(Symbol name) {
-    return MirrorSystem.getName(name).paramCase.replaceAll('-controller', '');
-  }
+  String _getResourcePathFromControllerName(Symbol name) =>
+      MirrorSystem.getName(name).paramCase.replaceAll('-controller', '');
 
   RouteEntry _registerRoute(
     List<String> methods,
@@ -231,36 +219,28 @@ class RouteEntry implements RouteDefinitions {
     String action,
     String resource,
     dynamic middleware,
-  ) {
-    return router
-        .via(methods, path, controller, action)
-        .middleware(middleware)
-        .name('$resource.${action.paramCase}');
-  }
+  ) =>
+      router
+          .via(methods, path, controller, action)
+          .middleware(middleware)
+          .name('$resource.${action.paramCase}');
 
-  RouteEntry get(String path, handler, [String? action]) {
-    return _set(path, handler, action)..register();
-  }
+  RouteEntry get(String path, handler, [String? action]) =>
+      _set(path, handler, action)..register();
 
-  RouteEntry delete(String path, handler, [String? action]) {
-    return _set(path, handler, action)..register();
-  }
+  RouteEntry post(String path, handler, [String? action]) =>
+      _set(path, handler, action)..register();
 
-  RouteEntry patch(String path, handler, [String? action]) {
-    return _set(path, handler, action)..register();
-  }
+  RouteEntry put(String path, handler, [String? action]) =>
+      _set(path, handler, action)..register();
 
-  RouteEntry post(String path, handler, [String? action]) {
-    return _set(path, handler, action)..register();
-  }
+  RouteEntry delete(String path, handler, [String? action]) =>
+      _set(path, handler, action)..register();
 
-  RouteEntry put(String path, handler, [String? action]) {
-    return _set(path, handler, action)..register();
-  }
+  RouteEntry patch(String path, handler, [String? action]) =>
+      _set(path, handler, action)..register();
 
-  void register() {
-    router.register(this);
-  }
+  void register() => router.register(this);
 
   RouteEntry mergeOptions(RouteOptions parentOptions) {
     options = options ?? RouteOptions();
@@ -287,9 +267,7 @@ class RouteEntry implements RouteDefinitions {
     return this;
   }
 
-  bool nameIs(String name) {
-    return _name == name;
-  }
+  bool nameIs(String name) => _name == name;
 
   bool matches(Request request) {
     if (!methods.contains(request.method)) return false;
@@ -306,9 +284,8 @@ class RouteEntry implements RouteDefinitions {
     });
   }
 
-  String sanitize(String string) {
-    return string.replaceAll(RegExp(r'^/*'), '').replaceAll(RegExp(r'/*$'), '');
-  }
+  String sanitize(String string) =>
+      string.replaceAll(RegExp(r'^/*'), '').replaceAll(RegExp(r'/*$'), '');
 
   run(Request request) async {
     request.setRoute(this);
@@ -352,40 +329,36 @@ class RouteEntry implements RouteDefinitions {
   _injectedParams(InstanceMirror controller, String action, Request request) {
     MethodMirror? method = _getMethodFrom(controller, action);
 
-    if (method == null) return [];
+    return method == null
+        ? []
+        : method.parameters.map((param) {
+            var type = param.type.reflectedType;
+            if (type == Request) return request;
+            if (_isPrimitive(type)) {
+              return paramValue(
+                param.simpleName,
+                request: request,
+                castTo: type,
+              );
+            }
 
-    return method.parameters.map((param) {
-      var type = param.type.reflectedType;
-      if (type == Request) return request;
-      if (_isPrimitive(type)) {
-        return paramValue(
-          param.simpleName,
-          request: request,
-          castTo: type,
-        );
-      }
-
-      return container.get(param.type.reflectedType);
-    }).toList();
+            return container.get(param.type.reflectedType);
+          }).toList();
   }
 
-  bool _isPrimitive(type) {
-    return [int, double, String].contains(type);
-  }
+  bool _isPrimitive(type) => const [int, double, String].contains(type);
 
-  MethodMirror? _getMethodFrom(InstanceMirror instance, String methodName) {
-    return _getMethodsFrom(instance)
-        .where((element) => element.key == Symbol(methodName))
-        .toList()
-        .firstOrNull
-        ?.value as MethodMirror?;
-  }
+  MethodMirror? _getMethodFrom(InstanceMirror instance, String methodName) =>
+      _getMethodsFrom(instance)
+          .where((element) => element.key == Symbol(methodName))
+          .toList()
+          .firstOrNull
+          ?.value as MethodMirror?;
 
   Iterable<MapEntry<Symbol, DeclarationMirror>> _getMethodsFrom(
-      InstanceMirror instance) {
-    return instance.type.declarations.entries.where((declaration) =>
-        declaration.value is MethodMirror && !declaration.value.isPrivate);
-  }
+          InstanceMirror instance) =>
+      instance.type.declarations.entries.where((declaration) =>
+          declaration.value is MethodMirror && !declaration.value.isPrivate);
 
   bool hasController() {
     var controller = reflectClass(handler);
@@ -449,29 +422,23 @@ class RouteEntry implements RouteDefinitions {
         }).join('/');
   }
 
-  bool _allowedParamTypes(params) {
-    return [int, double, String].any((type) => params.runtimeType == type) ||
-        params is List ||
-        params is Map;
-  }
+  bool _allowedParamTypes(params) =>
+      const [int, double, String].any((type) => params.runtimeType == type) ||
+      params is List ||
+      params is Map;
 
-  int _paramIndexByName(Symbol paramName) {
-    return uri.pathSegments.indexOf(_paramByName(paramName));
-  }
+  int _paramIndexByName(Symbol paramName) =>
+      uri.pathSegments.indexOf(_paramByName(paramName));
 
-  String _paramByName(Symbol paramName) {
-    return parameters.firstWhere(
-      (segment) => Symbol(_removeCurlyBraces(segment)) == paramName,
-    );
-  }
+  String _paramByName(Symbol paramName) => parameters.firstWhere(
+        (segment) => Symbol(_removeCurlyBraces(segment)) == paramName,
+      );
 
-  bool _isParameter(String segment) {
-    return segment.startsWith('{') && segment.endsWith('}');
-  }
+  bool _isParameter(String segment) =>
+      segment.startsWith('{') && segment.endsWith('}');
 
-  String _removeCurlyBraces(String segment) {
-    return segment.replaceAll(RegExp(r'[{}]*'), '');
-  }
+  String _removeCurlyBraces(String segment) =>
+      segment.replaceAll(RegExp(r'[{}]*'), '');
 
   RouteEntry _set(String path, handler, String? action) {
     _setPath(path);
@@ -500,17 +467,12 @@ class RouteEntry implements RouteDefinitions {
     return this;
   }
 
-  _getOption(option) {
-    if (options == null) return;
+  _getOption(option) => options == null
+      ? null
+      : reflect(options).getField(Symbol(option)).reflectee;
 
-    return reflect(options).getField(Symbol(option)).reflectee;
-  }
-
-  RouteEntry _setPath(String path) {
+  _setPath(String path) {
     String? prefix = _getOption('prefix');
-
     this.path = prefix != null ? "${sanitize(prefix)}/${sanitize(path)}" : path;
-
-    return this;
   }
 }

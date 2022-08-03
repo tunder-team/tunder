@@ -2,9 +2,7 @@ import 'package:tunder/src/core/container.dart';
 import 'package:test/test.dart';
 
 class A {
-  name() {
-    return 'A';
-  }
+  name() => 'A';
 }
 
 void main() {

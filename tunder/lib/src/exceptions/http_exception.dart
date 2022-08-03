@@ -1,8 +1,8 @@
 class HttpException implements Exception {
-  late int statusCode;
-  late String message;
+  final int statusCode;
+  final String message;
 
-  HttpException({
+  const HttpException({
     required this.statusCode,
     required this.message,
   });

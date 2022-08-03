@@ -40,7 +40,5 @@ main() {
 }
 
 class TestController extends Controller {
-  index() {
-    return 'index worked';
-  }
+  index() => 'index worked';
 }

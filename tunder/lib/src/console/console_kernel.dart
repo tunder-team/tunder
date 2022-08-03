@@ -13,7 +13,7 @@ class ConsoleKernel implements ConsoleKernelContract {
 
   @override
   Future<int> handle(List<String> arguments) async {
-    var runner = CommandRunner('tunder', 'Tunder Framework $TunderVersion');
+    var runner = CommandRunner('tunder', 'Tunder Framework $tunderVersion');
 
     commands.forEach((command) => runner.addCommand(app.get(command)));
 

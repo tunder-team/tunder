@@ -43,47 +43,34 @@ class Query<T> {
     return this;
   }
 
-  Future<List<T>> all() {
-    return get();
-  }
+  Future<List<T>> all() => get();
 
-  Future<T> findBy(column, value) async {
-    return this
-        .add(where(column).equals(value))
-        .first()
-        .catchError((e) => throw RecordNotFoundException());
-  }
+  Future<T> findBy(column, value) => this
+      .add(where(column).equals(value))
+      .first()
+      .catchError((e) => throw RecordNotFoundException());
 
-  Future<T?> findByOrNull(column, value) async {
-    return this.add(where(column).equals(value)).firstOrNull();
-  }
+  Future<T?> findByOrNull(column, value) =>
+      this.add(where(column).equals(value)).firstOrNull();
 
-  Future<T> find(value) {
-    return findBy('id', value);
-  }
+  Future<T> find(value) => findBy('id', value);
 
-  Future<T?> findOrNull(value) {
-    return findByOrNull('id', value);
-  }
+  Future<T?> findOrNull(value) => findByOrNull('id', value);
 
-  Future<T> first() {
-    return get().then((result) => result.first);
-  }
+  Future<T> first() => get().then((result) => result.first);
 
-  Future<T?> firstOrNull() {
-    return get().then((result) => result.isEmpty ? null : result.first);
-  }
+  Future<T?> firstOrNull() =>
+      get().then((result) => result.isEmpty ? null : result.first);
 
   Paginator<T> paginate({
     int page = 1,
     int perPage = 10,
-  }) {
-    return Paginator(
-      query: this,
-      page: page,
-      perPage: perPage,
-    );
-  }
+  }) =>
+      Paginator(
+        query: this,
+        page: page,
+        perPage: perPage,
+      );
 
   Query<T> orderBy(String column, [String direction = 'asc']) {
     _orderBy = 'ORDER BY "$column" ${direction.toUpperCase()}';
@@ -91,18 +78,14 @@ class Query<T> {
     return this;
   }
 
-  Future<List<T>> get() async {
-    return execute(toSql());
-  }
+  Future<List<T>> get() => execute(toSql());
 
   Future<int> count() async {
     var rows = await executeRaw(toSqlCount());
     return rows.first['total'];
   }
 
-  Future<List<MappedRow>> executeRaw(String sql) {
-    return _connection.query(sql);
-  }
+  Future<List<MappedRow>> executeRaw(String sql) => _connection.query(sql);
 
   Future<List<T>> execute(String sql) async {
     var results = await _connection.query(sql);
@@ -129,13 +112,9 @@ class Query<T> {
     return this;
   }
 
-  Query<T> and(Where where) {
-    return add(where..boolOperator = 'AND');
-  }
+  Query<T> and(Where where) => add(where..boolOperator = 'AND');
 
-  Query<T> or(Where where) {
-    return add(where..boolOperator = 'OR');
-  }
+  Query<T> or(Where where) => add(where..boolOperator = 'OR');
 
   Where where(String column) {
     var _where = Where(column);

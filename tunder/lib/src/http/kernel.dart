@@ -39,7 +39,7 @@ class Kernel implements Contract.HttpKernelContract {
       response.statusCode = error.statusCode;
     } catch (e, s) {
       response.statusCode = 500;
-      response.write('Error: $e\n Stack trace:\n$s');
+      response.write('Error: $e\nStack trace:\n$s');
     } finally {
       response.close(request);
     }

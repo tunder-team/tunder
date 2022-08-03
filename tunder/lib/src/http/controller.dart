@@ -1,5 +1,5 @@
 class Controller {
-  const Controller({this.middleware});
-
   final dynamic middleware;
+
+  const Controller({this.middleware});
 }

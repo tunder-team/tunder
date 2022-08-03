@@ -40,9 +40,7 @@ class Request {
     return route;
   }
 
-  void setRoute(RouteEntry route) {
-    this.route = route;
-  }
+  void setRoute(RouteEntry route) => this.route = route;
 
   dynamic get(String name) {
     dynamic value = uri.queryParameters[name] ?? null;
@@ -55,7 +53,7 @@ class Request {
 
   getRouteParam(dynamic name, {Type type = String}) {
     if (name is String) name = Symbol(name);
-    if (!(name is Symbol)) throw ArgumentError.value(name, 'name');
+    if (name is! Symbol) throw ArgumentError.value(name, 'name');
 
     return route.paramValue(
       name,
@@ -65,11 +63,11 @@ class Request {
   }
 
   _tryParsePrimitives(String value) {
+    if (value == '') return null;
     if (int.tryParse(value) != null) return int.tryParse(value);
     if (double.tryParse(value) != null) return double.tryParse(value);
     if (value == 'null') return null;
     if (value == 'undefined') return null;
-    if (value == '') return null;
     if (value == 'true') return true;
     if (value == 'false') return false;
 

@@ -72,9 +72,8 @@ class TableSchema {
   void softDeletes([String name = 'deleted_at']) =>
       _add(name, DataType.timestamp).nullable();
 
-  void index({required String column, String? name = null}) {
-    indexes.add(IndexSchema(column: column, table: this.name, name: name));
-  }
+  void index({required String column, String? name = null}) =>
+      indexes.add(IndexSchema(column: column, table: this.name, name: name));
 
   void unique(List<String> columns, {String? name}) => constraints
       .add(UniqueConstraint(columns: columns, table: this.name, name: name));
@@ -94,36 +93,47 @@ class TableSchema {
   }
 
   void check(String expression, {String? name}) => constraints.add(
-      CheckConstraint(expression: expression, table: this.name, name: name));
+        CheckConstraint(
+          expression: expression,
+          table: this.name,
+          name: name,
+        ),
+      );
 
-  void dropColumn(String column) {
-    droppings.add(ColumnSchema(column, DataType.string, this));
-  }
+  void dropColumn(String column) => droppings.add(
+        ColumnSchema(
+          column,
+          DataType.string,
+          this,
+        ),
+      );
 
-  void dropColumns(List<String> columns) {
-    columns.forEach((column) => dropColumn(column));
-  }
+  void dropColumns(List<String> columns) => columns.forEach(dropColumn);
 
   void dropTimestamps({
     String? createdColumn,
     String? updatedColumn,
     bool camelCase = false,
-  }) {
-    dropColumns([
-      createdColumn ?? (camelCase ? 'createdAt' : 'created_at'),
-      updatedColumn ?? (camelCase ? 'updatedAt' : 'updated_at'),
-    ]);
-  }
+  }) =>
+      dropColumns([
+        createdColumn ?? (camelCase ? 'createdAt' : 'created_at'),
+        updatedColumn ?? (camelCase ? 'updatedAt' : 'updated_at'),
+      ]);
 
   void dropSoftDeletes([String name = 'deleted_at']) => dropColumn(name);
 
-  void dropIndex({String? column, String? name}) {
-    droppings
-        .add(IndexSchema(column: column ?? '', table: this.name, name: name));
-  }
+  void dropIndex({String? column, String? name}) => droppings.add(
+        IndexSchema(
+          column: column ?? '',
+          table: this.name,
+          name: name,
+        ),
+      );
 
-  void dropIndexes(
-      {List<String> columns = const [], List<String> names = const []}) {
+  void dropIndexes({
+    List<String> columns = const [],
+    List<String> names = const [],
+  }) {
     columns.forEach((column) => dropIndex(column: column));
     names.forEach((name) => dropIndex(name: name));
   }
@@ -138,8 +148,10 @@ class TableSchema {
     ));
   }
 
-  void dropUniques(
-      {List<String> columns = const [], List<String> names = const []}) {
+  void dropUniques({
+    List<String> columns = const [],
+    List<String> names = const [],
+  }) {
     columns.forEach((column) => dropUnique(column: column));
     names.forEach((name) => dropUnique(name: name));
   }
@@ -147,27 +159,43 @@ class TableSchema {
   void dropPrimary({List<String>? columns, String? name}) {
     name ??= '${this.name}_${columns!.join('_')}_pkey';
     droppings.add(
-      PrimaryConstraint(table: this.name, name: name, columns: columns ?? []),
+      PrimaryConstraint(
+        table: this.name,
+        name: name,
+        columns: columns ?? [],
+      ),
     );
   }
 
-  void dropCheck(
-      {List<String> columns = const [], List<String> names = const []}) {
+  void dropCheck({
+    List<String> columns = const [],
+    List<String> names = const [],
+  }) {
     columns.forEach((column) {
       var name = '${this.name}_${column}_check';
       droppings.add(
-        CheckConstraint(expression: '', table: this.name, name: name),
+        CheckConstraint(
+          expression: '',
+          table: this.name,
+          name: name,
+        ),
       );
     });
     names.forEach((name) {
       droppings.add(
-        CheckConstraint(expression: '', table: this.name, name: name),
+        CheckConstraint(
+          expression: '',
+          table: this.name,
+          name: name,
+        ),
       );
     });
   }
 
-  void dropForeign(
-      {List<String> columns = const [], List<String> names = const []}) {
+  void dropForeign({
+    List<String> columns = const [],
+    List<String> names = const [],
+  }) {
     columns.forEach((column) {
       var name = '${this.name}_${column}_fkey';
       droppings.add(
@@ -189,17 +217,14 @@ class TableSchema {
     });
   }
 
-  void renameColumn(String from, String to) {
-    renames.add(RenameColumn(from, to));
-  }
+  void renameColumn(String from, String to) =>
+      renames.add(RenameColumn(from, to));
 
-  void renameIndex(String from, String to) {
-    renames.add(RenameIndex(from, to));
-  }
+  void renameIndex(String from, String to) =>
+      renames.add(RenameIndex(from, to));
 
-  void renamePrimary(String from, String to) {
-    renames.add(RenamePrimary(from, to));
-  }
+  void renamePrimary(String from, String to) =>
+      renames.add(RenamePrimary(from, to));
 
   ColumnSchema _add(String name, String datatype, [int length = 255]) {
     var column = ColumnSchema(name, datatype, this, length);

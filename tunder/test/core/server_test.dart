@@ -38,9 +38,8 @@ main() {
   });
 }
 
-createServer() async {
-  return await HttpServer.bind(InternetAddress.loopbackIPv4, 9123);
-}
+createServer() async =>
+    await HttpServer.bind(InternetAddress.loopbackIPv4, 9123);
 
 handleRequest(HttpServer server) async {
   await for (var request in server) {

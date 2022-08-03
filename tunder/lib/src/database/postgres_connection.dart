@@ -2,18 +2,18 @@ import 'package:postgres/postgres.dart';
 import 'package:tunder/database.dart';
 
 class PostgresConnection implements DatabaseConnection {
-  late String host;
-  late int port;
-  late String database;
-  late String username;
-  late String password;
-  late Symbol driver;
+  String host;
+  int port;
+  String database;
+  String username;
+  String password;
+  Symbol driver;
   int _transactionLevel = 0;
   late PostgreSQLConnection _connection;
 
   String get url => 'postgres://$username:$password@$host:$port/$database';
   String get _name => 'sp_$_transactionLevel';
-  bool _isOpened = false;
+  bool _isOpen = false;
 
   PostgresConnection({
     this.host = 'localhost',
@@ -25,15 +25,13 @@ class PostgresConnection implements DatabaseConnection {
     _connection = _createNewConnection();
   }
 
-  PostgreSQLConnection _createNewConnection() {
-    return PostgreSQLConnection(
-      host,
-      port,
-      database,
-      username: username,
-      password: password,
-    );
-  }
+  PostgreSQLConnection _createNewConnection() => PostgreSQLConnection(
+        host,
+        port,
+        database,
+        username: username,
+        password: password,
+      );
 
   @override
   Future<int> execute(String query) async {
@@ -44,18 +42,18 @@ class PostgresConnection implements DatabaseConnection {
 
   @override
   Future<void> open() async {
-    if (_isOpened) return;
+    if (_isOpen) return;
     if (_connection.isClosed) _connection = _createNewConnection();
 
     await _connection.open();
 
-    _isOpened = true;
+    _isOpen = true;
   }
 
   @override
   void close() async {
     await _connection.close();
-    _isOpened = false;
+    _isOpen = false;
   }
 
   @override
@@ -91,11 +89,8 @@ class PostgresConnection implements DatabaseConnection {
     }
   }
 
-  List<MappedRow> _transformedRows(List rows) {
-    return rows.map((row) {
-      return row.values.single as MappedRow;
-    }).toList();
-  }
+  List<MappedRow> _transformedRows(List rows) =>
+      rows.map((row) => row.values.single as MappedRow).toList();
 
   @override
   Future begin() async {

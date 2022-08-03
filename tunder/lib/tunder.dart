@@ -4,4 +4,4 @@ export 'src/exceptions/exceptions.dart';
 
 export '_common.dart';
 
-const TunderVersion = '1.0.0';
+const tunderVersion = '1.0.0';

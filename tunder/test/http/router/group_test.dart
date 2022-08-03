@@ -46,9 +46,7 @@ main() {
 }
 
 class TestController extends Controller {
-  index() {
-    return 'index worked';
-  }
+  index() => 'index worked';
 }
 
 class MyMiddleware extends Middleware {

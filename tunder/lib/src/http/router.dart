@@ -9,7 +9,7 @@ import 'package:tunder/src/http/route_definitions.dart';
 import 'package:tunder/src/http/route_options.dart';
 
 class Router implements RouteDefinitions {
-  late Application app;
+  Application app;
   List middlewares = [];
   Map<String, Type> aliasMiddleware = {};
   final List<RouteEntry> routes = [];
@@ -17,63 +17,48 @@ class Router implements RouteDefinitions {
 
   Router(this.app);
 
-  RouteEntry prefix(String prefix) {
-    return _newRoute([RouteEntry.GET, RouteEntry.HEAD], prefix, () => null)
-        .setOption(
-      prefix: prefix,
-    );
-  }
+  RouteEntry prefix(String prefix) =>
+      _newRoute([RouteEntry.GET, RouteEntry.HEAD], prefix, () => null)
+          .setOption(prefix: prefix);
 
-  void discovery(Type controller) {
-    return _newRoute([RouteEntry.GET], '', () => null).discovery(controller);
-  }
+  void discovery(Type controller) =>
+      _newRoute([RouteEntry.GET], '', () => null).discovery(controller);
 
-  RouteEntry middleware(middlewares) {
-    return _newRoute([RouteEntry.GET, RouteEntry.HEAD], '', () => null)
-        .setOption(
-      middleware: middlewares,
-    );
-  }
+  RouteEntry middleware(middlewares) =>
+      _newRoute([RouteEntry.GET, RouteEntry.HEAD], '', () => null)
+          .setOption(middleware: middlewares);
 
-  RouteEntry via(List<String> methods, String uri, handler, [String? action]) {
-    return _addRoute(methods, uri, handler, action);
-  }
+  RouteEntry via(List<String> methods, String uri, handler, [String? action]) =>
+      _addRoute(methods, uri, handler, action);
 
-  RouteEntry get(String uri, handler, [String? action]) {
-    return _addRoute([RouteEntry.GET, RouteEntry.HEAD], uri, handler, action);
-  }
+  RouteEntry get(String uri, handler, [String? action]) =>
+      _addRoute([RouteEntry.GET, RouteEntry.HEAD], uri, handler, action);
 
-  RouteEntry put(String uri, handler, [String? action]) {
-    return _addRoute([RouteEntry.PUT], uri, handler, action);
-  }
+  RouteEntry post(String uri, handler, [String? action]) =>
+      _addRoute([RouteEntry.POST], uri, handler, action);
 
-  RouteEntry patch(String uri, handler, [String? action]) {
-    return _addRoute([RouteEntry.PATCH], uri, handler, action);
-  }
+  RouteEntry put(String uri, handler, [String? action]) =>
+      _addRoute([RouteEntry.PUT], uri, handler, action);
 
-  RouteEntry post(String uri, handler, [String? action]) {
-    return _addRoute([RouteEntry.POST], uri, handler, action);
-  }
+  RouteEntry delete(String uri, handler, [String? action]) =>
+      _addRoute([RouteEntry.DELETE], uri, handler, action);
 
-  RouteEntry delete(String uri, handler, [String? action]) {
-    return _addRoute([RouteEntry.DELETE], uri, handler, action);
-  }
+  RouteEntry patch(String uri, handler, [String? action]) =>
+      _addRoute([RouteEntry.PATCH], uri, handler, action);
 
   RouteEntry _addRoute(List<String> methods, String path, handler,
-      [String? action]) {
-    return _newRoute(methods, path, handler, action)..register();
-  }
+          [String? action]) =>
+      _newRoute(methods, path, handler, action)..register();
 
-  RouteEntry _newRoute(List<String> methods, path, handler, [String? action]) {
-    return RouteEntry(
-      methods: methods,
-      path: path,
-      handler: handler,
-      action: action,
-      container: app,
-      router: this,
-    );
-  }
+  RouteEntry _newRoute(List<String> methods, path, handler, [String? action]) =>
+      RouteEntry(
+        methods: methods,
+        path: path,
+        handler: handler,
+        action: action,
+        container: app,
+        router: this,
+      );
 
   void group(RouteOptions options, Function registrar) {
     // add the group attributes to stack
@@ -90,14 +75,12 @@ class Router implements RouteDefinitions {
     routes.add(route);
   }
 
-  FutureOr runRoute(Request request, RouteEntry route) {
-    return Pipeline(app)
-        .send(request)
-        .through(_gatherMiddlewares(route))
-        .then((request) async {
-      return toResponse(request, await route.run(request));
-    });
-  }
+  FutureOr runRoute(Request request, RouteEntry route) => Pipeline(app)
+          .send(request)
+          .through(_gatherMiddlewares(route))
+          .then((request) async {
+        return toResponse(request, await route.run(request));
+      });
 
   Response toResponse(Request request, dynamicResponse) {
     Response response = Response.from(request);
@@ -128,9 +111,6 @@ class Router implements RouteDefinitions {
     return _resolveMiddlewares(currentMiddlewares.toSet().toList());
   }
 
-  List _resolveMiddlewares(List middlewares) {
-    return middlewares
-        .map((m) => m is String ? aliasMiddleware[m] : m)
-        .toList();
-  }
+  List _resolveMiddlewares(List middlewares) =>
+      middlewares.map((m) => m is String ? aliasMiddleware[m] : m).toList();
 }
