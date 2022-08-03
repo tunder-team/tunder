@@ -37,6 +37,20 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: docker
+          POSTGRES_DB: tunder_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v3
       - uses: dart-lang/setup-dart@v1
@@ -49,7 +63,15 @@ jobs:
         run: melos bootstrap
 
       - name: Test
-        run: melos test
+        run: |
+          cp .env.ci tunder/.env
+          melos test
+        env:
+          DB_HOST: postgres
+          DB_PORT: 5432
+          DB_DATABASE: tunder_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: docker
 
       - name: Check Coverage
         uses: VeryGoodOpenSource/very_good_coverage@v1
