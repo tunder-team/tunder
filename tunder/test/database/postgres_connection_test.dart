@@ -1,160 +1,163 @@
-// import 'package:test/test.dart';
-// import 'package:tunder/database.dart';
-// import 'package:tunder/src/providers/database_service_provider.dart';
-// import 'package:tunder/test.dart';
-// import 'package:tunder/utils.dart';
+import 'package:test/test.dart';
+import 'package:tunder/database.dart';
+import 'package:tunder/src/providers/database_service_provider.dart';
+import 'package:tunder/test.dart';
+import 'package:tunder/utils.dart';
 
 main() {
-//   useDatabaseTransactions();
+  // useDatabaseTransactions();
 
-//   group('PostgresConnection', () {
-//     late DatabaseConnection connection;
-//     String testingTable = 'sample_table_postgres_connection';
+  group('PostgresConnection', () {
+    late DatabaseConnection connection;
+    String testingTable = 'sample_table_postgres_connection';
 
-//     setUpAll(() async {
-//       DatabaseServiceProvider().boot(app());
-//       connection = DB.connection;
-//       await Schema.create('$testingTable', (table) {
-//         table.id();
-//         table.string('name').notNullable();
-//       });
-//       await DB.execute("insert into $testingTable (name) values ('Marco')");
-//       await DB.execute("insert into $testingTable (name) values ('John Doe')");
-//     });
+    setUpAll(() async {
+      DatabaseServiceProvider().boot(app());
+      connection = DB.connection;
 
-//     tearDownAll(() async {
-//       await Schema.drop('$testingTable');
-//     });
+      await connection.begin();
 
-//     test('open() connection', () async {
-//       await connection.open();
-//     });
+      await Schema.create('$testingTable', (table) {
+        table.id();
+        table.string('name').notNullable();
+      });
+      await DB.execute("insert into $testingTable (name) values ('Marco')");
+      await DB.execute("insert into $testingTable (name) values ('John Doe')");
+    });
 
-//     test('query(sql) executes a query and return as map', () async {
-//       var rows = await connection.query(
-//         'SELECT * FROM $testingTable',
-//       );
-//       expect(rows, isNotEmpty);
-//       expect(rows.length, 2);
-//       expect(rows.first, TypeMatcher<Map>());
-//       expect(rows.first['id'], TypeMatcher<int>());
-//     });
+    tearDownAll(() async {
+      await connection.rollback();
+    });
 
-//     test('execute(sql) returns the number of affected rows', () async {
-//       var affectedRows = await connection.execute(
-//         "UPDATE $testingTable SET name = 'John' WHERE id = 1",
-//       );
-//       expect(affectedRows, 1);
-//       affectedRows = await connection.execute(
-//         "UPDATE $testingTable SET name = 'Marco' WHERE id = 1",
-//       );
-//       expect(affectedRows, 1);
-//     });
+    test('open() connection', () async {
+      await connection.open();
+    });
 
-//     test('transaction(function) executes a function in a transaction',
-//         () async {
-//       var queryJose = "SELECT * FROM $testingTable WHERE name = 'Jose'";
+    test('query(sql) executes a query and return as map', () async {
+      var rows = await connection.query(
+        'SELECT * FROM $testingTable',
+      );
+      expect(rows, isNotEmpty);
+      expect(rows.length, 2);
+      expect(rows.first, TypeMatcher<Map>());
+      expect(rows.first['id'], TypeMatcher<int>());
+    });
 
-//       try {
-//         await connection.transaction(() async {
-//           var insertJose = "INSERT INTO $testingTable (name) VALUES ('Jose')";
-//           var insertAnna = "INSERT INTO $testingTable (name) VALUES ('Anna')";
-//           var affectedRows = await connection.execute(insertJose);
-//           expect(affectedRows, 1);
-//           affectedRows = await connection.execute(insertAnna);
-//           expect(affectedRows, 1);
-//           var results = await connection.query(queryJose);
-//           expect(results, isNotEmpty);
+    test('execute(sql) returns the number of affected rows', () async {
+      var affectedRows = await connection.execute(
+        "UPDATE $testingTable SET name = 'John' WHERE id = 1",
+      );
+      expect(affectedRows, 1);
+      affectedRows = await connection.execute(
+        "UPDATE $testingTable SET name = 'Marco' WHERE id = 1",
+      );
+      expect(affectedRows, 1);
+    });
 
-//           results = await connection.query('SELECT * FROM $testingTable');
-//           expect(results.length, 4);
+    test('transaction(function) executes a function in a transaction',
+        () async {
+      var queryJose = "SELECT * FROM $testingTable WHERE name = 'Jose'";
 
-//           throw SomeException('Some error');
-//         });
-//       } on SomeException catch (e) {
-//         expect(e.message, 'Some error');
-//       }
+      try {
+        await connection.transaction(() async {
+          var insertJose = "INSERT INTO $testingTable (name) VALUES ('Jose')";
+          var insertAnna = "INSERT INTO $testingTable (name) VALUES ('Anna')";
+          var affectedRows = await connection.execute(insertJose);
+          expect(affectedRows, 1);
+          affectedRows = await connection.execute(insertAnna);
+          expect(affectedRows, 1);
+          var results = await connection.query(queryJose);
+          expect(results, isNotEmpty);
 
-//       var results = await connection.query(queryJose);
-//       expect(results, isEmpty);
-//     });
+          results = await connection.query('SELECT * FROM $testingTable');
+          expect(results.length, 4);
 
-//     test('begin() and rollback()', () async {
-//       // Arrange
-//       var insertRobert = "INSERT INTO $testingTable (name) VALUES ('Robert')";
+          throw SomeException('Some error');
+        });
+      } on SomeException catch (e) {
+        expect(e.message, 'Some error');
+      }
 
-//       // Act
-//       await connection.begin();
-//       var result = await connection.execute(insertRobert);
-//       expect(result, 1);
-//       await connection.rollback();
+      var results = await connection.query(queryJose);
+      expect(results, isEmpty);
+    });
 
-//       // Assert
-//       expect(
-//           await DB.connection
-//               .query("SELECT * from $testingTable where name = 'Robert'"),
-//           isEmpty);
-//     });
+    test('begin() and rollback()', () async {
+      // Arrange
+      var insertRobert = "INSERT INTO $testingTable (name) VALUES ('Robert')";
 
-//     test('begin() and commit() should persist in database', () async {
-//       // Arrange
-//       var insertRobert = "INSERT INTO $testingTable (name) VALUES ('Robert')";
-//       var deleteRobert = "DELETE FROM $testingTable WHERE name = 'Robert'";
+      // Act
+      await connection.begin();
+      var result = await connection.execute(insertRobert);
+      expect(result, 1);
+      await connection.rollback();
 
-//       // Act
-//       await connection.begin();
-//       var result = await connection.execute(insertRobert);
-//       expect(result, 1);
-//       await connection.commit();
+      // Assert
+      expect(
+          await DB.connection
+              .query("SELECT * from $testingTable where name = 'Robert'"),
+          isEmpty);
+    });
 
-//       // Assert
-//       expect(
-//           await DB.connection
-//               .query("SELECT * from $testingTable where name = 'Robert'"),
-//           isNotEmpty);
+    test('begin() and commit() should persist in database', () async {
+      // Arrange
+      var insertRobert = "INSERT INTO $testingTable (name) VALUES ('Robert')";
+      var deleteRobert = "DELETE FROM $testingTable WHERE name = 'Robert'";
 
-//       // Cleanup
-//       await connection.execute(deleteRobert);
-//       expect(
-//           await DB.connection
-//               .query("SELECT * from $testingTable where name = 'Robert'"),
-//           isEmpty);
-//     });
+      // Act
+      await connection.begin();
+      var result = await connection.execute(insertRobert);
+      expect(result, 1);
+      await connection.commit();
 
-//     test(
-//         'transaction(operation) should run a transaction and commit at the end',
-//         () async {
-//       // Arrange
-//       var insertRobert = "INSERT INTO $testingTable (name) VALUES ('Robert')";
-//       var deleteRobert = "DELETE FROM $testingTable WHERE name = 'Robert'";
+      // Assert
+      expect(
+          await DB.connection
+              .query("SELECT * from $testingTable where name = 'Robert'"),
+          isNotEmpty);
 
-//       // Act
-//       var result =
-//           await connection.transaction(() => connection.execute(insertRobert));
-//       expect(result, 1);
+      // Cleanup
+      await connection.execute(deleteRobert);
+      expect(
+          await DB.connection
+              .query("SELECT * from $testingTable where name = 'Robert'"),
+          isEmpty);
+    });
 
-//       // Assert
-//       expect(
-//           await DB.connection
-//               .query("SELECT * from $testingTable where name = 'Robert'"),
-//           isNotEmpty);
+    test(
+        'transaction(operation) should run a transaction and commit at the end',
+        () async {
+      // Arrange
+      var insertRobert = "INSERT INTO $testingTable (name) VALUES ('Robert')";
+      var deleteRobert = "DELETE FROM $testingTable WHERE name = 'Robert'";
 
-//       // Cleanup
-//       await connection.execute(deleteRobert);
-//       expect(
-//           await DB.connection
-//               .query("SELECT * from $testingTable where name = 'Robert'"),
-//           isEmpty);
-//     });
+      // Act
+      var result =
+          await connection.transaction(() => connection.execute(insertRobert));
+      expect(result, 1);
 
-//     test('close connection', () {
-//       connection.close();
-//     });
-//   });
+      // Assert
+      expect(
+          await DB.connection
+              .query("SELECT * from $testingTable where name = 'Robert'"),
+          isNotEmpty);
+
+      // Cleanup
+      await connection.execute(deleteRobert);
+      expect(
+          await DB.connection
+              .query("SELECT * from $testingTable where name = 'Robert'"),
+          isEmpty);
+    });
+
+    test('close connection', () {
+      connection.close();
+    });
+  });
 }
 
-// class SomeException implements Exception {
-//   final String message;
+class SomeException implements Exception {
+  final String message;
 
-//   SomeException(this.message);
-// }
+  SomeException(this.message);
+}

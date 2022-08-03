@@ -1,4 +1,4 @@
-import 'package:postgresql2/postgresql.dart';
+import 'package:postgres/postgres.dart';
 import 'package:tunder/database.dart';
 
 class PostgresConnection implements DatabaseConnection {
@@ -9,10 +9,11 @@ class PostgresConnection implements DatabaseConnection {
   late String password;
   late Symbol driver;
   int _transactionLevel = 0;
-  Connection? _connection;
+  late PostgreSQLConnection _connection;
 
   String get url => 'postgres://$username:$password@$host:$port/$database';
   String get _name => 'sp_$_transactionLevel';
+  bool _isOpened = false;
 
   PostgresConnection({
     this.host = 'localhost',
@@ -20,30 +21,47 @@ class PostgresConnection implements DatabaseConnection {
     required this.database,
     required this.username,
     required this.password,
-  }) : driver = DatabaseDriver.postgres;
+  }) : driver = DatabaseDriver.postgres {
+    _connection = _createNewConnection();
+  }
+
+  PostgreSQLConnection _createNewConnection() {
+    return PostgreSQLConnection(
+      host,
+      port,
+      database,
+      username: username,
+      password: password,
+    );
+  }
 
   @override
   Future<int> execute(String query) async {
     await open();
 
-    return _connection!.execute(query);
+    return _connection.execute(query);
   }
 
   @override
   Future<void> open() async {
-    _connection ??= await connect(url);
+    if (_isOpened) return;
+    if (_connection.isClosed) _connection = _createNewConnection();
+
+    await _connection.open();
+
+    _isOpened = true;
   }
 
   @override
-  void close() {
-    _connection?.close();
-    _connection = null;
+  void close() async {
+    await _connection.close();
+    _isOpened = false;
   }
 
   @override
   Future<List<MappedRow>> query(String query) async {
     await open();
-    List<Row> rows = await _connection!.query(query).toList();
+    List<Map> rows = (await _connection.mappedResultsQuery(query)).toList();
 
     return _transformedRows(rows);
   }
@@ -73,9 +91,9 @@ class PostgresConnection implements DatabaseConnection {
     }
   }
 
-  List<MappedRow> _transformedRows(List<Row> rows) {
+  List<MappedRow> _transformedRows(List rows) {
     return rows.map((row) {
-      return row.toMap() as MappedRow;
+      return row.values.single as MappedRow;
     }).toList();
   }
 
