@@ -1,12 +1,9 @@
 import 'package:test/test.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/src/providers/database_service_provider.dart';
-import 'package:tunder/test.dart';
 import 'package:tunder/utils.dart';
 
 main() {
-  // useDatabaseTransactions();
-
   group('PostgresConnection', () {
     late DatabaseConnection connection;
     String testingTable = 'sample_table_postgres_connection';
