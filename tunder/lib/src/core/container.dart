@@ -5,9 +5,8 @@ import 'package:tunder/src/core/binding_resolution_exception.dart';
 class Container {
   final Map _bindingMap = {};
 
-  void bind(key, value, {bool shared = false}) {
-    _bindingMap[key] = {'value': value, 'shared': shared};
-  }
+  void bind(key, value, {bool shared = false}) =>
+      _bindingMap[key] = {'value': value, 'shared': shared};
 
   void singleton(key, value) => bind(key, value, shared: true);
 

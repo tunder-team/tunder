@@ -329,21 +329,19 @@ class RouteEntry implements RouteDefinitions {
   _injectedParams(InstanceMirror controller, String action, Request request) {
     MethodMirror? method = _getMethodFrom(controller, action);
 
-    return method == null
-        ? []
-        : method.parameters.map((param) {
-            var type = param.type.reflectedType;
-            if (type == Request) return request;
-            if (_isPrimitive(type)) {
-              return paramValue(
-                param.simpleName,
-                request: request,
-                castTo: type,
-              );
-            }
+    if (method == null) return [];
 
-            return container.get(param.type.reflectedType);
-          }).toList();
+    return method.parameters.map((param) {
+      var type = param.type.reflectedType;
+
+      if (type == Request) {
+        return request;
+      } else if (_isPrimitive(type)) {
+        return paramValue(param.simpleName, request: request, castTo: type);
+      } else {
+        return container.get(param.type.reflectedType);
+      }
+    }).toList();
   }
 
   bool _isPrimitive(type) => const [int, double, String].contains(type);
@@ -422,10 +420,11 @@ class RouteEntry implements RouteDefinitions {
         }).join('/');
   }
 
-  bool _allowedParamTypes(params) =>
-      const [int, double, String].any((type) => params.runtimeType == type) ||
-      params is List ||
-      params is Map;
+  bool _allowedParamTypes(params) {
+    return [int, double, String].any((type) => params.runtimeType == type) ||
+        params is List ||
+        params is Map;
+  }
 
   int _paramIndexByName(Symbol paramName) =>
       uri.pathSegments.indexOf(_paramByName(paramName));
