@@ -334,24 +334,29 @@ class RouteEntry implements RouteDefinitions {
     return method.parameters.map((param) {
       var type = param.type.reflectedType;
 
-      if (type == Request) {
-        return request;
-      } else if (_isPrimitive(type)) {
-        return paramValue(param.simpleName, request: request, castTo: type);
-      } else {
-        return container.get(param.type.reflectedType);
+      if (type == Request) return request;
+
+      if (_isPrimitive(type)) {
+        return paramValue(
+          param.simpleName,
+          request: request,
+          castTo: type,
+        );
       }
+
+      return container.get(param.type.reflectedType);
     }).toList();
   }
 
   bool _isPrimitive(type) => const [int, double, String].contains(type);
 
-  MethodMirror? _getMethodFrom(InstanceMirror instance, String methodName) =>
-      _getMethodsFrom(instance)
-          .where((element) => element.key == Symbol(methodName))
-          .toList()
-          .firstOrNull
-          ?.value as MethodMirror?;
+  MethodMirror? _getMethodFrom(InstanceMirror instance, String methodName) {
+    return _getMethodsFrom(instance)
+        .where((element) => element.key == Symbol(methodName))
+        .toList()
+        .firstOrNull
+        ?.value as MethodMirror?;
+  }
 
   Iterable<MapEntry<Symbol, DeclarationMirror>> _getMethodsFrom(
           InstanceMirror instance) =>
