@@ -16,8 +16,13 @@ scripts:
     exec:
       concurrency: 1
   coverage: |
-    genhtml coverage/lcov.info -o coverage/html
-    open coverage/html/index.html
+    melos clean_coverage_reports
+    melos test
+    melos run_coverage
+  clean_coverage_reports: rm -rf coverage_report
+  run_coverage: |
+    genhtml coverage_report/lcov.info -o coverage_report/html
+    open coverage_report/html/index.html
   pana:
     run: ../tool/pana_score.sh
     exec:

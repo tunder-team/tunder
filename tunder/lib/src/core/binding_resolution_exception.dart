@@ -1,3 +1,6 @@
 class BindingResolutionException implements Exception {
-  const BindingResolutionException();
+  final key;
+  const BindingResolutionException(this.key);
+
+  String toString() => 'Failed to resolve binding for: [$key]';
 }

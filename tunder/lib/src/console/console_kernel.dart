@@ -1,24 +1,38 @@
 import 'dart:io';
 
-import 'package:args/command_runner.dart';
+import 'package:tunder/src/console/command.dart';
+import 'package:tunder/src/console/commands/migrations/make_migration_command.dart';
+import 'package:tunder/src/console/sky_command.dart';
 import 'package:tunder/tunder.dart';
 
 import '../contracts/console_kernel_contract.dart';
 
 class ConsoleKernel implements ConsoleKernelContract {
   final Application app;
-  final Set<Type> commands = {};
 
   ConsoleKernel(this.app);
 
   @override
   Future<int> handle(List<String> arguments) async {
-    var runner = CommandRunner('tunder', 'Tunder Framework $tunderVersion');
+    SkyCommand runner = app.get(SkyCommand);
 
-    commands.forEach((command) => runner.addCommand(app.get(command)));
+    (baseCommands() + _commands)
+        .forEach((command) => runner.addTunderCommand(command));
 
-    runner.run(arguments);
+    await runner.run(arguments);
 
     return exitCode;
   }
+
+  List<Command> baseCommands() {
+    return [
+      MakeMigrationCommand(),
+    ];
+  }
+
+  @override
+  List<Type> commands() => [];
+
+  List<Command> get _commands =>
+      commands().map((command) => app.get<Command>(command)).toList();
 }

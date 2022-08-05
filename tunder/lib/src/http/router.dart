@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:tunder/tunder.dart';
 import 'package:tunder/http.dart';
@@ -85,9 +86,10 @@ class Router implements RouteDefinitions {
   Response toResponse(Request request, dynamicResponse) {
     Response response = Response.from(request);
     if (dynamicResponse is String) return response..body = dynamicResponse;
-    if (dynamicResponse == null) return response..body = '';
+    if (dynamicResponse is Map)
+      return response..body = jsonEncode(dynamicResponse);
 
-    throw UnsupportedError('Unsupported response type: $dynamicResponse');
+    return response..body = dynamicResponse?.toString() ?? '';
   }
 
   flush() {

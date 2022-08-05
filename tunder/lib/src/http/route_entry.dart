@@ -53,10 +53,6 @@ class RouteEntry implements RouteDefinitions {
 
   RouteEntry middleware(middleware) {
     setOption(middleware: middleware);
-    // if (middleware is Type) middlewares.add(middleware);
-    // if (middleware is List) middlewares.addAll(middleware);
-
-    // if (middlewares.isNotEmpty) setOption(middleware: middlewares);
 
     return this;
   }
@@ -198,7 +194,7 @@ class RouteEntry implements RouteDefinitions {
     var defaultVerbs = [RouteEntry.GET];
 
     if (metadata == null) return defaultVerbs;
-    if (metadata.method != null) return [metadata.method!.toUpperCase()];
+    if (metadata.method != null) return [metadata.method!];
 
     return metadata.methods ?? defaultVerbs;
   }
@@ -226,19 +222,19 @@ class RouteEntry implements RouteDefinitions {
           .name('$resource.${action.paramCase}');
 
   RouteEntry get(String path, handler, [String? action]) =>
-      _set(path, handler, action)..register();
-
-  RouteEntry post(String path, handler, [String? action]) =>
-      _set(path, handler, action)..register();
-
-  RouteEntry put(String path, handler, [String? action]) =>
-      _set(path, handler, action)..register();
+      _set([GET, HEAD], path, handler, action)..register();
 
   RouteEntry delete(String path, handler, [String? action]) =>
-      _set(path, handler, action)..register();
+      _set([DELETE], path, handler, action)..register();
 
   RouteEntry patch(String path, handler, [String? action]) =>
-      _set(path, handler, action)..register();
+      _set([PATCH], path, handler, action)..register();
+
+  RouteEntry post(String path, handler, [String? action]) =>
+      _set([POST], path, handler, action)..register();
+
+  RouteEntry put(String path, handler, [String? action]) =>
+      _set([PUT], path, handler, action)..register();
 
   void register() => router.register(this);
 
@@ -269,8 +265,10 @@ class RouteEntry implements RouteDefinitions {
 
   bool nameIs(String name) => _name == name;
 
+  final _toLower = (String s) => s.toLowerCase();
   bool matches(Request request) {
-    if (!methods.contains(request.method)) return false;
+    if (!methods.map(_toLower).contains(request.method.toLowerCase()))
+      return false;
     if (sanitize(uri.path) == sanitize(request.uri.path)) return true;
     if (uri.pathSegments.length != request.uri.pathSegments.length)
       return false;
@@ -290,10 +288,10 @@ class RouteEntry implements RouteDefinitions {
   run(Request request) async {
     request.setRoute(this);
     if (handler is Function) return _invokeFunction(request);
-    if (hasController()) return _invokeController(request);
+    if (handler is! Type || !hasController())
+      throw UnsupportedError('This type of handler is not supported. $handler');
 
-    throw UnsupportedError(
-        'This type of RouteEntry handler is not supported. $handler');
+    return _invokeController(request);
   }
 
   _invokeFunction(Request request) {
@@ -326,10 +324,13 @@ class RouteEntry implements RouteDefinitions {
         .reflectee;
   }
 
-  _injectedParams(InstanceMirror controller, String action, Request request) {
+  List _injectedParams(
+      InstanceMirror controller, String action, Request request) {
     MethodMirror? method = _getMethodFrom(controller, action);
 
-    if (method == null) return [];
+    if (method == null)
+      throw UnsupportedError(
+          'Method [$action] not found in controller [${controller.reflectee}]');
 
     return method.parameters.map((param) {
       var type = param.type.reflectedType;
@@ -385,10 +386,10 @@ class RouteEntry implements RouteDefinitions {
   String pathWith(dynamic params) {
     if (params == null && parameters.isEmpty) return uri.path;
     if (params == null && parameters.isNotEmpty)
-      throw Exception("Missing route params ${parameters}");
+      throw ArgumentError("Missing route params ${parameters}");
 
     if (!_allowedParamTypes(params))
-      throw Exception('Invalid param type for $params');
+      throw ArgumentError('Invalid param type [$params]');
     if (!(params is List) && !(params is Map)) params = [params];
     if (params is Map) {
       var path = '/' +
@@ -425,11 +426,11 @@ class RouteEntry implements RouteDefinitions {
         }).join('/');
   }
 
-  bool _allowedParamTypes(params) {
-    return [int, double, String].any((type) => params.runtimeType == type) ||
-        params is List ||
-        params is Map;
-  }
+  bool _allowedParamTypes(params) =>
+      params is num ||
+      params is String ||
+      params is List ||
+      params is Map<String, dynamic>;
 
   int _paramIndexByName(Symbol paramName) =>
       uri.pathSegments.indexOf(_paramByName(paramName));
@@ -444,8 +445,9 @@ class RouteEntry implements RouteDefinitions {
   String _removeCurlyBraces(String segment) =>
       segment.replaceAll(RegExp(r'[{}]*'), '');
 
-  RouteEntry _set(String path, handler, String? action) {
+  RouteEntry _set(List<String> methods, String path, handler, String? action) {
     _setPath(path);
+    this.methods = methods;
     this.handler = handler;
     this.action = action;
 
@@ -457,19 +459,26 @@ class RouteEntry implements RouteDefinitions {
 
     if (prefix != null) options!.prefix = prefix;
     if (name != null) options!.name = name;
-    if (middleware != null) {
-      options!.middleware = middleware;
-      if (middleware is List)
-        middlewares.addAll(middleware);
-      else if (middleware is Type || middleware is String)
-        middlewares.add(middleware);
-      else
-        throw ArgumentError('Invalid type for middleware $middleware');
-      middlewares.unique();
-    }
+    if (middleware != null) _addMiddleware(middleware);
 
     return this;
   }
+
+  void _addMiddleware(middleware) {
+    if (!_isValidMiddleware(middleware))
+      throw ArgumentError('Invalid type for middleware [$middleware]');
+
+    options!.middleware = middleware;
+
+    middleware is List
+        ? middlewares.addAll(middleware)
+        : middlewares.add(middleware);
+
+    middlewares.unique();
+  }
+
+  bool _isValidMiddleware(middleware) =>
+      middleware is String || middleware is Type || middleware is List;
 
   _getOption(option) => options == null
       ? null

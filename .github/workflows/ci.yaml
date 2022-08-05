@@ -76,7 +76,6 @@ jobs:
       - name: Check Coverage
         uses: VeryGoodOpenSource/very_good_coverage@v1
         with:
-          min_coverage: 95
           path: coverage/lcov.info
 
   pana_tunder:

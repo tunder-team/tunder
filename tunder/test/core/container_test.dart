@@ -43,5 +43,25 @@ void main() {
       expect(a2, TypeMatcher<A>());
       expect(a, a2);
     });
+
+    group('get(key)', () {
+      test('resolves constructor dependencies', () {
+        Cat cat = container.get(Cat);
+        expect(cat, TypeMatcher<Cat>());
+        expect(cat.sound(), 'meow');
+      });
+    });
   });
+}
+
+class Heart {
+  final int number;
+  Heart([this.number = 1]);
+}
+
+class Cat {
+  final Heart heart;
+  Cat(this.heart);
+
+  sound() => 'meow';
 }

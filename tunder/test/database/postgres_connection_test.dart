@@ -1,6 +1,5 @@
 import 'package:test/test.dart';
 import 'package:tunder/database.dart';
-import 'package:tunder/src/providers/database_service_provider.dart';
 import 'package:tunder/utils.dart';
 
 main() {

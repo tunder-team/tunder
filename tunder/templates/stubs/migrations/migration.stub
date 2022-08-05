@@ -1,0 +1,14 @@
+import 'package:tunder/database.dart';
+
+class Migration{{ version }} extends Migration {
+  var name = '{{ name }}';
+  var version = {{ version }};
+
+  up() async {
+    // TODO: Add your migration logic here.
+  }
+
+  down() async {
+    // TODO: Add your migration logic here.
+  }
+}
