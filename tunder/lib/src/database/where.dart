@@ -8,13 +8,19 @@ class Where {
 
   Where(this.column, {this.boolOperator = 'AND'});
 
-  Where get and {
-    return add(Where(this.column, boolOperator: 'AND'));
-  }
+  Where get and => add(
+        Where(
+          this.column,
+          boolOperator: 'AND',
+        ),
+      );
 
-  Where get or {
-    return add(Where(this.column, boolOperator: 'OR'));
-  }
+  Where get or => add(
+        Where(
+          this.column,
+          boolOperator: 'OR',
+        ),
+      );
 
   Where add(Where where) {
     _wheres.add(where);
@@ -34,9 +40,7 @@ class Where {
     return this;
   }
 
-  Where notEqual(value) {
-    return different(value);
-  }
+  Where notEqual(value) => different(value);
 
   Where contains(value) {
     this.value = '%$value%';
@@ -90,9 +94,7 @@ class Where {
   /**
    * Alias of [isIn]. Builds a WHERE IN query.
    */
-  Where inList(List<dynamic> values) {
-    return isIn(values);
-  }
+  Where inList(List<dynamic> values) => isIn(values);
 
   /**
    * Builds a WHERE IN query.
@@ -107,9 +109,7 @@ class Where {
   /**
    * Alias of [notIn]. Builds a WHERE NOT IN query.
    */
-  Where isNotIn(List<dynamic> values) {
-    return notIn(values);
-  }
+  Where isNotIn(List<dynamic> values) => notIn(values);
 
   /**
    * Builds a WHERE NOT IN query.

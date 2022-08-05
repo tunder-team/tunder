@@ -7,14 +7,12 @@ class Response {
   static const HTTP_NOT_FOUND = 404;
   static const HTTP_METHOD_NOT_ALLOWED = 405;
 
-  late HttpResponse original;
-  late Request request;
+  HttpResponse original;
+  Request request;
   Map<String, String?> headers;
   String? body;
 
-  void set statusCode(statusCode) {
-    original.statusCode = statusCode;
-  }
+  set statusCode(int statusCode) => original.statusCode = statusCode;
 
   Response({
     required this.original,
@@ -30,9 +28,7 @@ class Response {
           original: request.response,
         );
 
-  static Never notFound() {
-    throw NotFoundHttpException();
-  }
+  static Never notFound() => throw NotFoundHttpException();
 
   void write([String? overwrite]) {
     body = overwrite ?? body;

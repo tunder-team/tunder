@@ -10,37 +10,24 @@ class DB {
 
   static DatabaseConnection get newConnection {
     _connection = null;
-
     return connection;
   }
 
-  static Future<T> transaction<T>(Future<T> Function() function) async {
-    return connection.transaction(function);
-  }
+  static Future<T> transaction<T>(Future<T> Function() function) =>
+      connection.transaction(function);
 
-  static Future<int> execute(String query) async {
-    return connection.execute(query);
-  }
+  static Future<int> execute(String query) => connection.execute(query);
 
-  static Future<List<MappedRow>> query(String query) async {
-    return connection.query(query);
-  }
+  static Future<List<MappedRow>> query(String query) => connection.query(query);
 
-  static Future<bool> tableExists(String table) async {
-    return connection.tableExists(table);
-  }
+  static Future<bool> tableExists(String table) =>
+      connection.tableExists(table);
 
-  static Future begin() {
-    return connection.begin();
-  }
+  static Future begin() => connection.begin();
 
-  static Future commit() {
-    return connection.commit();
-  }
+  static Future commit() => connection.commit();
 
-  static Future rollback() {
-    return connection.rollback();
-  }
+  static Future rollback() => connection.rollback();
 }
 
 class DatabaseDriver {

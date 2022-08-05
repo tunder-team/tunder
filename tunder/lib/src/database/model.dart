@@ -12,7 +12,7 @@ abstract class Model<T> {
   }
 
   dynamic _cast(PropertyReflection property, value) {
-    if (!(value is String)) return value;
+    if (value is! String) return value;
 
     if (property.type == int) return int.parse(value);
     if (property.type == DateTime) return DateTime.parse(value);
@@ -33,19 +33,15 @@ class InstanceReflection {
     instanceMirror = reflect(instance);
   }
 
-  List<PropertyReflection> get properties {
-    return classMirror.declarations.values
-        .where((declaration) => declaration is VariableMirror)
-        .map((declaration) =>
-            PropertyReflection(declaration as VariableMirror, this))
-        .toList();
-  }
+  List<PropertyReflection> get properties => classMirror.declarations.values
+      .where((declaration) => declaration is VariableMirror)
+      .map((declaration) =>
+          PropertyReflection(declaration as VariableMirror, this))
+      .toList();
 
-  void setProperty(String propertyName, dynamic value) {
-    properties
-        .firstWhere((property) => property.name == propertyName)
-        .set(value);
-  }
+  void setProperty(String propertyName, dynamic value) => properties
+      .firstWhere((property) => property.name == propertyName)
+      .set(value);
 }
 
 class PropertyReflection {
@@ -57,7 +53,5 @@ class PropertyReflection {
   String get name => mirror.simpleName.name;
   Type get type => mirror.type.reflectedType;
 
-  void set(dynamic value) {
-    instance?.instanceMirror.setField(Symbol(name), value);
-  }
+  set(dynamic value) => instance?.instanceMirror.setField(Symbol(name), value);
 }

@@ -3,15 +3,12 @@ import 'dart:mirrors';
 import 'package:tunder/src/core/binding_resolution_exception.dart';
 
 class Container {
-  final Map _bindingMap = new Map();
+  final Map _bindingMap = {};
 
-  void bind(key, value, {bool shared = false}) {
-    _bindingMap[key] = {'value': value, 'shared': shared};
-  }
+  void bind(key, value, {bool shared = false}) =>
+      _bindingMap[key] = {'value': value, 'shared': shared};
 
-  void singleton(key, value) {
-    bind(key, value, shared: true);
-  }
+  void singleton(key, value) => bind(key, value, shared: true);
 
   T get<T>(key) {
     Map? binding = _bindingMap[key];
@@ -64,11 +61,10 @@ class Container {
     return instance.reflectee;
   }
 
-  MethodMirror? _getDefaultConstructor(ClassMirror mirror) {
-    return mirror.declarations.values
-            .where((m) => m is MethodMirror && m.isConstructor)
-            .firstWhere(
-                (constructor) => constructor.simpleName == mirror.simpleName)
-        as MethodMirror;
-  }
+  MethodMirror? _getDefaultConstructor(ClassMirror mirror) =>
+      mirror.declarations.values
+          .where((m) => m is MethodMirror && m.isConstructor)
+          .firstWhere(
+            (constructor) => constructor.simpleName == mirror.simpleName,
+          ) as MethodMirror;
 }

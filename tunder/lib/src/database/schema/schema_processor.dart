@@ -11,8 +11,9 @@ abstract class SchemaProcessor {
     switch (driver) {
       case DatabaseDriver.postgres:
         return PostgresSchemaProcessor();
+      default:
+        throw UnknownDatabaseDriverException(driver);
     }
-    throw UnknownDatabaseDriverException(driver);
   }
 
   String createSql(TableSchema table);

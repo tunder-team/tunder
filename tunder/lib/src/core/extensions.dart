@@ -35,8 +35,8 @@ extension TunderDurations on Duration {
 
 extension TunderString on String {
   String trimWith(String pattern) {
-    RegExp leading = RegExp('^[$pattern]*');
-    RegExp trailing = RegExp('/*[${pattern}]\$');
+    var leading = RegExp('^[$pattern]*');
+    var trailing = RegExp('/*[${pattern}]\$');
 
     return trim().replaceAll(leading, '').replaceAll(trailing, '').trim();
   }
@@ -98,9 +98,11 @@ extension TunderIterable<E> on Iterable<E> {
    */
   List flatten() {
     var list = [];
+
     for (var item in this) {
       item is Iterable ? list.addAll(item.flatten()) : list.add(item);
     }
+
     return list;
   }
 }

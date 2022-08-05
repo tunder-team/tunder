@@ -8,11 +8,11 @@ class DatabaseServiceProvider extends ServiceProvider {
     app.bind(
       DatabaseConnection,
       (_) => PostgresConnection(
-        host: env('DB_HOST') ?? "localhost",
+        host: env('DB_HOST') ?? 'localhost',
         port: int.parse(env('DB_PORT') ?? '5432'),
-        database: env('DB_DATABASE') ?? "tunder_test",
-        username: env('DB_USERNAME') ?? "postgres",
-        password: env('DB_PASSWORD') ?? "docker",
+        database: env('DB_DATABASE') ?? 'tunder_test',
+        username: env('DB_USERNAME') ?? 'postgres',
+        password: env('DB_PASSWORD') ?? 'docker',
       ),
     );
   }

@@ -182,16 +182,13 @@ class PostgresSchemaProcessor
     }).flatten();
   }
 
-  List<String> getCreateIndexCommands(TableSchema table) {
-    return table.columns
-        .where((column) => column.addIndex != null)
-        .map((column) => _compileCreateIndex(column.addIndex!))
-        .toList();
-  }
+  List<String> getCreateIndexCommands(TableSchema table) => table.columns
+      .where((column) => column.addIndex != null)
+      .map((column) => _compileCreateIndex(column.addIndex!))
+      .toList();
 
-  List<String> getAddConstraintCommands(TableSchema table) {
-    return table.constraints.map(compileConstraintForUpdate).toList();
-  }
+  List<String> getAddConstraintCommands(TableSchema table) =>
+      table.constraints.map(compileConstraintForUpdate).toList();
 
   List<String> getRenameCommands(TableSchema table) {
     return table.renames.map((rename) {
@@ -350,9 +347,8 @@ class PostgresSchemaProcessor
     return indexes.map(_compileCreateIndex).join('; ');
   }
 
-  String compileIndexesForUpdate(TableSchema table) {
-    return table.indexes.map(_compileCreateIndex).join('; ');
-  }
+  String compileIndexesForUpdate(TableSchema table) =>
+      table.indexes.map(_compileCreateIndex).join('; ');
 
   String _compileCreateIndex(IndexSchema index) {
     var columns = ([index.column] + index.columns).map((column) => '"$column"');
@@ -441,7 +437,6 @@ class PostgresSchemaProcessor
   }
 
   @override
-  String renameSql(String from, String to) {
-    return 'alter table "$from" rename to "$to"';
-  }
+  String renameSql(String from, String to) =>
+      'alter table "$from" rename to "$to"';
 }

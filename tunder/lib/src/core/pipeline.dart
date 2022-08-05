@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:tunder/src/core/container.dart';
 
 class Pipeline {
-  late Container container;
-  var handlers = [];
-  var passable;
+  Container container;
+  List handlers = [];
+  dynamic passable;
 
   Pipeline(this.container);
 
@@ -35,7 +35,5 @@ class Pipeline {
     return pipeline(passable);
   }
 
-  FutureOr thenReturn() {
-    return then((passable) => passable);
-  }
+  FutureOr thenReturn() => then((passable) => passable);
 }

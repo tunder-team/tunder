@@ -35,27 +35,23 @@ class Paginator<T> {
     );
   }
 
-  String toSql() {
-    return _paginated.toSql();
-  }
+  String toSql() => _paginated.toSql();
 
-  Query<T> get _paginated {
-    return query
-      ..offset = (page - 1) * perPage
-      ..limit = perPage;
-  }
+  Query<T> get _paginated => query
+    ..offset = (page - 1) * perPage
+    ..limit = perPage;
 }
 
 class Pagination<T> {
-  late final List<T> data;
-  late final int total;
-  late final int currentPage;
-  late final int perPage;
-  late final int lastPage;
-  late final int from;
-  late final int to;
+  final List<T> data;
+  final int total;
+  final int currentPage;
+  final int perPage;
+  final int lastPage;
+  final int from;
+  final int to;
 
-  Pagination({
+  const Pagination({
     required this.data,
     required this.total,
     required this.currentPage,

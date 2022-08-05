@@ -9,13 +9,9 @@ import 'package:tunder/tunder.dart';
 class A {
   A();
 
-  factory A.from() {
-    return A();
-  }
+  factory A.from() => A();
 
-  someMethod() {
-    return 'some method called';
-  }
+  someMethod() => 'some method called';
 }
 
 class B {
@@ -230,7 +226,5 @@ main() {
 
 class MyServiceProvider extends ServiceProvider {
   @override
-  boot(Application app) {
-    app.bind('my.service', 'it worked');
-  }
+  boot(Application app) => app.bind('my.service', 'it worked');
 }

@@ -25,7 +25,7 @@ main() {
 class SomeException implements Exception {
   final String message;
 
-  SomeException(this.message);
+  const SomeException(this.message);
 
   @override
   String toString() => message;

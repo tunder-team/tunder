@@ -77,7 +77,5 @@ main() {
 }
 
 class AlwaysNotFound implements Middleware {
-  handle(request, next) {
-    return Response.notFound();
-  }
+  handle(request, next) => Response.notFound();
 }

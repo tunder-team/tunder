@@ -1,5 +1,5 @@
 class RecordNotFoundException implements Exception {
-  RecordNotFoundException();
+  final String message = 'Record not found.';
 
-  final String message = 'Record not found';
+  const RecordNotFoundException();
 }

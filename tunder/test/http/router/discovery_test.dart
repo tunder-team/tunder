@@ -159,66 +159,39 @@ main() {
 }
 
 class TunderUserController extends Controller {
-  index() {
-    return 'index worked';
-  }
+  index() => 'index worked';
 
-  show(int id) {
-    return 'show worked $id';
-  }
+  show(int id) => 'show worked $id';
 
-  create() {
-    return 'create worked';
-  }
+  create() => 'create worked';
 
-  store() {
-    return 'store worked';
-  }
+  store() => 'store worked';
 
-  update(int id) {
-    return 'update worked $id';
-  }
+  update(int id) => 'update worked $id';
 
-  delete(int id) {
-    return 'delete worked $id';
-  }
+  delete(int id) => 'delete worked $id';
 
-  forceDelete(int id) {
-    return 'forceDelete worked $id';
-  }
+  forceDelete(int id) => 'forceDelete worked $id';
 
-  getAction() {
-    return 'getAction worked';
-  }
+  getAction() => 'getAction worked';
 
   @Route(method: 'post')
-  postAction() {
-    return 'postAction worked';
-  }
+  postAction() => 'postAction worked';
 
   @Route(method: 'put')
-  putAction(Request request, int id, String name) {
-    return 'putAction worked $id $name';
-  }
+  putAction(Request request, int id, String name) =>
+      'putAction worked $id $name';
 
   @Route(method: 'patch')
-  patchAction(int id) {
-    return 'patchAction worked $id';
-  }
+  patchAction(int id) => 'patchAction worked $id';
 
   @Route(method: 'delete')
-  deleteAction(int id) {
-    return 'deleteAction worked $id';
-  }
+  deleteAction(int id) => 'deleteAction worked $id';
 
   // ignore: unused_element
-  _somePrivateMethod() {
-    return 'should not generate route';
-  }
+  _somePrivateMethod() => 'should not generate route';
 }
 
 class PartialController extends Controller {
-  index() {
-    return 'index worked';
-  }
+  index() => 'index worked';
 }

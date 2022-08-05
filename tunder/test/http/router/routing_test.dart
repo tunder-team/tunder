@@ -122,27 +122,18 @@ main() {
 }
 
 class TestController extends Controller {
-  index() {
-    return 'TestController worked';
-  }
+  index() => 'TestController worked';
 
-  methodWithDependencies(Request request, Router router) {
-    return 'TestController worked with dependencies';
-  }
+  methodWithDependencies(Request request, Router router) =>
+      'TestController worked with dependencies';
 }
 
 class UserController extends Controller {
-  show(Request request, int user) {
-    return 'User id is $user.';
-  }
+  show(Request request, int user) => 'User id is $user.';
 
-  index(Request request, SomeService service) {
-    return service.doSomething();
-  }
+  index(Request request, SomeService service) => service.doSomething();
 }
 
 class SomeService {
-  doSomething() {
-    return 'doSomething worked';
-  }
+  doSomething() => 'doSomething worked';
 }

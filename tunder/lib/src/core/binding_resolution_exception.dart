@@ -1,1 +1,3 @@
-class BindingResolutionException implements Exception {}
+class BindingResolutionException implements Exception {
+  const BindingResolutionException();
+}
