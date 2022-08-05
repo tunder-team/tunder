@@ -76,7 +76,7 @@ jobs:
       - name: Check Coverage
         uses: VeryGoodOpenSource/very_good_coverage@v1
         with:
-          path: coverage/lcov.info
+          path: coverage_report/lcov.info
 
   pana_tunder:
     runs-on: ubuntu-latest
