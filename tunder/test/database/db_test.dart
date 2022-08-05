@@ -1,7 +1,6 @@
 import 'package:test/test.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/src/exceptions/unknown_database_driver_exception.dart';
-import 'package:tunder/src/providers/database_service_provider.dart';
 import 'package:tunder/test.dart';
 import 'package:tunder/utils.dart';
 

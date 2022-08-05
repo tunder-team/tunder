@@ -148,11 +148,32 @@ main() {
         expect(response.statusCode, 200);
         expect(response.body, 'deleteAction worked 123');
       });
+      test(
+          'multipleMethods generates [discovery.tunder-user.multiple-methods], PUT and PATCH /discovery/tunder-user/multiple-methods',
+          () async {
+        Route.discovery(TestController1);
+        var path = route('test1.multiple-methods');
+        expect(path, '/test1/multiple-methods');
+        var response1 = await http.put(path);
+        expect(response1.statusCode, 200);
+        expect(response1.body, 'multipleMethods worked');
+      });
       test("shouldn't generate route for private methods", () async {
         expect(() => route('discovery.tunder-user._some-private-method'),
             throwsA(TypeMatcher<RouteNotFoundException>()));
         expect(() => route('discovery.tunder-user.some-private-method'),
             throwsA(TypeMatcher<RouteNotFoundException>()));
+      });
+    });
+
+    group('WrongConventionController', () {
+      test(
+          'throws an exception if required params is not provided in the method',
+          () {
+        expect(
+            () => Route.discovery(WrongConventionController),
+            toThrow(
+                ArgumentError, 'Parameter {id} not found for action [show]'));
       });
     });
   });
@@ -188,10 +209,21 @@ class TunderUserController extends Controller {
   @Route(method: 'delete')
   deleteAction(int id) => 'deleteAction worked $id';
 
+  @Route(methods: ['put', 'patch'])
+  multipleMethods() => 'multipleMethods worked';
   // ignore: unused_element
   _somePrivateMethod() => 'should not generate route';
 }
 
 class PartialController extends Controller {
   index() => 'index worked';
+}
+
+class WrongConventionController extends Controller {
+  show() => 'this shouldnt work because the {id} param is required';
+}
+
+class TestController1 extends Controller {
+  @Route(methods: ['put', 'patch'])
+  multipleMethods() => 'multipleMethods worked';
 }

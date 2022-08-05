@@ -43,6 +43,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.1.1"
+  clock:
+    dependency: "direct main"
+    description:
+      name: clock
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.1"
   collection:
     dependency: "direct main"
     description:
@@ -155,6 +162,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
+  mason_logger:
+    dependency: "direct main"
+    description:
+      name: mason_logger
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.1.1"
   matcher:
     dependency: transitive
     description:
@@ -310,7 +324,7 @@ packages:
     source: hosted
     version: "1.9.0"
   stack_trace:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: stack_trace
       url: "https://pub.dartlang.org"

@@ -4,3 +4,4 @@ coverage/
 .env
 .env.test
 .vscode/
+/tmp/

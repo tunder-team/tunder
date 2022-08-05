@@ -17,7 +17,7 @@ class Container {
       return _resolveType(key);
     }
 
-    if (binding == null) throw BindingResolutionException();
+    if (binding == null) throw BindingResolutionException(key);
     if (binding['instance'] != null) return binding['instance'];
 
     var value = binding['value'];
@@ -41,18 +41,21 @@ class Container {
   _resolveType(Type type) {
     var mirror = reflectClass(type);
 
-    if (mirror.isAbstract) throw BindingResolutionException();
+    if (mirror.isAbstract)
+      throw BindingResolutionException('abstract type $type');
 
     var constructor = _getDefaultConstructor(mirror);
 
     var positionalArguments = constructor!.parameters
-        .where((param) => !param.isNamed)
+        .where((param) => !param.isOptional && !param.isNamed)
         .map((param) => get(param.type.reflectedType))
         .toList();
 
     var namedArguments = <Symbol, dynamic>{};
     constructor.parameters.where((param) => param.isNamed).forEach((param) {
-      namedArguments[param.simpleName] = get(param.type.reflectedType);
+      namedArguments[param.simpleName] = param.hasDefaultValue
+          ? param.defaultValue!.reflectee
+          : get(param.type.reflectedType);
     });
 
     var instance =

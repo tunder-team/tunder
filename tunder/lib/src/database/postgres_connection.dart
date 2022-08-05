@@ -11,7 +11,6 @@ class PostgresConnection implements DatabaseConnection {
   int _transactionLevel = 0;
   late PostgreSQLConnection _connection;
 
-  String get url => 'postgres://$username:$password@$host:$port/$database';
   String get _name => 'sp_$_transactionLevel';
   bool _isOpen = false;
 
