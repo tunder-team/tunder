@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:tunder/src/database/operations/contracts/count_operation.dart';
+import 'package:tunder/src/database/operations/contracts/delete_operation.dart';
 import 'package:tunder/src/database/operations/contracts/insert_operation.dart';
 import 'package:tunder/src/database/operations/contracts/query_operation.dart';
 import 'package:tunder/src/database/operations/contracts/update_operation.dart';
@@ -37,6 +38,14 @@ main() {
         () => UpdateOperation.forDatabase(#unknown),
         toThrow(UnsupportedError,
             'Update operation not implemented for driver [unknown]'),
+      );
+    });
+
+    test('DeleteOperation throws exception for unknown driver', () {
+      expect(
+        () => DeleteOperation.forDatabase(#unknown),
+        toThrow(UnsupportedError,
+            'Delete operation not implemented for driver [unknown]'),
       );
     });
   });

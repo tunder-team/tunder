@@ -3,6 +3,7 @@ import 'dart:mirrors';
 
 import 'package:inflection3/inflection3.dart';
 import 'package:tunder/src/database/operations/contracts/count_operation.dart';
+import 'package:tunder/src/database/operations/contracts/delete_operation.dart';
 import 'package:tunder/src/database/operations/contracts/insert_operation.dart';
 import 'package:tunder/src/database/operations/contracts/query_operation.dart';
 import 'package:tunder/src/database/operations/contracts/update_operation.dart';
@@ -41,18 +42,25 @@ class Query<T> {
     this.table = _inferTableNameVia(tableNameOrModelClass);
   }
 
+  Future<List<T>> get() async => _transformRows(await _operation.process(this));
+
+  Future<int> count() => CountOperation.forDatabase(DB.driver).process(this);
+
   Future<int> insert(Map<String, dynamic> row) =>
       InsertOperation.forDatabase(DB.driver).process(this, row);
+
   Future<int> update(Map<String, dynamic> row) =>
       UpdateOperation.forDatabase(DB.driver).process(this, row);
+
+  Future<int> delete() => DeleteOperation.forDatabase(DB.driver).process(this);
+
+  Future<List<T>> all() => get();
 
   Query<T> select(List<String> columns) {
     this.columns = columns;
 
     return this;
   }
-
-  Future<List<T>> all() => get();
 
   Future<T> findBy(column, value) => this
       .add(where(column).equals(value))
@@ -87,10 +95,6 @@ class Query<T> {
 
     return this;
   }
-
-  Future<List<T>> get() async => _transformRows(await _operation.process(this));
-
-  Future<int> count() => CountOperation.forDatabase(DB.driver).process(this);
 
   String _inferTableNameVia(type) {
     final modelClass = reflectClass(type);
