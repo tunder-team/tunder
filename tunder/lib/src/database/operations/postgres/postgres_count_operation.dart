@@ -1,6 +1,6 @@
 import 'package:tunder/database.dart';
 import 'package:tunder/src/database/operations/contracts/count_operation.dart';
-import 'package:tunder/src/database/operations/postgres/postgres_query_operation.dart';
+import 'package:tunder/src/database/operations/postgres/mixins/where_compiler.dart';
 
 class PostgresCountOperation with WhereCompiler implements CountOperation {
   @override

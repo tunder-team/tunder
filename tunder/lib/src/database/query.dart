@@ -5,6 +5,7 @@ import 'package:inflection3/inflection3.dart';
 import 'package:tunder/src/database/operations/contracts/count_operation.dart';
 import 'package:tunder/src/database/operations/contracts/insert_operation.dart';
 import 'package:tunder/src/database/operations/contracts/query_operation.dart';
+import 'package:tunder/src/database/operations/contracts/update_operation.dart';
 import 'package:tunder/src/exceptions/record_not_found_exception.dart';
 import 'package:tunder/tunder.dart';
 import 'package:tunder/database.dart';
@@ -42,6 +43,8 @@ class Query<T> {
 
   Future<int> insert(Map<String, dynamic> row) =>
       InsertOperation.forDatabase(DB.driver).process(this, row);
+  Future<int> update(Map<String, dynamic> row) =>
+      UpdateOperation.forDatabase(DB.driver).process(this, row);
 
   Query<T> select(List<String> columns) {
     this.columns = columns;

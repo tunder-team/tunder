@@ -8,6 +8,7 @@ main() {
   group('Query(table)', () {
     useDatabaseTransactions();
 
+    // TODO: make insert operation return the id?
     test('insert(map)', () async {
       final table = await createTable();
       final int affectedRows = await Query(table).insert({

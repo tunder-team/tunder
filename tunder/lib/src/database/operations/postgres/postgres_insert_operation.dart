@@ -1,7 +1,8 @@
 import 'package:tunder/database.dart';
 import 'package:tunder/src/database/operations/contracts/insert_operation.dart';
+import 'package:tunder/src/database/operations/postgres/mixins/escapable.dart';
 
-class PostgresInsertOperation implements InsertOperation {
+class PostgresInsertOperation with ValueTransformer implements InsertOperation {
   @override
   Future<int> process(Query query, Map<String, dynamic> row) async {
     final columns = _columns(row);
@@ -17,14 +18,6 @@ class PostgresInsertOperation implements InsertOperation {
   }
 
   String _values(Map<String, dynamic> row) {
-    return row.values.map(_escape).join(', ');
-  }
-
-  String _escape(value) {
-    if (value is DateTime) return "'${value.toIso8601String()}'";
-    if (value is num) return '$value';
-    if (value is bool) return value ? 'true' : 'false';
-
-    return "'$value'";
+    return row.values.map(transform).join(', ');
   }
 }

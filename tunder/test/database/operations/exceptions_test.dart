@@ -2,6 +2,7 @@ import 'package:test/test.dart';
 import 'package:tunder/src/database/operations/contracts/count_operation.dart';
 import 'package:tunder/src/database/operations/contracts/insert_operation.dart';
 import 'package:tunder/src/database/operations/contracts/query_operation.dart';
+import 'package:tunder/src/database/operations/contracts/update_operation.dart';
 
 import '../../feature.dart';
 
@@ -28,6 +29,14 @@ main() {
         () => QueryOperation.forDatabase(#unknown),
         toThrow(UnsupportedError,
             'Query operation not implemented for driver [unknown]'),
+      );
+    });
+
+    test('UpdateOperation throws exception for unknown driver', () {
+      expect(
+        () => UpdateOperation.forDatabase(#unknown),
+        toThrow(UnsupportedError,
+            'Update operation not implemented for driver [unknown]'),
       );
     });
   });
