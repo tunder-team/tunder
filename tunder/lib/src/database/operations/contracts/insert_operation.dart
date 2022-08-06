@@ -1,6 +1,6 @@
 import 'package:tunder/database.dart';
 import 'package:tunder/_common.dart';
-import 'package:tunder/src/database/query/postgres_insert_operation.dart';
+import 'package:tunder/src/database/operations/postgres/postgres_insert_operation.dart';
 
 abstract class InsertOperation {
   factory InsertOperation.forDatabase(Symbol driver) {
@@ -8,8 +8,8 @@ abstract class InsertOperation {
       case DatabaseDriver.postgres:
         return PostgresInsertOperation();
       default:
-        throw UnimplementedError(
-            'Insert processor not implemented for ${driver.name}');
+        throw UnsupportedError(
+            'Insert operation not implemented for driver [${driver.name}]');
     }
   }
 

@@ -1,5 +1,5 @@
 import 'package:tunder/database.dart';
-import 'package:tunder/src/database/query/contracts/insert_operation.dart';
+import 'package:tunder/src/database/operations/contracts/insert_operation.dart';
 
 class PostgresInsertOperation implements InsertOperation {
   @override
