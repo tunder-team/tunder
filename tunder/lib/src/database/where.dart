@@ -4,7 +4,7 @@ class Where {
   String operator = '=';
   dynamic value;
 
-  final List<Where> _wheres = [];
+  final List<Where> wheres = [];
 
   Where(this.column, {this.boolOperator = 'AND'});
 
@@ -23,7 +23,7 @@ class Where {
       );
 
   Where add(Where where) {
-    _wheres.add(where);
+    wheres.add(where);
     return where;
   }
 
@@ -176,52 +176,5 @@ class Where {
     this.operator = 'ILIKE';
 
     return this;
-  }
-
-  String toSql() {
-    String sql = _thisSql();
-    String otherClauses = _wheres
-        .map((where) => where.toSql())
-        .join(' ${boolOperator.toUpperCase()} ');
-
-    if (otherClauses.isEmpty) return sql;
-    if (otherClauses.startsWith('(')) {
-      // remove trailing parenthesis from otherClauses
-      otherClauses = otherClauses.substring(1, otherClauses.length - 1);
-    }
-
-    return "($sql $otherClauses)";
-  }
-
-  String _thisSql() {
-    var column = '"${this.column}"';
-
-    if (operator == 'IS NOT NULL') return "$boolOperator $column $operator";
-    if (value == null) return "$boolOperator $column IS NULL";
-    if (value is num) return "$boolOperator $column $operator $value";
-    if (value is List) {
-      if ((value as List).every((element) => element is num)) {
-        return this.operator == 'BETWEEN'
-            ? "$boolOperator $column $operator ${value.join(' AND ')}"
-            : "$boolOperator $column $operator (${value.join(', ')})";
-      }
-
-      var newValue = value.map((v) => "\$\$${v}\$\$");
-
-      if ((value as List).every((element) => element is DateTime)) {
-        return ['BETWEEN', 'NOT BETWEEN'].contains(this.operator)
-            ? "$boolOperator $column $operator ${newValue.join(' AND ')}"
-            : "$boolOperator $column $operator (${newValue.join(', ')})";
-      }
-
-      return "$boolOperator $column $operator (${newValue.join(', ')})";
-    }
-
-    if (value is bool && ['IS TRUE', 'IS FALSE'].contains(this.operator))
-      return "$boolOperator $column $operator";
-
-    if (value is bool) return "$boolOperator $column $operator $value";
-
-    return "$boolOperator $column $operator \$\$$value\$\$";
   }
 }

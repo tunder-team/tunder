@@ -2,6 +2,11 @@ import 'dart:async';
 import 'dart:mirrors';
 
 import 'package:inflection3/inflection3.dart';
+import 'package:tunder/src/database/operations/contracts/count_operation.dart';
+import 'package:tunder/src/database/operations/contracts/delete_operation.dart';
+import 'package:tunder/src/database/operations/contracts/insert_operation.dart';
+import 'package:tunder/src/database/operations/contracts/query_operation.dart';
+import 'package:tunder/src/database/operations/contracts/update_operation.dart';
 import 'package:tunder/src/exceptions/record_not_found_exception.dart';
 import 'package:tunder/tunder.dart';
 import 'package:tunder/database.dart';
@@ -16,9 +21,9 @@ class Query<T> {
 
   late bool _shouldMap = false;
   String? _orderBy;
-  List<Where> _wheres = [];
+  List<Where> wheres = [];
 
-  DatabaseConnection get _connection => DB.connection;
+  QueryOperation get _operation => QueryOperation.forDatabase(DB.driver);
 
   Query([tableNameOrModelClass]) {
     container = app();
@@ -37,13 +42,25 @@ class Query<T> {
     this.table = _inferTableNameVia(tableNameOrModelClass);
   }
 
+  Future<List<T>> get() async => _transformRows(await _operation.process(this));
+
+  Future<int> count() => CountOperation.forDatabase(DB.driver).process(this);
+
+  Future<int> insert(Map<String, dynamic> row) =>
+      InsertOperation.forDatabase(DB.driver).process(this, row);
+
+  Future<int> update(Map<String, dynamic> row) =>
+      UpdateOperation.forDatabase(DB.driver).process(this, row);
+
+  Future<int> delete() => DeleteOperation.forDatabase(DB.driver).process(this);
+
+  Future<List<T>> all() => get();
+
   Query<T> select(List<String> columns) {
     this.columns = columns;
 
     return this;
   }
-
-  Future<List<T>> all() => get();
 
   Future<T> findBy(column, value) => this
       .add(where(column).equals(value))
@@ -72,28 +89,15 @@ class Query<T> {
         perPage: perPage,
       );
 
+  // TODO: refactor: delegate this to query operation and use data objects instead of strings
   Query<T> orderBy(String column, [String direction = 'asc']) {
     _orderBy = 'ORDER BY "$column" ${direction.toUpperCase()}';
 
     return this;
   }
 
-  Future<List<T>> get() => execute(toSql());
-
-  Future<int> count() async {
-    var rows = await executeRaw(toSqlCount());
-    return rows.first['total'];
-  }
-
-  Future<List<MappedRow>> executeRaw(String sql) => _connection.query(sql);
-
-  Future<List<T>> execute(String sql) async {
-    var results = await _connection.query(sql);
-    return _transformRows<T>(results);
-  }
-
   String _inferTableNameVia(type) {
-    var modelClass = reflectClass(type);
+    final modelClass = reflectClass(type);
     return modelClass.simpleName.name.titleCase
         .split(' ')
         .map((word) => word.toLowerCase())
@@ -108,7 +112,7 @@ class Query<T> {
   }
 
   Query<T> add(Where where) {
-    _wheres.add(where);
+    wheres.add(where);
     return this;
   }
 
@@ -117,54 +121,20 @@ class Query<T> {
   Query<T> or(Where where) => add(where..boolOperator = 'OR');
 
   Where where(String column) {
-    var _where = Where(column);
+    final _where = Where(column);
     add(_where);
 
     return _where;
   }
 
   Where orWhere(String column) {
-    var _where = Where(column);
+    final _where = Where(column);
     or(_where);
 
     return _where;
   }
 
-  String toSql() {
-    String wheres = _compileWheres();
-    String columns = _compileColumns();
+  getOrderBy() => _orderBy;
 
-    var sql = wheres.isEmpty
-        ? 'SELECT $columns FROM "$table"'
-        : 'SELECT $columns FROM "$table" WHERE $wheres';
-
-    if (_orderBy != null) sql += ' $_orderBy';
-    if (offset != null) sql += ' OFFSET $offset';
-    if (limit != null) sql += ' LIMIT $limit';
-
-    return sql;
-  }
-
-  String toSqlCount() {
-    String wheres = _compileWheres();
-    String countQuery = 'SELECT COUNT(*) AS TOTAL FROM "$table"';
-
-    return wheres.isEmpty ? countQuery : '$countQuery WHERE $wheres';
-  }
-
-  String _compileColumns() {
-    if (columns.length == 1 && columns.first == '*') return '*';
-
-    return columns.map((c) => '"$table"."$c"').join(', ');
-  }
-
-  String _compileWheres() {
-    var sql = _wheres.map((w) => w.toSql()).join(' ').trim();
-    if (sql.startsWith('AND ') || sql.startsWith('(AND'))
-      sql = sql.replaceFirst('AND ', '');
-    if (sql.startsWith('OR ') || sql.startsWith('(OR'))
-      sql = sql.replaceFirst('OR ', '');
-
-    return sql.trim();
-  }
+  String toSql() => _operation.toSql(this);
 }
