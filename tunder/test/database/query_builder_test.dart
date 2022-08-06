@@ -17,10 +17,17 @@ main() {
         table.boolean('admin').nullable();
         table.timestamps();
       });
-      await DB.execute(
-          "insert into users (name, email, admin, created_at, updated_at) values ('Marco', 'marco@mail.com', true, '2022-05-27 05:04:23.805328Z', '2022-05-27 05:04:23.805328Z')");
-      await DB.execute(
-          "INSERT INTO users (name, email) VALUES ('John Doe', 'john.doe@mail.com')");
+      await Query('users').insert({
+        'name': 'Marco',
+        'email': 'marco@mail.com',
+        'admin': true,
+        'created_at': DateTime.parse('2022-05-27 05:04:23.805328Z'),
+        'updated_at': DateTime.parse('2022-05-27 05:04:23.805328Z'),
+      });
+      await Query('users').insert({
+        'name': 'John Doe',
+        'email': 'john.doe@mail.com',
+      });
     });
 
     test('can be initialized with table name: Query(tableName)', () async {

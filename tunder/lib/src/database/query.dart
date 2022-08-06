@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:mirrors';
 
 import 'package:inflection3/inflection3.dart';
+import 'package:tunder/src/database/query/contracts/insert_operation.dart';
 import 'package:tunder/src/exceptions/record_not_found_exception.dart';
 import 'package:tunder/tunder.dart';
 import 'package:tunder/database.dart';
@@ -36,6 +37,9 @@ class Query<T> {
 
     this.table = _inferTableNameVia(tableNameOrModelClass);
   }
+
+  Future<int> insert(Map<String, dynamic> row) =>
+      InsertOperation.forDatabase(DB.driver).process(this, row);
 
   Query<T> select(List<String> columns) {
     this.columns = columns;
