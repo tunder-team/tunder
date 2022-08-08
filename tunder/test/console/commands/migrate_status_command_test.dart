@@ -46,16 +46,16 @@ main() {
 
       // Assert
       verify(() => test.logger
-              .info(' $pending ${migration1.version} ${migration1.name}'))
+              .info(' $pending ${migration1.id}_${migration1.name.snakeCase}'))
           .called(1);
       verify(() => test.logger
-              .info(' $pending ${migration2.version} ${migration2.name}'))
+              .info(' $pending ${migration2.id}_${migration2.name.snakeCase}'))
           .called(1);
       await assertDatabaseDoesntHave('migrations', {
-        'id': migration1.version,
+        'id': migration1.id,
       });
       await assertDatabaseDoesntHave('migrations', {
-        'id': migration2.version,
+        'id': migration2.id,
       });
     });
 
@@ -80,13 +80,13 @@ main() {
 
       // Assert
       verify(() => test.logger
-              .info(' $checked ${migration1.version} ${migration1.name}'))
+              .info(' $checked ${migration1.id}_${migration1.name.snakeCase}'))
           .called(1);
       verify(() => test.logger
-              .info(' $pending ${migration2.version} ${migration2.name}'))
+              .info(' $pending ${migration2.id}_${migration2.name.snakeCase}'))
           .called(1);
-      await assertDatabaseHas('migrations', {'id': migration1.version});
-      await assertDatabaseDoesntHave('migrations', {'id': migration2.version});
+      await assertDatabaseHas('migrations', {'id': migration1.id});
+      await assertDatabaseDoesntHave('migrations', {'id': migration2.id});
     });
 
     test('list migrations in order of version', () async {
@@ -104,8 +104,8 @@ main() {
       // Act
       final sortedMigrations = test.command.migrations;
       expect(sortedMigrations.length, 2);
-      expect(sortedMigrations.first.version, migration1.version);
-      expect(sortedMigrations.last.version, migration2.version);
+      expect(sortedMigrations.first.id, migration1.id);
+      expect(sortedMigrations.last.id, migration2.id);
     });
   });
 }

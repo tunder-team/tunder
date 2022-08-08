@@ -8,14 +8,14 @@ mixin ManageMigrations on Command {
   late final List ranMigrations;
   List<Migration> get pendingMigrations => migrations
       .where((migration) =>
-          !ranMigrations.any((existing) => existing['id'] == migration.version))
+          !ranMigrations.any((existing) => existing['id'] == migration.id))
       .toList();
 
   Future<void> createMigrationsTable() async {
     Progress creation = progress('Creating migrations table');
     await Schema.create('migrations', (table) {
       table
-        ..bigInteger('id').notNullable().primary()
+        ..string('id').notNullable().primary()
         ..string('name').notNullable()
         ..dateTime('executed_at').notNullable();
     });
@@ -28,7 +28,7 @@ mixin ManageMigrations on Command {
 
   Future<int> insertMigration(Migration migration) {
     return Query('migrations').insert({
-      'id': migration.version,
+      'id': migration.id,
       'name': migration.name,
       'executed_at': clock.now(),
     });

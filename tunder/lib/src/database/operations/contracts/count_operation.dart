@@ -1,4 +1,3 @@
-import 'package:tunder/extensions.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/src/database/operations/postgres/postgres_count_operation.dart';
 

@@ -36,8 +36,8 @@ class LoggerMock extends Mock implements Logger {}
 class ProgressMock extends Mock implements Progress {}
 
 class Migration1 extends Migration {
+  final id = '1';
   final name = 'Migration1';
-  final version = 1;
 
   @override
   Future down() async {}
@@ -47,8 +47,8 @@ class Migration1 extends Migration {
 }
 
 class Migration2 extends Migration {
+  final id = '2';
   final name = 'Migration2';
-  final version = 2;
 
   @override
   Future down() async {}
@@ -58,8 +58,8 @@ class Migration2 extends Migration {
 }
 
 class MigrationWithError extends Migration {
+  final id = '3';
   final name = 'MigrationWithError';
-  final version = 3;
 
   @override
   Future down() async {

@@ -12,7 +12,7 @@ class MigrateStatusCommand extends Command
   final List<Migration> migrations;
 
   MigrateStatusCommand(this.migrations) {
-    this.migrations.sort((a, b) => a.version.compareTo(b.version));
+    this.migrations.sort((a, b) => a.id.compareTo(b.id));
   }
 
   Future run() async {
@@ -23,7 +23,7 @@ class MigrateStatusCommand extends Command
       dynamic status = isPending(migration) ? 'pending' : '✔';
       status = Colorize(status)..bold();
       isPending(migration) ? status.lightYellow() : status.lightGreen();
-      info(' $status ${migration.version} ${migration.name}');
+      info(' $status ${migration.id}_${migration.name.snakeCase}');
     }
   }
 

@@ -36,7 +36,7 @@ main() {
 
       // Assert
       await assertDatabaseHas('migrations', {
-        'id': migration1.version,
+        'id': migration1.id,
       });
     });
 
@@ -58,8 +58,8 @@ main() {
       await test.sky.run(['migrate']);
 
       // Assert
-      await assertDatabaseHas('migrations', {'id': migration1.version});
-      await assertDatabaseHas('migrations', {'id': migration2.version});
+      await assertDatabaseHas('migrations', {'id': migration1.id});
+      await assertDatabaseHas('migrations', {'id': migration2.id});
     });
 
     test('dont insert a migration on failure', () async {
@@ -79,10 +79,10 @@ main() {
       await test.sky.run(['migrate']);
 
       // Assert
-      await assertDatabaseHas('migrations', {'id': migration1.version});
-      await assertDatabaseHas('migrations', {'id': migration2.version});
+      await assertDatabaseHas('migrations', {'id': migration1.id});
+      await assertDatabaseHas('migrations', {'id': migration2.id});
       await assertDatabaseDoesntHave(
-          'migrations', {'id': migrationWithError.version});
+          'migrations', {'id': migrationWithError.id});
       verify(() => test.logger.err(any())).called(1);
     });
 
@@ -103,10 +103,10 @@ main() {
       await test.sky.run(['migrate']);
 
       // Assert
-      await assertDatabaseHas('migrations', {'id': migration1.version});
+      await assertDatabaseHas('migrations', {'id': migration1.id});
       await assertDatabaseDoesntHave(
-          'migrations', {'id': migrationWithError.version});
-      await assertDatabaseDoesntHave('migrations', {'id': migration2.version});
+          'migrations', {'id': migrationWithError.id});
+      await assertDatabaseDoesntHave('migrations', {'id': migration2.id});
       verify(() => test.logger.err(any())).called(1);
     });
   });

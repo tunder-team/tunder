@@ -11,7 +11,7 @@ class MigrateCommand extends Command
   final List<Migration> migrations;
 
   MigrateCommand(this.migrations) {
-    this.migrations.sort((a, b) => a.version.compareTo(b.version));
+    this.migrations.sort((a, b) => a.id.compareTo(b.id));
   }
 
   Future run() async {
@@ -20,15 +20,15 @@ class MigrateCommand extends Command
 
     for (final migration in pendingMigrations) {
       final migrating =
-          progress('Migrating: ${migration.version} ${migration.name}');
+          progress('Migrating: ${migration.id} ${migration.name}');
 
       try {
         await migration.up();
         await insertMigration(migration);
 
-        migrating.complete('Migrated: ${migration.version} ${migration.name}');
+        migrating.complete('Migrated: ${migration.id} ${migration.name}');
       } catch (err) {
-        migrating.fail('Failed: ${migration.version} ${migration.name}');
+        migrating.fail('Failed: ${migration.id} ${migration.name}');
         error(err.toString());
         break;
       }

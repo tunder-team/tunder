@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:clock/clock.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:tunder/console.dart';
 import 'package:tunder/tunder.dart';
@@ -13,8 +14,13 @@ class MakeMigrationCommand extends Command {
 
   String? _migrationName;
   String get migrationName => _migrationName ??= argResults!.rest.join(' ');
-  int? _timestamp;
-  int get timestamp => _timestamp ??= clock.now().millisecondsSinceEpoch;
+
+  String? _id;
+  String get id {
+    if (_id != null) return _id!;
+
+    return _id = DateFormat('yyyy_MM_dd_HHmmss').format(clock.now());
+  }
 
   MakeMigrationCommand({
     this.destinationDir = ConsoleConfig.migrationDestination,
@@ -40,10 +46,10 @@ class MakeMigrationCommand extends Command {
     var contents = file.readAsStringSync();
 
     contents = contents
-        .replaceAll('{{ version }}', timestamp.toString())
+        .replaceAll('{{ id }}', id)
         .replaceAll('{{ name }}', migrationName);
 
-    var fileName = '${timestamp}_${migrationName.snakeCase}.dart';
+    var fileName = '${id}_${migrationName.snakeCase}.dart';
     var createdFile = _generateFile(fileName, contents);
 
     return createdFile;
@@ -64,16 +70,18 @@ class MakeMigrationCommand extends Command {
   void registerMigrationInListFile(File generated) {
     var listFile = File(path.join(destinationDir, 'list.dart'));
     var defaultListContents = '''
+import 'package:tunder/database.dart';
+
 import 'index.dart';
 
-var migrations = [
+final List<Migration> migrations = [
 ];
 
 ''';
     var listContents = listFile.existsSync()
         ? listFile.readAsStringSync()
         : defaultListContents;
-    var migrationInstance = "  Migration$timestamp(),\n];";
+    var migrationInstance = "  Migration_$id(),\n];";
 
     listContents = listContents.replaceAll('];', migrationInstance);
     listFile

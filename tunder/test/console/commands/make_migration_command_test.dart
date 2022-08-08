@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
+import 'package:intl/intl.dart';
 import 'package:mason_logger/mason_logger.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:path/path.dart';
@@ -29,15 +30,15 @@ main() {
       final sky = SkyCommand(Logger(), silent: true);
       final command = MakeMigrationCommand();
       sky.addTunderCommand(command);
-      var currentTime = DateTime.now();
-      var timestamp = currentTime.millisecondsSinceEpoch;
+      final currentTime = DateTime.now();
+      final id = DateFormat('yyyy_MM_dd_HHmmss').format(currentTime);
       var name = 'Some migration name';
       var expectedContent = '''
 import 'package:tunder/database.dart';
 
-class Migration$timestamp extends Migration {
-  var name = '$name';
-  var version = $timestamp;
+class Migration_$id extends Migration {
+  final id = '$id';
+  final name = '$name';
 
   up() async {
     // TODO: Add your migration logic here.
@@ -53,7 +54,7 @@ class Migration$timestamp extends Migration {
         await sky.run(['make:migration', name]);
       });
       var file = File(join(
-          '${ConsoleConfig.migrationDestination}/${timestamp}_${name.snakeCase}.dart'));
+          '${ConsoleConfig.migrationDestination}/${id}_${name.snakeCase}.dart'));
 
       // Assert
       expect(file.existsSync(), true);
@@ -70,19 +71,18 @@ class Migration$timestamp extends Migration {
         destinationDir: testDestinationDir,
       );
       sky.addTunderCommand(command);
-      var currentDate = DateTime.now();
-      var timestamp = currentDate.millisecondsSinceEpoch;
-      var expectedContent = 'class Migration${timestamp} {}\n';
-      var name = 'A migration';
+      final currentTime = DateTime.now();
+      final id = DateFormat('yyyy_MM_dd_HHmmss').format(currentTime);
+      final expectedContent = 'class Migration_${id} {}\n';
+      final name = 'A migration';
 
       // Act
-      withClock(Clock.fixed(currentDate), () async {
+      withClock(Clock.fixed(currentTime), () async {
         await sky.run(['make:migration', name]);
       });
 
       // Assert
-      var file =
-          File('$testDestinationDir/${timestamp}_${name.snakeCase}.dart');
+      var file = File('$testDestinationDir/${id}_${name.snakeCase}.dart');
       expect(file.existsSync(), true);
       expect(file.readAsStringSync(), expectedContent);
       Directory(testDestinationDir).deleteSync(recursive: true);
@@ -97,13 +97,13 @@ class Migration$timestamp extends Migration {
         stubsDir: testStubsDir,
         destinationDir: testDestinationDir,
       );
-      var currentTime = DateTime.now();
-      var timestamp = currentTime.millisecondsSinceEpoch;
-      var logger = LoggerMock();
-      var progress = ProgressMock();
-      var name = 'some migration';
-      var filename = '${timestamp}_${name.snakeCase}.dart';
-      var sky = SkyCommand(logger, silent: false);
+      final currentTime = DateTime.now();
+      final id = DateFormat('yyyy_MM_dd_HHmmss').format(currentTime);
+      final logger = LoggerMock();
+      final progress = ProgressMock();
+      final name = 'some migration';
+      final filename = '${id}_${name.snakeCase}.dart';
+      final sky = SkyCommand(logger, silent: false);
       sky.addTunderCommand(command);
 
       when(() => logger.progress(any())).thenReturn(progress);
@@ -115,7 +115,7 @@ class Migration$timestamp extends Migration {
       });
 
       // Assert
-      var file = File(join('$testDestinationDir/$filename'));
+      final file = File(join('$testDestinationDir/$filename'));
       expect(file.existsSync(), true);
       verify(() => logger.progress('Creating migration')).called(1);
       verify(() => progress.complete(
@@ -144,7 +144,7 @@ class Migration$timestamp extends Migration {
       final sky = SkyCommand(Logger(), silent: true);
       final command = MakeMigrationCommand();
       final currentTime = DateTime(2020);
-      final timestamp = currentTime.millisecondsSinceEpoch;
+      final id = DateFormat('yyyy_MM_dd_HHmmss').format(currentTime);
       final name = 'Some migration name';
       sky.addTunderCommand(command);
 
@@ -158,7 +158,7 @@ class Migration$timestamp extends Migration {
       // Assert
       expect(indexFile.existsSync(), true);
       expect(indexFile.readAsStringSync(), '''
-export '${timestamp}_${name.snakeCase}.dart';
+export '${id}_${name.snakeCase}.dart';
 // end
 ''');
       cleanUpDir();
@@ -182,7 +182,7 @@ export 'something.dart';
       sky.addTunderCommand(command);
       final name = 'Some migration name';
       final currentTime = DateTime(2019);
-      final timestamp = currentTime.millisecondsSinceEpoch;
+      final id = DateFormat('yyyy_MM_dd_HHmmss').format(currentTime);
 
       // Act
       withClock(Clock.fixed(currentTime), () async {
@@ -192,7 +192,7 @@ export 'something.dart';
       // Assert
       expect(indexFile.readAsStringSync(), '''
 export 'something.dart';
-export '${timestamp}_${name.snakeCase}.dart';
+export '${id}_${name.snakeCase}.dart';
 // end
 ''');
       cleanUpDir(destinationDir);
@@ -205,7 +205,7 @@ export '${timestamp}_${name.snakeCase}.dart';
       final sky = SkyCommand(Logger(), silent: true);
       final command = MakeMigrationCommand();
       final currentTime = DateTime(2018);
-      final timestamp = currentTime.millisecondsSinceEpoch;
+      final id = DateFormat('yyyy_MM_dd_HHmmss').format(currentTime);
       final name = 'Some migration name';
       sky.addTunderCommand(command);
 
@@ -219,10 +219,12 @@ export '${timestamp}_${name.snakeCase}.dart';
       // Assert
       expect(listFile.existsSync(), true);
       expect(listFile.readAsStringSync(), '''
+import 'package:tunder/database.dart';
+
 import 'index.dart';
 
-var migrations = [
-  Migration$timestamp(),
+final List<Migration> migrations = [
+  Migration_$id(),
 ];
 
 ''');
@@ -237,17 +239,19 @@ var migrations = [
           File(absolute('${ConsoleConfig.migrationDestination}/list.dart'))
             ..createSync(recursive: true);
       listFile.writeAsStringSync('''
+import 'package:tunder/database.dart';
+
 import 'index.dart';
 
-var migrations = [
+final List<Migration> migrations = [
   Migration1(),
 ];
 
 ''');
       sky.addTunderCommand(command);
       final currentTime = randomDate();
-      var timestamp = currentTime.millisecondsSinceEpoch;
-      var name = 'Some migration name';
+      final id = DateFormat('yyyy_MM_dd_HHmmss').format(currentTime);
+      final name = 'Some migration name';
 
       // Act
       await withClock(Clock.fixed(currentTime), () async {
@@ -256,11 +260,13 @@ var migrations = [
 
       // Assert
       expect(listFile.readAsStringSync(), '''
+import 'package:tunder/database.dart';
+
 import 'index.dart';
 
-var migrations = [
+final List<Migration> migrations = [
   Migration1(),
-  Migration$timestamp(),
+  Migration_$id(),
 ];
 
 ''');

@@ -1,5 +1,4 @@
 import 'package:tunder/database.dart';
-import 'package:tunder/_common.dart';
 import 'package:tunder/src/database/operations/postgres/postgres_insert_operation.dart';
 
 abstract class InsertOperation {
