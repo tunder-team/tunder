@@ -1,7 +1,9 @@
 import 'dart:io';
 
+import 'package:tunder/database.dart';
 import 'package:tunder/src/console/command.dart';
 import 'package:tunder/src/console/commands/migrations/make_migration_command.dart';
+import 'package:tunder/src/console/commands/migrations/migrate_command.dart';
 import 'package:tunder/src/console/sky_command.dart';
 import 'package:tunder/tunder.dart';
 
@@ -27,11 +29,13 @@ class ConsoleKernel implements ConsoleKernelContract {
   List<Command> baseCommands() {
     return [
       MakeMigrationCommand(),
+      MigrateCommand(migrations()),
     ];
   }
 
   @override
   List<Type> commands() => [];
+  List<Migration> migrations() => [];
 
   List<Command> get _commands =>
       commands().map((command) => app.get<Command>(command)).toList();

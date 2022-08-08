@@ -1,5 +1,5 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
-// ignore_for_file: prefer_single_quotes, public_member_api_docs, lines_longer_than_80_chars, implicit_dynamic_list_literal, implicit_dynamic_map_literal
+// ignore_for_file: type=lint, implicit_dynamic_list_literal, implicit_dynamic_map_literal, inference_failure_on_collection_literal
 
 import 'package:mason/mason.dart';
 
@@ -1171,6 +1171,11 @@ final projectBundle = MasonBundle.fromJson(<String, dynamic>{
       "type": "text"
     },
     {
+      "path": "{{name.snakeCase()}}/app/config/commands.dart",
+      "data": "TGlzdDxUeXBlPiBjb21tYW5kcygpID0+IFtdOwo=",
+      "type": "text"
+    },
+    {
       "path": "{{name.snakeCase()}}/app/config/providers.dart",
       "data":
           "aW1wb3J0ICcuLi9wcm92aWRlcnMvYXBwX3NlcnZpY2VfcHJvdmlkZXIuZGFydCc7CmltcG9ydCAnLi4vcHJvdmlkZXJzL3JvdXRlX3NlcnZpY2VfcHJvdmlkZXIuZGFydCc7Cgpwcm92aWRlcnMoKSB7CiAgcmV0dXJuIFsKICAgIFJvdXRlU2VydmljZVByb3ZpZGVyKCksCiAgICBBcHBTZXJ2aWNlUHJvdmlkZXIoKSwKICBdOwp9Cg==",
@@ -1185,13 +1190,13 @@ final projectBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "{{name.snakeCase()}}/app/console/kernel.dart",
       "data":
-          "aW1wb3J0ICdwYWNrYWdlOnR1bmRlci9jb25zb2xlLmRhcnQnIGFzIGNvbnNvbGU7CmltcG9ydCAncGFja2FnZTp0dW5kZXIvc3JjL2NvcmUvYXBwbGljYXRpb24uZGFydCc7CgpjbGFzcyBDb25zb2xlS2VybmVsIGV4dGVuZHMgY29uc29sZS5Db25zb2xlS2VybmVsIHsKICBDb25zb2xlS2VybmVsKEFwcGxpY2F0aW9uIGFwcCkgOiBzdXBlcihhcHApOwp9Cg==",
+          "aW1wb3J0ICdwYWNrYWdlOnR1bmRlci9jb25zb2xlLmRhcnQnIGFzIHR1bmRlcjsKaW1wb3J0ICdwYWNrYWdlOnR1bmRlci9kYXRhYmFzZS5kYXJ0JzsKaW1wb3J0ICdwYWNrYWdlOnR1bmRlci90dW5kZXIuZGFydCc7CmltcG9ydCAnLi4vY29uZmlnL3Byb3ZpZGVycy5kYXJ0JyBhcyBwcm92aWRlcnNDb25maWc7CmltcG9ydCAnLi4vY29uZmlnL2NvbW1hbmRzLmRhcnQnIGFzIGNvbW1hbmRzQ29uZmlnOwppbXBvcnQgJy4uLy4uL2RhdGFiYXNlL21pZ3JhdGlvbnMvbGlzdC5kYXJ0JyBhcyBtaWdyYXRpb25zRmlsZTsKCmNsYXNzIENvbnNvbGVLZXJuZWwgZXh0ZW5kcyB0dW5kZXIuQ29uc29sZUtlcm5lbCB7CiAgTGlzdDxTZXJ2aWNlUHJvdmlkZXI+IGdldCBwcm92aWRlcnMgPT4gcHJvdmlkZXJzQ29uZmlnLnByb3ZpZGVycygpOwoKICBDb25zb2xlS2VybmVsKEFwcGxpY2F0aW9uIGFwcCkgOiBzdXBlcihhcHApOwoKICBMaXN0PFR5cGU+IGNvbW1hbmRzKCkgPT4gY29tbWFuZHNDb25maWcuY29tbWFuZHMoKTsKICBMaXN0PE1pZ3JhdGlvbj4gbWlncmF0aW9ucygpID0+IG1pZ3JhdGlvbnNGaWxlLm1pZ3JhdGlvbnM7Cn0K",
       "type": "text"
     },
     {
       "path": "{{name.snakeCase()}}/app/http/controllers/home_controller.dart",
       "data":
-          "aW1wb3J0ICdwYWNrYWdlOnR1bmRlci9odHRwLmRhcnQnOwoKY2xhc3MgSG9tZUNvbnRyb2xsZXIgZXh0ZW5kcyBDb250cm9sbGVyIHsKICBpbmRleChSZXF1ZXN0IHJlcXVlc3QpIHsKICAgIHJldHVybiAnSGVsbG8gV29ybGQhJzsKICB9Cn0K",
+          "aW1wb3J0ICdwYWNrYWdlOnR1bmRlci9odHRwLmRhcnQnOwppbXBvcnQgJ3BhY2thZ2U6dHVuZGVyL3R1bmRlci5kYXJ0JzsKCmNsYXNzIEhvbWVDb250cm9sbGVyIGV4dGVuZHMgQ29udHJvbGxlciB7CiAgaW5kZXgoKSB7CiAgICB2YXIgZGF0ZSA9IDMuZGF5cy5hZ287CiAgICByZXR1cm4gJ0hlbGxvIFdvcmxkISBUaHJlZSBkYXlzIGFnbyB3YXM6ICR7ZGF0ZX0nOwogIH0KfQo=",
       "type": "text"
     },
     {
@@ -1259,6 +1264,12 @@ final projectBundle = MasonBundle.fromJson(<String, dynamic>{
       "path": "{{name.snakeCase()}}/sky.dart",
       "data":
           "IyEvdXNyL2Jpbi9lbnYgZGFydAoKaW1wb3J0ICdkYXJ0OmlvJzsKCmltcG9ydCAncGFja2FnZTp0dW5kZXIvY29udHJhY3RzLmRhcnQnOwoKaW1wb3J0ICdib290c3RyYXAvYXBwLmRhcnQnOwoKbWFpbihMaXN0PFN0cmluZz4gYXJncykgYXN5bmMgewogIHZhciBhcHAgPSBib290c3RyYXAoKTsKICBDb25zb2xlS2VybmVsQ29udHJhY3Qga2VybmVsID0gYXBwLmdldChDb25zb2xlS2VybmVsQ29udHJhY3QpOwoKICB2YXIgZXhpdENvZGUgPSBhd2FpdCBrZXJuZWwuaGFuZGxlKGFyZ3MpOwoKICBleGl0KGV4aXRDb2RlKTsKfQo=",
+      "type": "text"
+    },
+    {
+      "path": "{{name.snakeCase()}}/templates/stubs/migrations/migration.stub",
+      "data":
+          "aW1wb3J0ICdwYWNrYWdlOnR1bmRlci9kYXRhYmFzZS5kYXJ0JzsKCmNsYXNzIE1pZ3JhdGlvbnt7IHZlcnNpb24gfX0gZXh0ZW5kcyBNaWdyYXRpb24gewogIHZhciBuYW1lID0gJ3t7IG5hbWUgfX0nOwogIHZhciB2ZXJzaW9uID0ge3sgdmVyc2lvbiB9fTsKCiAgdXAoKSBhc3luYyB7CiAgICAvLyBUT0RPOiBBZGQgeW91ciBtaWdyYXRpb24gbG9naWMgaGVyZS4KICB9CgogIGRvd24oKSBhc3luYyB7CiAgICAvLyBUT0RPOiBBZGQgeW91ciBtaWdyYXRpb24gbG9naWMgaGVyZS4KICB9Cn0K",
       "type": "text"
     },
     {

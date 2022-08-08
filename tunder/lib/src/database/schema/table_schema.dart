@@ -78,6 +78,14 @@ class TableSchema {
   void unique(List<String> columns, {String? name}) => constraints
       .add(UniqueConstraint(columns: columns, table: this.name, name: name));
 
+  /**
+   * Adds Primary constraint to specified columns.
+   *
+   * Example:
+   * ```dart
+   * table.primary(['id']);
+   * ```
+   */
   void primary(List<String> columns, {String? name}) => constraints
       .add(PrimaryConstraint(columns: columns, table: this.name, name: name));
 
