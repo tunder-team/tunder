@@ -4,6 +4,7 @@ import 'package:tunder/database.dart';
 import 'package:tunder/src/console/command.dart';
 import 'package:tunder/src/console/commands/migrations/make_migration_command.dart';
 import 'package:tunder/src/console/commands/migrations/migrate_command.dart';
+import 'package:tunder/src/console/commands/migrations/migrate_status_command.dart';
 import 'package:tunder/src/console/sky_command.dart';
 import 'package:tunder/tunder.dart';
 
@@ -27,9 +28,11 @@ class ConsoleKernel implements ConsoleKernelContract {
   }
 
   List<Command> baseCommands() {
+    final appMigrations = migrations();
     return [
       MakeMigrationCommand(),
-      MigrateCommand(migrations()),
+      MigrateCommand(appMigrations),
+      MigrateStatusCommand(appMigrations),
     ];
   }
 
