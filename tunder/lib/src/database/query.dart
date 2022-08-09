@@ -23,7 +23,7 @@ class Query<T> {
   String? _orderBy;
   List<Where> wheres = [];
 
-  QueryOperation get _operation => QueryOperation.forDatabase(DB.driver);
+  QueryOperation get _operation => QueryOperation.forDriver(DB.driver);
 
   Query([tableNameOrModelClass]) {
     container = app();
@@ -44,15 +44,15 @@ class Query<T> {
 
   Future<List<T>> get() async => _transformRows(await _operation.process(this));
 
-  Future<int> count() => CountOperation.forDatabase(DB.driver).process(this);
+  Future<int> count() => CountOperation.forDriver(DB.driver).process(this);
 
   Future<int> insert(Map<String, dynamic> row) =>
-      InsertOperation.forDatabase(DB.driver).process(this, row);
+      InsertOperation.forDriver(DB.driver).process(this.table, row);
 
   Future<int> update(Map<String, dynamic> row) =>
-      UpdateOperation.forDatabase(DB.driver).process(this, row);
+      UpdateOperation.forDriver(DB.driver).process(this, row);
 
-  Future<int> delete() => DeleteOperation.forDatabase(DB.driver).process(this);
+  Future<int> delete() => DeleteOperation.forDriver(DB.driver).process(this);
 
   Future<List<T>> all() => get();
 

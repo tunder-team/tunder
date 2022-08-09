@@ -2,7 +2,7 @@ import 'package:tunder/database.dart';
 import 'package:tunder/src/database/operations/postgres/postgres_update_operation.dart';
 
 abstract class UpdateOperation {
-  factory UpdateOperation.forDatabase(Symbol driver) {
+  factory UpdateOperation.forDriver(Symbol driver) {
     switch (driver) {
       case DatabaseDriver.postgres:
         return PostgresUpdateOperation();

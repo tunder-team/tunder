@@ -36,7 +36,7 @@ class Paginator<T> {
     );
   }
 
-  String toSql() => QueryOperation.forDatabase(DB.driver).toSql(_paginated);
+  String toSql() => QueryOperation.forDriver(DB.driver).toSql(_paginated);
 
   Query<T> get _paginated => query
     ..offset = (page - 1) * perPage

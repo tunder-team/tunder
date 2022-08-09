@@ -2,7 +2,7 @@ import 'package:tunder/database.dart';
 import 'package:tunder/src/database/operations/postgres/postgres_count_operation.dart';
 
 abstract class CountOperation {
-  factory CountOperation.forDatabase(Symbol driver) {
+  factory CountOperation.forDriver(Symbol driver) {
     switch (driver) {
       case DatabaseDriver.postgres:
         return PostgresCountOperation();

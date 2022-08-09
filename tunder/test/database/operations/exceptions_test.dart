@@ -11,7 +11,7 @@ main() {
   group('Operation Exceptions', () {
     test('CountOperation throws exception for unknown driver', () {
       expect(
-        () => CountOperation.forDatabase(#unknown),
+        () => CountOperation.forDriver(#unknown),
         toThrow(UnsupportedError,
             'Count operation not implemented for driver [unknown]'),
       );
@@ -19,7 +19,7 @@ main() {
 
     test('InsertOperation throws exception for unknown driver', () {
       expect(
-        () => InsertOperation.forDatabase(#unknown),
+        () => InsertOperation.forDriver(#unknown),
         toThrow(UnsupportedError,
             'Insert operation not implemented for driver [unknown]'),
       );
@@ -27,7 +27,7 @@ main() {
 
     test('QueryOperation throws exception for unknown driver', () {
       expect(
-        () => QueryOperation.forDatabase(#unknown),
+        () => QueryOperation.forDriver(#unknown),
         toThrow(UnsupportedError,
             'Query operation not implemented for driver [unknown]'),
       );
@@ -35,7 +35,7 @@ main() {
 
     test('UpdateOperation throws exception for unknown driver', () {
       expect(
-        () => UpdateOperation.forDatabase(#unknown),
+        () => UpdateOperation.forDriver(#unknown),
         toThrow(UnsupportedError,
             'Update operation not implemented for driver [unknown]'),
       );
@@ -43,7 +43,7 @@ main() {
 
     test('DeleteOperation throws exception for unknown driver', () {
       expect(
-        () => DeleteOperation.forDatabase(#unknown),
+        () => DeleteOperation.forDriver(#unknown),
         toThrow(UnsupportedError,
             'Delete operation not implemented for driver [unknown]'),
       );

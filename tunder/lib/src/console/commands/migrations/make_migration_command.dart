@@ -39,8 +39,7 @@ class MakeMigrationCommand extends MigrationCommand {
     registerMigrationInIndexFile(createdFile);
     registerMigrationInListFile(createdFile);
 
-    if (logging != null)
-      logging.complete('Migration created: ${createdFile.path}');
+    logging?.complete('Migration created: ${createdFile.path}');
 
     return 0;
   }

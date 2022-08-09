@@ -2,7 +2,7 @@ import 'package:tunder/database.dart';
 import 'package:tunder/src/database/operations/postgres/postgres_insert_operation.dart';
 
 abstract class InsertOperation {
-  factory InsertOperation.forDatabase(Symbol driver) {
+  factory InsertOperation.forDriver(Symbol driver) {
     switch (driver) {
       case DatabaseDriver.postgres:
         return PostgresInsertOperation();
@@ -12,5 +12,5 @@ abstract class InsertOperation {
     }
   }
 
-  Future<int> process(Query query, Map<String, dynamic> row);
+  Future<int> process(String table, Map<String, dynamic> row);
 }

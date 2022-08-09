@@ -4,12 +4,12 @@ import 'package:tunder/src/database/operations/postgres/mixins/escapable.dart';
 
 class PostgresInsertOperation with ValueTransformer implements InsertOperation {
   @override
-  Future<int> process(Query query, Map<String, dynamic> row) async {
+  Future<int> process(String table, Map<String, dynamic> row) async {
     final columns = _columns(row);
     final values = _values(row);
 
     return DB.execute(
-      'insert into ${query.table} ($columns) values ($values)',
+      'insert into ${table} ($columns) values ($values)',
     );
   }
 

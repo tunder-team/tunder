@@ -2,7 +2,7 @@ import 'package:tunder/database.dart';
 import 'package:tunder/src/database/operations/postgres/postgres_delete_operation.dart';
 
 abstract class DeleteOperation {
-  factory DeleteOperation.forDatabase(Symbol driver) {
+  factory DeleteOperation.forDriver(Symbol driver) {
     switch (driver) {
       case DatabaseDriver.postgres:
         return PostgresDeleteOperation();

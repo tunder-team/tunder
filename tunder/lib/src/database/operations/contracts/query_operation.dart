@@ -2,7 +2,7 @@ import 'package:tunder/database.dart';
 import 'package:tunder/src/database/operations/postgres/postgres_query_operation.dart';
 
 abstract class QueryOperation {
-  factory QueryOperation.forDatabase(Symbol driver) {
+  factory QueryOperation.forDriver(Symbol driver) {
     switch (driver) {
       case DatabaseDriver.postgres:
         return PostgresQueryOperation();
