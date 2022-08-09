@@ -13,7 +13,7 @@ class SkyCommandContext {
 
   SkyCommandContext({required MigrationCommand forCommand}) {
     command = forCommand;
-    sky = SkyCommand(logger, silent: true)..addTunderCommand(command);
+    sky = SkyCommand<int>(logger, silent: true)..addTunderCommand(command);
   }
 
   Future<void> createMigrationsTable() => command.createMigrationsTable();

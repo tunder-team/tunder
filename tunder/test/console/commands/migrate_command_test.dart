@@ -18,8 +18,9 @@ main() {
 
       // Act
       expect(await DB.tableExists('migrations'), false);
-      await test.sky.run(['migrate']);
+      final exitCode = await test.sky.run(['migrate']);
       expect(await DB.tableExists('migrations'), true);
+      expect(exitCode, 0);
     });
 
     test('runs each migration and insert them in migrations table', () async {
@@ -76,9 +77,10 @@ main() {
         ..addMigrations([migration2, migrationWithError]);
 
       // Act
-      await test.sky.run(['migrate']);
+      final exitCode = await test.sky.run(['migrate']);
 
       // Assert
+      expect(exitCode, 1);
       await assertDatabaseHas('migrations', {'id': migration1.id});
       await assertDatabaseHas('migrations', {'id': migration2.id});
       await assertDatabaseDoesntHave(
@@ -100,9 +102,10 @@ main() {
         ..addMigrations([migrationWithError, migration2]);
 
       // Act
-      await test.sky.run(['migrate']);
+      final exitCode = await test.sky.run(['migrate']);
 
       // Assert
+      expect(exitCode, 1);
       await assertDatabaseHas('migrations', {'id': migration1.id});
       await assertDatabaseDoesntHave(
           'migrations', {'id': migrationWithError.id});

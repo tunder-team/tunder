@@ -1,7 +1,7 @@
 import 'package:args/command_runner.dart' as args;
 import 'package:mason_logger/mason_logger.dart';
 
-abstract class Command<T> extends args.Command<T> {
+abstract class Command<int> extends args.Command<int> {
   late final String name;
   late final String description;
   late Logger logger;

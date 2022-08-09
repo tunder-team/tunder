@@ -1,3 +1,4 @@
+import 'package:tunder/console.dart';
 import 'package:tunder/src/core/container.dart';
 import 'package:test/test.dart';
 
@@ -49,6 +50,11 @@ void main() {
         Cat cat = container.get(Cat);
         expect(cat, TypeMatcher<Cat>());
         expect(cat.sound(), 'meow');
+      });
+
+      test('accepts generics as key', () {
+        final skyCommand = container.get(SkyCommand<int>);
+        expect(skyCommand, TypeMatcher<SkyCommand<int>>());
       });
     });
   });

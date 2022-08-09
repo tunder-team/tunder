@@ -39,7 +39,7 @@ class Container {
   }
 
   _resolveType(Type type) {
-    var mirror = reflectClass(type);
+    var mirror = reflectType(type) as ClassMirror;
 
     if (mirror.isAbstract)
       throw BindingResolutionException('abstract type $type');

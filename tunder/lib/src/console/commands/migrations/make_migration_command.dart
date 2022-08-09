@@ -4,9 +4,10 @@ import 'package:clock/clock.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:tunder/console.dart';
+import 'package:tunder/src/console/commands/migrations/contracts/migration_command.dart';
 import 'package:tunder/tunder.dart';
 
-class MakeMigrationCommand extends Command {
+class MakeMigrationCommand extends MigrationCommand {
   final name = 'make:migration';
   final description = 'Create a migration file';
   final String stubsDir;
@@ -27,7 +28,7 @@ class MakeMigrationCommand extends Command {
     this.stubsDir = ConsoleConfig.stubsDirectory,
   });
 
-  run() async {
+  Future<int> run() async {
     var file = File('$stubsDir/migrations/migration.stub');
 
     if (!file.existsSync())
@@ -40,6 +41,8 @@ class MakeMigrationCommand extends Command {
 
     if (logging != null)
       logging.complete('Migration created: ${createdFile.path}');
+
+    return 0;
   }
 
   File generateMigrationFile(File file) {
