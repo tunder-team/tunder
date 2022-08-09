@@ -380,5 +380,13 @@ main() {
       expect(user, isNull);
       expect(await Query<User>().findOrNull(1), isNotNull);
     });
+
+    test('Query.whereMap(map) builds where clause with equal values', () async {
+      var query = Query<User>().whereMap({'id': 1, 'name': 'Marco'});
+      expect(query.toSql(),
+          'SELECT * FROM "users" WHERE "id" = 1 AND "name" = \$\$Marco\$\$');
+      var users = await query.get();
+      expect(users.length, 1);
+    });
   });
 }

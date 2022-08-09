@@ -127,6 +127,12 @@ class Query<T> {
     return _where;
   }
 
+  Query<T> whereMap(Map<String, dynamic> map) {
+    map.forEach((key, value) => where(key).equals(value));
+
+    return this;
+  }
+
   Where orWhere(String column) {
     final _where = Where(column);
     or(_where);
