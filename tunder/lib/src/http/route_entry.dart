@@ -5,7 +5,6 @@ import 'package:tunder/src/core/container.dart';
 import 'package:tunder/src/http/route_definitions.dart';
 import 'package:tunder/src/http/route_options.dart';
 import 'package:tunder/utils.dart';
-import 'package:tunder/tunder.dart';
 
 class RouteEntry implements RouteDefinitions {
   String path;

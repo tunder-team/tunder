@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:tunder/tunder.dart';
 import 'package:tunder/http.dart';
 import 'package:tunder/src/core/container.dart';
 import 'package:tunder/src/http/route_entry.dart';
