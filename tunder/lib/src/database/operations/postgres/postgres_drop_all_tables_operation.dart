@@ -1,13 +1,16 @@
 import 'package:tunder/database.dart';
+import 'package:tunder/src/database/operations/postgres/mixins/value_transformer.dart';
 
-class PostgresDropAllTablesOperation {
+class PostgresDropAllTablesOperation with PostgresTransformers {
   Future<int> execute() async {
     final connection = DB.connection;
     final dropSql =
-        'select "table_name" from information_schema.tables where table_schema = \'public\'';
-    final rows = await connection.query(dropSql);
-    final tables = rows.map((row) => row['table_name']).toList().join(', ');
+        'select "tablename" from pg_tables where schemaname = \'public\'';
 
-    return await connection.execute('drop table $tables cascade');
+    final rows = await connection.query(dropSql);
+    final tables =
+        rows.map(toField('tablename')).map(toIdentity).toList().join(', ');
+
+    return await connection.execute('drop table if exists $tables cascade');
   }
 }

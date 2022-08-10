@@ -1,5 +1,4 @@
 import 'package:clock/clock.dart';
-import 'package:mason_logger/mason_logger.dart';
 import 'package:tunder/console.dart';
 import 'package:tunder/database.dart';
 
@@ -12,7 +11,7 @@ mixin ManageMigrations on Command<int> {
       .toList();
 
   Future<void> createMigrationsTable() async {
-    Progress creation = progress('Creating migrations table');
+    final creation = progress('Creating migrations table');
     await Schema.create('migrations', (table) {
       table
         ..string('id').notNullable().primary()

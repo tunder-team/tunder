@@ -18,6 +18,19 @@ main() {
     ..lightGreen();
 
   group('MigrateStatusCommand', () {
+    test('responds to migrate:status command', () {
+      expect(MigrateStatusCommand([]).name, 'migrate:status');
+    });
+
+    test('has description', () {
+      expect(MigrateStatusCommand([]).description,
+          'Get the status of each migration');
+    });
+
+    test('has migrations category', () {
+      expect(MigrateStatusCommand([]).category, 'migrations');
+    });
+
     test('creates table "migrations" if doesnt exist', () async {
       // Arrange
       final test =

@@ -16,6 +16,11 @@ class MigrateCommand extends MigrationCommand with ManageMigrations {
     if (!await DB.tableExists('migrations')) await createMigrationsTable();
     ranMigrations = await getRanMigrations();
 
+    if (pendingMigrations.isEmpty) {
+      info('No pending migrations');
+      return 0;
+    }
+
     late Progress migrating;
     late Migration migration;
     try {

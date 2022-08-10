@@ -15,9 +15,13 @@ main() {
       expect(MigrateRollbackCommand([]).name, 'migrate:rollback');
     });
 
-    test('description: Rollback the last database migration', () {
+    test('has description', () {
       expect(MigrateRollbackCommand([]).description,
           'Rollback the last database migration');
+    });
+
+    test('has migrations category', () {
+      expect(MigrateRollbackCommand([]).category, 'migrations');
     });
 
     test('displays "no migrations to rollback" if theres no migration ran',

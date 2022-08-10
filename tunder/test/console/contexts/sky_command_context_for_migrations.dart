@@ -3,6 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:tunder/console.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/src/console/commands/migrations/contracts/migration_command.dart';
+import 'package:tunder/utils.dart';
 
 class SkyCommandContextForMigrations {
   late final SkyCommand sky;
@@ -17,6 +18,13 @@ class SkyCommandContextForMigrations {
   }
 
   Future<void> createMigrationsTable() => command.createMigrationsTable();
+
+  Future<String> createRandomTable() async {
+    final table = 'test_table_${Generate.id()}';
+    await Schema.create(table, (table) => table..id());
+
+    return table;
+  }
 
   void mockProgressCall() =>
       when(() => logger.progress(any())).thenReturn(progress);

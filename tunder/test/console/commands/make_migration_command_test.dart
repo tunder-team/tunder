@@ -14,6 +14,19 @@ import 'package:clock/clock.dart';
 main() {
   group('MakeMigrationCommand', () {
     const testStubsDir = 'test/stubs';
+
+    test('responds to migrate command', () {
+      expect(MakeMigrationCommand().name, 'make:migration');
+    });
+
+    test('has a description', () {
+      expect(MakeMigrationCommand().description, 'Creates a migration file');
+    });
+
+    test('has migrations category', () {
+      expect(MakeMigrationCommand().category, 'migrations');
+    });
+
     test('has one argument', () {
       const testDestinationDir = 'tmp/migrations1';
       final sky = SkyCommand<int>(Logger(), silent: true);

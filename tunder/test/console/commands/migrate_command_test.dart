@@ -11,6 +11,18 @@ main() {
   useDatabaseTransactions();
 
   group('MigrateCommand', () {
+    test('responds to migrate command', () {
+      expect(MigrateCommand([]).name, 'migrate');
+    });
+
+    test('has a description', () {
+      expect(MigrateCommand([]).description, 'Runs migrations');
+    });
+
+    test('has migrations category', () {
+      expect(MigrateCommand([]).category, 'migrations');
+    });
+
     test('creates table "migrations" if doesnt exist', () async {
       // Arrange
       final test =
@@ -116,6 +128,29 @@ main() {
           'migrations', {'id': migrationWithError.id});
       await assertDatabaseDoesntHave('migrations', {'id': migration2.id});
       verify(() => test.logger.err(any())).called(1);
+    });
+
+    test('prints "No pending migrations" if all migrations migrated', () async {
+      // Arrange
+      final migration1 = Migration1();
+      final migration2 = Migration2();
+      final test =
+          await SkyCommandContextForMigrations(forCommand: MigrateCommand([]))
+            ..mockProgressCall()
+            ..createMigrationsTable()
+            ..addExistingMigrations([
+              migration1,
+              migration2,
+            ]);
+
+      // Act
+      final exitCode = await test.sky.run(['migrate']);
+
+      // Assert
+      expect(exitCode, 0);
+      await assertDatabaseHas('migrations', {'id': migration1.id});
+      await assertDatabaseHas('migrations', {'id': migration2.id});
+      verify(() => test.logger.info('No pending migrations')).called(1);
     });
   });
 }

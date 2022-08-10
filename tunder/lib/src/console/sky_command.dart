@@ -10,11 +10,6 @@ class SkyCommand<int> extends CommandRunner<int> {
   SkyCommand(this.logger, {this.silent = false})
       : super('sky', 'Tunder Framework $tunderVersion');
 
-  void addTunderCommand(tunder.Command<int> command) {
-    super.addCommand(
-      command
-        ..logger = logger
-        ..silent = silent,
-    );
-  }
+  void addTunderCommand(tunder.Command<int> command) =>
+      super.addCommand(command..logger = logger);
 }

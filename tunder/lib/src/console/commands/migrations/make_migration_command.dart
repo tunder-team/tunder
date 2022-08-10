@@ -9,7 +9,7 @@ import 'package:tunder/tunder.dart';
 
 class MakeMigrationCommand extends MigrationCommand {
   final name = 'make:migration';
-  final description = 'Create a migration file';
+  final description = 'Creates a migration file';
   final String stubsDir;
   final String destinationDir;
 

@@ -2,7 +2,7 @@ import 'package:tunder/database.dart';
 import 'package:tunder/src/database/operations/postgres/mixins/value_transformer.dart';
 import 'package:tunder/src/database/operations/postgres/mixins/where_compiler.dart';
 
-class PostgresUpdateOperation with WhereCompiler, ValueTransformer {
+class PostgresUpdateOperation with WhereCompiler, PostgresTransformers {
   Future<int> process(Query query, Map<String, dynamic> row) async {
     return DB.execute(toSql(query, row));
   }
@@ -22,7 +22,7 @@ class PostgresUpdateOperation with WhereCompiler, ValueTransformer {
 
   String _values(Map<String, dynamic> row) {
     return row.entries
-        .map((field) => '"${field.key}" = ${transform(field.value)}')
+        .map((field) => '"${field.key}" = ${transformValue(field.value)}')
         .join(', ');
   }
 }

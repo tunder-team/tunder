@@ -1,7 +1,7 @@
 import 'package:tunder/database.dart';
 import 'package:tunder/src/database/operations/postgres/mixins/value_transformer.dart';
 
-class PostgresInsertOperation with ValueTransformer {
+class PostgresInsertOperation with PostgresTransformers {
   Future<int> process(String table, Map<String, dynamic> row) async {
     final columns = _columns(row);
     final values = _values(row);
@@ -16,6 +16,6 @@ class PostgresInsertOperation with ValueTransformer {
   }
 
   String _values(Map<String, dynamic> row) {
-    return row.values.map(transform).join(', ');
+    return row.values.map(transformValue).join(', ');
   }
 }
