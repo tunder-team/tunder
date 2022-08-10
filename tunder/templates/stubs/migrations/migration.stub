@@ -1,8 +1,8 @@
 import 'package:tunder/database.dart';
 
-class Migration{{ version }} extends Migration {
-  var name = '{{ name }}';
-  var version = {{ version }};
+class Migration_{{ id }} extends Migration {
+  final id = '{{ id }}';
+  final name = '{{ name }}';
 
   up() async {
     // TODO: Add your migration logic here.

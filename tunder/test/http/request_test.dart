@@ -1,5 +1,4 @@
 import 'package:tunder/http.dart';
-import 'package:tunder/tunder.dart';
 import 'package:tunder/utils.dart';
 import 'package:test/test.dart';
 

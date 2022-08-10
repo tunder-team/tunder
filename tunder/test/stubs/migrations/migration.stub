@@ -1,1 +1,1 @@
-class Migration{{ version }} {}
+class Migration_{{ id }} {}

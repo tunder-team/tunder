@@ -48,7 +48,7 @@ mixin WhereCompiler {
             : "$boolOperator $column $operator (${value.join(', ')})";
       }
 
-      var newValue = value.map((v) => "\$\$${v}\$\$");
+      var newValue = value.map(escape);
 
       if (value.every((element) => element is DateTime)) {
         return ['BETWEEN', 'NOT BETWEEN'].contains(where.operator)
@@ -64,6 +64,8 @@ mixin WhereCompiler {
 
     if (value is bool) return "$boolOperator $column $operator $value";
 
-    return "$boolOperator $column $operator \$\$$value\$\$";
+    return "$boolOperator $column $operator ${escape(value)}";
   }
+
+  String escape(value) => '\$\$$value\$\$';
 }

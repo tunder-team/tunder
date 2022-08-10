@@ -1,5 +1,4 @@
 import 'package:test/test.dart';
-import 'package:tunder/tunder.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/test.dart';
 
@@ -96,10 +95,10 @@ main() {
       });
 
       test('.drop(table) and .dropIfExists(table)', () async {
-        expect(Schema.dropSql('test'), 'drop table "test"');
         expect(Schema.drop('test'), isNotNull);
-        expect(Schema.dropIfExistsSql('test'), 'drop table if exists "test"');
+        expect(await DB.tableExists('test'), isFalse);
         expect(Schema.dropIfExists('test'), isNotNull);
+        expect(await DB.tableExists('test'), isFalse);
       });
 
       test('.dropColumn(name) and .dropColumns([name1, name2])', () {

@@ -1,27 +1,34 @@
 import 'dart:io';
 
 import 'package:clock/clock.dart';
+import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
 import 'package:tunder/console.dart';
+import 'package:tunder/src/console/commands/migrations/contracts/migration_command.dart';
 import 'package:tunder/tunder.dart';
 
-class MakeMigrationCommand extends Command {
+class MakeMigrationCommand extends MigrationCommand {
   final name = 'make:migration';
-  final description = 'Create a migration file';
+  final description = 'Creates a migration file';
   final String stubsDir;
   final String destinationDir;
 
   String? _migrationName;
   String get migrationName => _migrationName ??= argResults!.rest.join(' ');
-  int? _timestamp;
-  int get timestamp => _timestamp ??= clock.now().millisecondsSinceEpoch;
+
+  String? _id;
+  String get id {
+    if (_id != null) return _id!;
+
+    return _id = DateFormat('yyyy_MM_dd_HHmmss').format(clock.now());
+  }
 
   MakeMigrationCommand({
     this.destinationDir = ConsoleConfig.migrationDestination,
     this.stubsDir = ConsoleConfig.stubsDirectory,
   });
 
-  run() async {
+  Future<int> run() async {
     var file = File('$stubsDir/migrations/migration.stub');
 
     if (!file.existsSync())
@@ -32,18 +39,19 @@ class MakeMigrationCommand extends Command {
     registerMigrationInIndexFile(createdFile);
     registerMigrationInListFile(createdFile);
 
-    if (logging != null)
-      logging.complete('Migration created: ${createdFile.path}');
+    logging?.complete('Migration created: ${createdFile.path}');
+
+    return 0;
   }
 
   File generateMigrationFile(File file) {
     var contents = file.readAsStringSync();
 
     contents = contents
-        .replaceAll('{{ version }}', timestamp.toString())
+        .replaceAll('{{ id }}', id)
         .replaceAll('{{ name }}', migrationName);
 
-    var fileName = '${timestamp}_${migrationName.snakeCase}.dart';
+    var fileName = '${id}_${migrationName.snakeCase}.dart';
     var createdFile = _generateFile(fileName, contents);
 
     return createdFile;
@@ -64,16 +72,18 @@ class MakeMigrationCommand extends Command {
   void registerMigrationInListFile(File generated) {
     var listFile = File(path.join(destinationDir, 'list.dart'));
     var defaultListContents = '''
+import 'package:tunder/database.dart';
+
 import 'index.dart';
 
-var migrations = [
+final List<Migration> migrations = [
 ];
 
 ''';
     var listContents = listFile.existsSync()
         ? listFile.readAsStringSync()
         : defaultListContents;
-    var migrationInstance = "  Migration$timestamp(),\n];";
+    var migrationInstance = "  Migration_$id(),\n];";
 
     listContents = listContents.replaceAll('];', migrationInstance);
     listFile

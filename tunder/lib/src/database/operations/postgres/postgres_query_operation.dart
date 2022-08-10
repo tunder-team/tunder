@@ -1,11 +1,9 @@
 import 'package:tunder/database.dart';
-import 'package:tunder/src/database/operations/contracts/query_operation.dart';
 import 'package:tunder/src/database/operations/postgres/mixins/where_compiler.dart';
 
-class PostgresQueryOperation with WhereCompiler implements QueryOperation {
+class PostgresQueryOperation with WhereCompiler {
   late final Query query;
 
-  @override
   Future<List<MappedRow>> process(Query query) async {
     return DB.query(toSql(query));
   }

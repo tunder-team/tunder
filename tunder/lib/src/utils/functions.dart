@@ -1,5 +1,4 @@
 import 'package:dotenv/dotenv.dart';
-import 'package:tunder/extensions.dart';
 import 'package:tunder/http.dart';
 import 'package:tunder/src/http/route_entry.dart';
 

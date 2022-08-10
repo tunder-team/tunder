@@ -1,4 +1,5 @@
 import 'package:tunder/database.dart';
+import 'package:tunder/src/database/operations/contracts/database_operator.dart';
 import 'package:tunder/src/database/schema/schema_processor.dart';
 import 'package:tunder/src/database/schema/table_schema.dart';
 
@@ -35,15 +36,12 @@ class Schema {
   static Future<int> rename(String from, String to) =>
       DB.execute(renameSql(from, to));
 
-  static String renameSql(String from, String to) {
-    return SchemaProcessor.forDatabase(DB.driver).renameSql(from, to);
-  }
+  static String renameSql(String from, String to) =>
+      SchemaProcessor.forDatabase(DB.driver).renameSql(from, to);
 
-  static Future<int> drop(String table) async => DB.execute(dropSql(table));
-  static String dropSql(String tableName) => 'drop table "$tableName"';
+  static Future<int> drop(String table) =>
+      DatabaseOperator.forDriver(DB.driver).drop(table);
 
-  static Future<int> dropIfExists(String table) async =>
-      DB.execute(dropIfExistsSql(table));
-  static String dropIfExistsSql(String tableName) =>
-      'drop table if exists "$tableName"';
+  static Future<int> dropIfExists(String table) =>
+      DatabaseOperator.forDriver(DB.driver).dropIfExists(table);
 }
