@@ -24,8 +24,7 @@ mixin ManageMigrations on Command<int> {
 
   Future<List> getRanMigrations() => Query('migrations').orderBy('id').all();
 
-  Future<int> insertMigration(Migration migration) =>
-      Query('migrations').insert({
+  Future insertMigration(Migration migration) => Query('migrations').insert({
         'id': migration.id,
         'name': migration.name,
         'executed_at': clock.now(),

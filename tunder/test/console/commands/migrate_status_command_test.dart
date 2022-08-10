@@ -6,7 +6,7 @@ import 'package:tunder/src/console/commands/migrations/migrate_status_command.da
 import 'package:tunder/test.dart';
 
 import '../../helpers.dart';
-import '../contexts/sky_command_context.dart';
+import '../contexts/sky_command_context_for_migrations.dart';
 
 main() {
   useDatabaseTransactions();
@@ -20,8 +20,9 @@ main() {
   group('MigrateStatusCommand', () {
     test('creates table "migrations" if doesnt exist', () async {
       // Arrange
-      final test = SkyCommandContext(forCommand: MigrateStatusCommand([]))
-        ..mockProgressCall();
+      final test =
+          SkyCommandContextForMigrations(forCommand: MigrateStatusCommand([]))
+            ..mockProgressCall();
 
       // Act
       expect(await DB.tableExists('migrations'), false);
@@ -33,13 +34,14 @@ main() {
       // Arrange
       final migration1 = Migration1();
       final migration2 = Migration2();
-      final test = SkyCommandContext(forCommand: MigrateStatusCommand([]))
-        ..mockProgressCall()
-        ..mockInfoCall()
-        ..addMigrations([
-          migration1,
-          migration2,
-        ]);
+      final test =
+          SkyCommandContextForMigrations(forCommand: MigrateStatusCommand([]))
+            ..mockProgressCall()
+            ..mockInfoCall()
+            ..addMigrations([
+              migration1,
+              migration2,
+            ]);
 
       // Act
       await test.sky.run(['migrate:status']);
@@ -65,7 +67,8 @@ main() {
       // Arrange
       final migration1 = Migration1();
       final migration2 = Migration2();
-      final test = await SkyCommandContext(forCommand: MigrateStatusCommand([]))
+      final test = await SkyCommandContextForMigrations(
+          forCommand: MigrateStatusCommand([]))
         ..mockProgressCall()
         ..createMigrationsTable()
         ..addExistingMigrations([
@@ -93,7 +96,7 @@ main() {
       // Arrange
       final migration1 = Migration1();
       final migration2 = Migration2();
-      final test = await SkyCommandContext(
+      final test = await SkyCommandContextForMigrations(
           forCommand: MigrateStatusCommand([
         migration2,
         migration1,

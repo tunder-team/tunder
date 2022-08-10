@@ -1,5 +1,5 @@
 import 'package:tunder/database.dart';
-import 'package:tunder/src/database/operations/contracts/query_operation.dart';
+import 'package:tunder/src/database/operations/contracts/database_operator.dart';
 
 class Paginator<T> {
   int page;
@@ -36,7 +36,7 @@ class Paginator<T> {
     );
   }
 
-  String toSql() => QueryOperation.forDriver(DB.driver).toSql(_paginated);
+  String toSql() => DatabaseOperator.forDriver(DB.driver).toSql(_paginated);
 
   Query<T> get _paginated => query
     ..offset = (page - 1) * perPage

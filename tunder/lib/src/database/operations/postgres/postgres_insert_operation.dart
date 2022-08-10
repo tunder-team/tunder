@@ -1,9 +1,7 @@
 import 'package:tunder/database.dart';
-import 'package:tunder/src/database/operations/contracts/insert_operation.dart';
-import 'package:tunder/src/database/operations/postgres/mixins/escapable.dart';
+import 'package:tunder/src/database/operations/postgres/mixins/value_transformer.dart';
 
-class PostgresInsertOperation with ValueTransformer implements InsertOperation {
-  @override
+class PostgresInsertOperation with ValueTransformer {
   Future<int> process(String table, Map<String, dynamic> row) async {
     final columns = _columns(row);
     final values = _values(row);

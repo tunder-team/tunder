@@ -1,17 +1,12 @@
 import 'package:tunder/database.dart';
-import 'package:tunder/src/database/operations/contracts/update_operation.dart';
-import 'package:tunder/src/database/operations/postgres/mixins/escapable.dart';
+import 'package:tunder/src/database/operations/postgres/mixins/value_transformer.dart';
 import 'package:tunder/src/database/operations/postgres/mixins/where_compiler.dart';
 
-class PostgresUpdateOperation
-    with WhereCompiler, ValueTransformer
-    implements UpdateOperation {
-  @override
+class PostgresUpdateOperation with WhereCompiler, ValueTransformer {
   Future<int> process(Query query, Map<String, dynamic> row) async {
     return DB.execute(toSql(query, row));
   }
 
-  @override
   String toSql(Query query, Map<String, dynamic> row) {
     final values = _values(row);
     final wheres = compileWhereClauses(query.wheres);

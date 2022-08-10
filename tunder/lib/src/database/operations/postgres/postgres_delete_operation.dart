@@ -1,14 +1,11 @@
 import 'package:tunder/database.dart';
-import 'package:tunder/src/database/operations/contracts/delete_operation.dart';
 import 'package:tunder/src/database/operations/postgres/mixins/where_compiler.dart';
 
-class PostgresDeleteOperation with WhereCompiler implements DeleteOperation {
-  @override
+class PostgresDeleteOperation with WhereCompiler {
   Future<int> process(Query query) async {
     return DB.execute(toSql(query));
   }
 
-  @override
   String toSql(Query query) {
     final wheres = compileWhereClauses(query.wheres);
 

@@ -43,7 +43,7 @@ main() {
   });
 }
 
-Future<int> insertTestRecord(String table, [String name = 'test']) =>
+Future insertTestRecord(String table, [String name = 'test']) =>
     Query(table).insert({'name': name, 'age': 20, 'active': true});
 
 Future<String> createTable() async {

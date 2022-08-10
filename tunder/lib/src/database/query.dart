@@ -2,11 +2,7 @@ import 'dart:async';
 import 'dart:mirrors';
 
 import 'package:inflection3/inflection3.dart';
-import 'package:tunder/src/database/operations/contracts/count_operation.dart';
-import 'package:tunder/src/database/operations/contracts/delete_operation.dart';
-import 'package:tunder/src/database/operations/contracts/insert_operation.dart';
-import 'package:tunder/src/database/operations/contracts/query_operation.dart';
-import 'package:tunder/src/database/operations/contracts/update_operation.dart';
+import 'package:tunder/src/database/operations/contracts/database_operator.dart';
 import 'package:tunder/src/exceptions/record_not_found_exception.dart';
 import 'package:tunder/tunder.dart';
 import 'package:tunder/database.dart';
@@ -23,7 +19,7 @@ class Query<T> {
   String? _orderBy;
   List<Where> wheres = [];
 
-  QueryOperation get _operation => QueryOperation.forDriver(DB.driver);
+  DatabaseOperator get _operator => DatabaseOperator.forDriver(DB.driver);
 
   Query([tableNameOrModelClass]) {
     container = app();
@@ -42,17 +38,14 @@ class Query<T> {
     this.table = _inferTableNameVia(tableNameOrModelClass);
   }
 
-  Future<List<T>> get() async => _transformRows(await _operation.process(this));
+  Future<List<T>> get() async => _transformRows(await _operator.process(this));
+  Future<int> count() => _operator.count(this);
 
-  Future<int> count() => CountOperation.forDriver(DB.driver).process(this);
+  Future insert(Map<String, dynamic> row) =>
+      _operator.insert(row, table: table);
 
-  Future<int> insert(Map<String, dynamic> row) =>
-      InsertOperation.forDriver(DB.driver).process(this.table, row);
-
-  Future<int> update(Map<String, dynamic> row) =>
-      UpdateOperation.forDriver(DB.driver).process(this, row);
-
-  Future<int> delete() => DeleteOperation.forDriver(DB.driver).process(this);
+  Future<int> update(Map<String, dynamic> row) => _operator.update(this, row);
+  Future<int> delete() => _operator.delete(this);
 
   Future<List<T>> all() => get();
 
@@ -142,5 +135,5 @@ class Query<T> {
 
   getOrderBy() => _orderBy;
 
-  String toSql() => _operation.toSql(this);
+  String toSql() => _operator.toSql(this);
 }

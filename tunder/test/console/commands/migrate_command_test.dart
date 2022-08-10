@@ -5,7 +5,7 @@ import 'package:tunder/src/console/commands/migrations/migrate_command.dart';
 import 'package:tunder/test.dart';
 
 import '../../helpers.dart';
-import '../contexts/sky_command_context.dart';
+import '../contexts/sky_command_context_for_migrations.dart';
 
 main() {
   useDatabaseTransactions();
@@ -13,8 +13,9 @@ main() {
   group('MigrateCommand', () {
     test('creates table "migrations" if doesnt exist', () async {
       // Arrange
-      final test = SkyCommandContext(forCommand: MigrateCommand([]))
-        ..mockProgressCall();
+      final test =
+          SkyCommandContextForMigrations(forCommand: MigrateCommand([]))
+            ..mockProgressCall();
 
       // Act
       expect(await DB.tableExists('migrations'), false);
@@ -26,11 +27,12 @@ main() {
     test('runs each migration and insert them in migrations table', () async {
       // Arrange
       final migration1 = Migration1();
-      final test = SkyCommandContext(forCommand: MigrateCommand([]))
-        ..mockProgressCall()
-        ..addMigrations([
-          migration1,
-        ]);
+      final test =
+          SkyCommandContextForMigrations(forCommand: MigrateCommand([]))
+            ..mockProgressCall()
+            ..addMigrations([
+              migration1,
+            ]);
 
       // Act
       await test.sky.run(['migrate']);
@@ -45,15 +47,16 @@ main() {
       // Arrange
       final migration1 = Migration1();
       final migration2 = Migration2();
-      final test = await SkyCommandContext(forCommand: MigrateCommand([]))
-        ..mockProgressCall()
-        ..createMigrationsTable()
-        ..addExistingMigrations([
-          migration1,
-        ])
-        ..addMigrations([
-          migration2,
-        ]);
+      final test =
+          await SkyCommandContextForMigrations(forCommand: MigrateCommand([]))
+            ..mockProgressCall()
+            ..createMigrationsTable()
+            ..addExistingMigrations([
+              migration1,
+            ])
+            ..addMigrations([
+              migration2,
+            ]);
 
       // Act
       await test.sky.run(['migrate']);
@@ -68,13 +71,14 @@ main() {
       final migration1 = Migration1();
       final migration2 = Migration2();
       final migrationWithError = MigrationWithError();
-      final test = await SkyCommandContext(forCommand: MigrateCommand([]))
-        ..mockProgressCall()
-        ..createMigrationsTable()
-        ..addExistingMigrations([
-          migration1,
-        ])
-        ..addMigrations([migration2, migrationWithError]);
+      final test =
+          await SkyCommandContextForMigrations(forCommand: MigrateCommand([]))
+            ..mockProgressCall()
+            ..createMigrationsTable()
+            ..addExistingMigrations([
+              migration1,
+            ])
+            ..addMigrations([migration2, migrationWithError]);
 
       // Act
       final exitCode = await test.sky.run(['migrate']);
@@ -93,13 +97,14 @@ main() {
       final migration1 = Migration1();
       final migration2 = Migration2();
       final migrationWithError = MigrationWithError();
-      final test = await SkyCommandContext(forCommand: MigrateCommand([]))
-        ..mockProgressCall()
-        ..createMigrationsTable()
-        ..addExistingMigrations([
-          migration1,
-        ])
-        ..addMigrations([migrationWithError, migration2]);
+      final test =
+          await SkyCommandContextForMigrations(forCommand: MigrateCommand([]))
+            ..mockProgressCall()
+            ..createMigrationsTable()
+            ..addExistingMigrations([
+              migration1,
+            ])
+            ..addMigrations([migrationWithError, migration2]);
 
       // Act
       final exitCode = await test.sky.run(['migrate']);

@@ -4,14 +4,14 @@ import 'package:tunder/console.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/src/console/commands/migrations/contracts/migration_command.dart';
 
-class SkyCommandContext {
+class SkyCommandContextForMigrations {
   late final SkyCommand sky;
   late final MigrationCommand command;
   final logger = LoggerMock();
   final progress = ProgressMock();
   late final migrationsDir;
 
-  SkyCommandContext({required MigrationCommand forCommand}) {
+  SkyCommandContextForMigrations({required MigrationCommand forCommand}) {
     command = forCommand;
     sky = SkyCommand<int>(logger, silent: true)..addTunderCommand(command);
   }

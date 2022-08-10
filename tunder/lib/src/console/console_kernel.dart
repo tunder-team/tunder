@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:tunder/database.dart';
 import 'package:tunder/src/console/command.dart';
+import 'package:tunder/src/console/commands/db/wipe_command.dart';
 import 'package:tunder/src/console/commands/migrations/make_migration_command.dart';
 import 'package:tunder/src/console/commands/migrations/migrate_command.dart';
 import 'package:tunder/src/console/commands/migrations/migrate_rollback_command.dart';
@@ -35,6 +36,7 @@ class ConsoleKernel implements ConsoleKernelContract {
       MigrateCommand(appMigrations),
       MigrateStatusCommand(appMigrations),
       MigrateRollbackCommand(appMigrations),
+      WipeCommand(),
     ];
   }
 
