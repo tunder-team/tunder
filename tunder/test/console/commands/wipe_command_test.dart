@@ -4,6 +4,7 @@ import 'package:tunder/console.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/src/console/commands/db/wipe_command.dart';
 import 'package:tunder/test.dart';
+import 'package:tunder/utils.dart';
 
 import '../contexts/sky_command_context_for_migrations.dart';
 
@@ -62,7 +63,8 @@ class SkyCommandContext {
   late final progress = ProgressMock();
 
   SkyCommandContext(this.command) {
-    sky = SkyCommand<int>(logger, silent: true)..addTunderCommand(command);
+    sky = SkyCommand<int>(app(), logger, silent: true)
+      ..addTunderCommand(command);
     mockProgressCall();
   }
 

@@ -1,4 +1,4 @@
-import 'package:colorize/colorize.dart';
+import 'package:colorx/colorx.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:test/test.dart';
 import 'package:tunder/database.dart';
@@ -10,12 +10,8 @@ import '../contexts/sky_command_context_for_migrations.dart';
 
 main() {
   useDatabaseTransactions();
-  final pending = Colorize('pending')
-    ..bold()
-    ..lightYellow();
-  final checked = Colorize('✔')
-    ..bold()
-    ..lightGreen();
+  final pending = 'pending'.bold.brightYellow;
+  final checked = '✔'.bold.brightGreen;
 
   group('MigrateStatusCommand', () {
     test('responds to migrate:status command', () {

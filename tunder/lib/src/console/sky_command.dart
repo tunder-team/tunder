@@ -6,8 +6,9 @@ import 'package:tunder/tunder.dart';
 class SkyCommand<int> extends CommandRunner<int> {
   late final Logger logger;
   bool silent;
+  final Application app;
 
-  SkyCommand(this.logger, {this.silent = false})
+  SkyCommand(this.app, this.logger, {this.silent = false})
       : super('sky', 'Tunder Framework $tunderVersion');
 
   void addTunderCommand(tunder.Command<int> command) =>

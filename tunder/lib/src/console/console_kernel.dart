@@ -8,6 +8,7 @@ import 'package:tunder/src/console/commands/migrations/migrate_command.dart';
 import 'package:tunder/src/console/commands/migrations/migrate_fresh_command.dart';
 import 'package:tunder/src/console/commands/migrations/migrate_rollback_command.dart';
 import 'package:tunder/src/console/commands/migrations/migrate_status_command.dart';
+import 'package:tunder/src/console/commands/route_list_command.dart';
 import 'package:tunder/src/console/sky_command.dart';
 import 'package:tunder/tunder.dart';
 
@@ -39,6 +40,7 @@ class ConsoleKernel implements ConsoleKernelContract {
       MigrateRollbackCommand(appMigrations),
       WipeCommand(),
       MigrateFreshCommand(),
+      RouteListCommand(),
     ];
   }
 

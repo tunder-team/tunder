@@ -293,6 +293,17 @@ class RouteEntry implements RouteDefinitions {
     return _invokeController(request);
   }
 
+  Map<String, dynamic> toMap() {
+    return {
+      'name': _name,
+      'path': path,
+      'middlewares': middlewares,
+      'handler': _handlerName(),
+      'methods':
+          methods.map((m) => m.toUpperCase()).sorted((a, b) => a.compareTo(b)),
+    };
+  }
+
   _invokeFunction(Request request) {
     var mirror = reflect(request.route.handler) as ClosureMirror;
 
@@ -363,10 +374,8 @@ class RouteEntry implements RouteDefinitions {
       instance.type.declarations.entries.where((declaration) =>
           declaration.value is MethodMirror && !declaration.value.isPrivate);
 
-  bool hasController() {
-    var controller = reflectClass(handler);
-    return controller.superclass!.reflectedType == Controller;
-  }
+  bool hasController() =>
+      reflectClass(handler).superclass!.reflectedType == Controller;
 
   paramValue(
     Symbol paramName, {
@@ -486,5 +495,13 @@ class RouteEntry implements RouteDefinitions {
   _setPath(String path) {
     String? prefix = _getOption('prefix');
     this.path = prefix != null ? "${sanitize(prefix)}/${sanitize(path)}" : path;
+  }
+
+  String _handlerName() {
+    if (handler is Function) return 'function';
+
+    final name = reflectClass(handler).simpleName.name;
+
+    return '$name@$action';
   }
 }

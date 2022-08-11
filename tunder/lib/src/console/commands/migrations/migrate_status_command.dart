@@ -1,4 +1,4 @@
-import 'package:colorize/colorize.dart';
+import 'package:colorx/colorx.dart';
 import 'package:tunder/database.dart';
 import 'package:tunder/src/console/commands/migrations/contracts/migration_command.dart';
 import 'package:tunder/src/console/commands/migrations/mixins/manage_migrations.dart';
@@ -17,9 +17,10 @@ class MigrateStatusCommand extends MigrationCommand with ManageMigrations {
     ranMigrations = await getRanMigrations();
 
     for (final migration in migrations) {
-      dynamic status = isPending(migration) ? 'pending' : '✔';
-      status = Colorize(status)..bold();
-      isPending(migration) ? status.lightYellow() : status.lightGreen();
+      String status = isPending(migration)
+          ? 'pending'.bold.brightYellow
+          : '✔'.bold.brightGreen;
+
       info(' $status ${migration.id}_${migration.name.snakeCase}');
     }
 
