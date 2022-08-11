@@ -1,4 +1,3 @@
-import 'package:tunder/console.dart';
 import 'package:tunder/src/core/container.dart';
 import 'package:test/test.dart';
 
@@ -53,8 +52,8 @@ void main() {
       });
 
       test('accepts generics as key', () {
-        final skyCommand = container.get(SkyCommand<int>);
-        expect(skyCommand, TypeMatcher<SkyCommand<int>>());
+        final animal = container.get(Animal<Cat>);
+        expect(animal, TypeMatcher<Animal<Cat>>());
       });
     });
   });
@@ -70,4 +69,9 @@ class Cat {
   Cat(this.heart);
 
   sound() => 'meow';
+}
+
+class Animal<T> {
+  final T value;
+  Animal(this.value);
 }

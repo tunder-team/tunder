@@ -10,6 +10,7 @@ import 'package:tunder/console.dart';
 import 'package:tunder/src/console/commands/migrations/make_migration_command.dart';
 import 'package:tunder/tunder.dart';
 import 'package:clock/clock.dart';
+import 'package:tunder/utils.dart';
 
 main() {
   group('MakeMigrationCommand', () {
@@ -29,7 +30,7 @@ main() {
 
     test('has one argument', () {
       const testDestinationDir = 'tmp/migrations1';
-      final sky = SkyCommand<int>(Logger(), silent: true);
+      final sky = SkyCommand<int>(app(), Logger(), silent: true);
       final command = MakeMigrationCommand(
         stubsDir: testStubsDir,
         destinationDir: testDestinationDir,
@@ -40,7 +41,7 @@ main() {
 
     test('real migration file', () async {
       // Arrange
-      final sky = SkyCommand<int>(Logger(), silent: true);
+      final sky = SkyCommand<int>(app(), Logger(), silent: true);
       final command = MakeMigrationCommand();
       sky.addTunderCommand(command);
       final currentTime = DateTime.now();
@@ -80,7 +81,7 @@ class Migration_$id extends Migration {
     test('creates a migration file from stub', () async {
       // Arrange
       const testDestinationDir = 'tmp/migrations2';
-      final sky = SkyCommand<int>(Logger(), silent: true);
+      final sky = SkyCommand<int>(app(), Logger(), silent: true);
       final command = MakeMigrationCommand(
         stubsDir: testStubsDir,
         destinationDir: testDestinationDir,
@@ -118,7 +119,7 @@ class Migration_$id extends Migration {
       final progress = ProgressMock();
       final name = 'some migration';
       final filename = '${id}_${name.snakeCase}.dart';
-      final sky = SkyCommand<int>(logger, silent: false);
+      final sky = SkyCommand<int>(app(), logger, silent: false);
       sky.addTunderCommand(command);
 
       when(() => logger.progress(any())).thenReturn(progress);
@@ -140,7 +141,7 @@ class Migration_$id extends Migration {
 
     test('throws an exception if cant find the stub file', () {
       const testDestinationDir = 'tmp/migrations';
-      final sky = SkyCommand<int>(Logger(), silent: true);
+      final sky = SkyCommand<int>(app(), Logger(), silent: true);
       final command = MakeMigrationCommand(
         stubsDir: 'wrong/path',
         destinationDir: testDestinationDir,
@@ -156,7 +157,7 @@ class Migration_$id extends Migration {
     test('creates an index.dart file which exports the migration class',
         () async {
       // Arrange
-      final sky = SkyCommand<int>(Logger(), silent: true);
+      final sky = SkyCommand<int>(app(), Logger(), silent: true);
       final command = MakeMigrationCommand();
       final currentTime = DateTime(2020);
       final id = DateFormat('yyyy_MM_dd_HHmmss').format(currentTime);
@@ -183,7 +184,7 @@ export '${id}_${name.snakeCase}.dart';
         'appends an export to index.dart file which exports the migration class',
         () async {
       // Arrange
-      final sky = SkyCommand<int>(Logger(), silent: true);
+      final sky = SkyCommand<int>(app(), Logger(), silent: true);
       final destinationDir = randomDir();
       final command = MakeMigrationCommand(
         destinationDir: destinationDir,
@@ -217,7 +218,7 @@ export '${id}_${name.snakeCase}.dart';
         'creates a list.dart file which creates a list of Instances of migration classes',
         () async {
       // Arrange
-      final sky = SkyCommand<int>(Logger(), silent: true);
+      final sky = SkyCommand<int>(app(), Logger(), silent: true);
       final command = MakeMigrationCommand();
       final currentTime = DateTime(2018);
       final id = DateFormat('yyyy_MM_dd_HHmmss').format(currentTime);
@@ -248,7 +249,7 @@ final List<Migration> migrations = [
 
     test('adds a new item to migration list in list.dart file', () async {
       // Arrange
-      final sky = SkyCommand<int>(Logger(), silent: true);
+      final sky = SkyCommand<int>(app(), Logger(), silent: true);
       final command = MakeMigrationCommand();
       final listFile =
           File(absolute('${ConsoleConfig.migrationDestination}/list.dart'))
