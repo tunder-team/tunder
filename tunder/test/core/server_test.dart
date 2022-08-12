@@ -28,13 +28,19 @@ main() {
   test('Application.serve', () async {
     server!.close(force: true);
     server = await Application().serve(port: 1234);
-    var port = server!.port;
+    final port = server!.port;
     expect(server, TypeMatcher<HttpServer>());
     expect(port, 1234);
-    var server2 = await Application().serve(port: 1235);
+    final server2 = await Application().serve(port: 1235);
 
     expect(port, isNot(server2.port));
     expect(() => server!.port, throwsA(TypeMatcher<Exception>()));
+  });
+
+  test('Application.serve defaults port to 8080', () async {
+    server!.close(force: true);
+    server = await Application().serve();
+    expect(server!.port, 8080);
   });
 }
 
