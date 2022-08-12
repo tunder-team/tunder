@@ -7,8 +7,7 @@ import 'package:tunder/tunder.dart';
 import 'package:test/test.dart';
 
 feature() {
-  final DotEnv dotenv = DotEnv();
-  dotenv.load(['.env', '.env.test']);
+  DotEnv().load(['.env', '.env.test']);
   late Application app;
 
   setUpAll(() async {

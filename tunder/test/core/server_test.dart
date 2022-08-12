@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dotenv/dotenv.dart';
 import 'package:http/http.dart';
 import 'package:test/test.dart';
 import 'package:tunder/tunder.dart';
@@ -41,6 +42,15 @@ main() {
     server!.close(force: true);
     server = await Application().serve();
     expect(server!.port, 8080);
+  });
+
+  test('Application.serve you can define the port through app url', () async {
+    server!.close(force: true);
+    final env = DotEnv()..load(['.env']);
+    env.addAll({'APP_URL': 'http://localhost:1234'});
+    server = await Application().serve(dotenv: env);
+
+    expect(server!.port, 1234);
   });
 }
 
