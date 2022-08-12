@@ -32,6 +32,7 @@ command:
   version:
     linkToCommits: true
     workspaceChangelog: true
+    updateGitTagRefs: true
   bootstrap:
     usePubspecOverrides: true
     runPubGetInParallel: false
