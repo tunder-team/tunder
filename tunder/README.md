@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://tunder.dev" target="_blank">
-        <img src="../assets/logo-with-bg.svg" width="400">
+        <img src="https://raw.githubusercontent.com/tunder-team/tunder/main/assets/logo-with-bg.svg" width="400">
     </a>
 </p>
 
