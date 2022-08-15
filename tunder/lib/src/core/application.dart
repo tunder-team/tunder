@@ -21,9 +21,13 @@ class Application extends Container {
 
   static Application create() => Application._();
 
-  Future<HttpServer> serve({int port = 8080, DotEnv? dotenv}) async {
+  Future<HttpServer> serve({
+    String host = 'localhost',
+    int port = 8080,
+    DotEnv? dotenv,
+  }) async {
     dotenv ??= DotEnv()..load(['.env']);
-    final uri = Uri.parse(dotenv['APP_URL'] ?? 'http://localhost:$port');
+    final uri = Uri.parse(dotenv['APP_URL'] ?? 'http://$host:$port');
 
     await server?.close(force: true);
 
