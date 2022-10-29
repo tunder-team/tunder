@@ -1,6 +1,6 @@
 name: tunder
 description: Tunder is a framework designed to build server side applications.
-version: 0.2.0
+version: 0.2.1
 repository: https://github.com/tunder-team/tunder
 environment:
   sdk: ">=2.17.0 <3.0.0"
