@@ -47,9 +47,8 @@ class MakeMigrationCommand extends MigrationCommand {
   File generateMigrationFile(File file) {
     var contents = file.readAsStringSync();
 
-    contents = contents
-        .replaceAll('{{ id }}', id)
-        .replaceAll('{{ name }}', migrationName);
+    contents =
+        contents.replaceAll('<<id>>', id).replaceAll('<<name>>', migrationName);
 
     var fileName = '${id}_${migrationName.snakeCase}.dart';
     var createdFile = _generateFile(fileName, contents);

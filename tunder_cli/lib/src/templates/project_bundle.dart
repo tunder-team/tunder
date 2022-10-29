@@ -8,13 +8,13 @@ final projectBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "{{name.snakeCase()}}/.env",
       "data":
-          "QVBQX0VOVj1sb2NhbApBUFBfVVJMPSJodHRwOi8vbG9jYWxob3N0OjgwMDAiCg==",
+          "QVBQX0VOVj1sb2NhbAojIEFQUF9VUkw9Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCIKCkRCX0NPTk5FQ1RJT049cGdzcWwKREJfSE9TVD1sb2NhbGhvc3QKREJfUE9SVD01NDMyCkRCX0RBVEFCQVNFPXt7bmFtZS5zbmFrZUNhc2UoKX19CkRCX1VTRVJOQU1FPXBvc3RncmVzCkRCX1BBU1NXT1JEPWRvY2tlcgo=",
       "type": "text"
     },
     {
       "path": "{{name.snakeCase()}}/.env.example",
       "data":
-          "QVBQX0VOVj1sb2NhbApBUFBfVVJMPSJodHRwOi8vbG9jYWxob3N0OjgwMDAiCg==",
+          "QVBQX0VOVj1sb2NhbAojIEFQUF9VUkw9Imh0dHA6Ly9sb2NhbGhvc3Q6ODAwMCIKCkRCX0NPTk5FQ1RJT049cGdzcWwKREJfSE9TVD1sb2NhbGhvc3QKREJfUE9SVD01NDMyCkRCX0RBVEFCQVNFPXt7bmFtZS5zbmFrZUNhc2UoKX19CkRCX1VTRVJOQU1FPXBvc3RncmVzCkRCX1BBU1NXT1JEPWRvY2tlcgo=",
       "type": "text"
     },
     {
@@ -144,7 +144,7 @@ final projectBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "{{name.snakeCase()}}/pubspec.yaml",
       "data":
-          "bmFtZToge3tuYW1lLnNuYWtlQ2FzZSgpfX0KaG9tZXBhZ2U6IGh0dHBzOi8vZ29vZ2xlLmNvbQpkZXNjcmlwdGlvbjogVHVuZGVyIFByb2plY3QKcmVwb3NpdG9yeTogbm9uZQpwdWJsaXNoX3RvOiBub25lCmVudmlyb25tZW50OgogIHNkazogJz49Mi4xNi4xIDwzLjAuMCcKZGVwZW5kZW5jaWVzOgogIGRvdGVudjogXjQuMC4wCiAgc2hlbGZfaG90cmVsb2FkOiBeMS4zLjAKICB0dW5kZXI6IF4wLjIuMApkZXZfZGVwZW5kZW5jaWVzOgogIHRlc3Q6IF4xLjIxLjQK",
+          "bmFtZToge3tuYW1lLnNuYWtlQ2FzZSgpfX0KaG9tZXBhZ2U6IGh0dHBzOi8vZ29vZ2xlLmNvbQpkZXNjcmlwdGlvbjogVHVuZGVyIFByb2plY3QKcmVwb3NpdG9yeTogbm9uZQpwdWJsaXNoX3RvOiBub25lCmVudmlyb25tZW50OgogIHNkazogJz49Mi4xNi4xIDwzLjAuMCcKZGVwZW5kZW5jaWVzOgogIGRvdGVudjogXjQuMC4wCiAgc2hlbGZfaG90cmVsb2FkOiBeMS4zLjAKICB0dW5kZXI6IF4wLjIuMQpkZXZfZGVwZW5kZW5jaWVzOgogIHRlc3Q6IF4xLjIxLjQK",
       "type": "text"
     },
     {
@@ -156,7 +156,7 @@ final projectBundle = MasonBundle.fromJson(<String, dynamic>{
     {
       "path": "{{name.snakeCase()}}/templates/stubs/migrations/migration.stub",
       "data":
-          "aW1wb3J0ICdwYWNrYWdlOnR1bmRlci9kYXRhYmFzZS5kYXJ0JzsKCmNsYXNzIE1pZ3JhdGlvbl97eyBpZCB9fSBleHRlbmRzIE1pZ3JhdGlvbiB7CiAgZmluYWwgaWQgPSAne3sgaWQgfX0nOwogIGZpbmFsIG5hbWUgPSAne3sgbmFtZSB9fSc7CgogIHVwKCkgYXN5bmMgewogICAgLy8gVE9ETzogQWRkIHlvdXIgbWlncmF0aW9uIGxvZ2ljIGhlcmUuCiAgfQoKICBkb3duKCkgYXN5bmMgewogICAgLy8gVE9ETzogQWRkIHlvdXIgbWlncmF0aW9uIGxvZ2ljIGhlcmUuCiAgfQp9Cg==",
+          "aW1wb3J0ICdwYWNrYWdlOnR1bmRlci9kYXRhYmFzZS5kYXJ0JzsKCmNsYXNzIE1pZ3JhdGlvbl88PGlkPj4gZXh0ZW5kcyBNaWdyYXRpb24gewogIGZpbmFsIGlkID0gJzw8aWQ+Pic7CiAgZmluYWwgbmFtZSA9ICc8PG5hbWU+Pic7CgogIHVwKCkgYXN5bmMgewogICAgLy8gVE9ETzogQWRkIHlvdXIgbWlncmF0aW9uIGxvZ2ljIGhlcmUuCiAgfQoKICBkb3duKCkgYXN5bmMgewogICAgLy8gVE9ETzogQWRkIHlvdXIgbWlncmF0aW9uIGxvZ2ljIGhlcmUuCiAgfQp9Cg==",
       "type": "text"
     },
     {

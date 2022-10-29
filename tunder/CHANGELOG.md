@@ -1,3 +1,6 @@
+# 0.2.1
+- [fix(migrations)](https://github.com/tunder-team/tunder/pull/44): fix migration stub
+
 # 0.2.0
 - [feat(command)](https://github.com/tunder-team/tunder/pull/34): new routes command to list routes
 - [feat](https://github.com/tunder-team/tunder/pull/33): database migrations

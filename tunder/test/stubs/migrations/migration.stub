@@ -1,1 +1,1 @@
-class Migration_{{ id }} {}
+class Migration_<<id>> {}
