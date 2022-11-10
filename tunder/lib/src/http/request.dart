@@ -1,3 +1,4 @@
+import 'dart:convert' as convert;
 import 'dart:io';
 
 import 'package:tunder/http.dart';
@@ -12,8 +13,10 @@ class Request {
   Uri get uri => original.uri;
   late RouteEntry route;
   late Container container;
+  dynamic json;
 
   Router get router => container.get(Router);
+  ContentType? get contentType => original.headers.contentType;
 
   Request({
     required this.method,
@@ -42,7 +45,10 @@ class Request {
   void setRoute(RouteEntry route) => this.route = route;
 
   dynamic get(String name) {
+    if (json is Map) return json[name];
+
     dynamic value = uri.queryParameters[name] ?? null;
+
     if (value == null) return value;
     if (value.contains(','))
       return value.split(',').map(_tryParsePrimitives).toList();
@@ -71,5 +77,12 @@ class Request {
     if (value == 'false') return false;
 
     return value;
+  }
+
+  complete() async {
+    if (contentType?.value == ContentType.json.value) {
+      var text = await convert.utf8.decodeStream(original);
+      json = convert.json.decode(text);
+    }
   }
 }

@@ -26,6 +26,7 @@ class Kernel implements Contract.HttpKernelContract {
   }
 
   FutureOr<void> _processRequest(Request request) async {
+    await request.complete();
     Response response = Response.from(request);
 
     try {
