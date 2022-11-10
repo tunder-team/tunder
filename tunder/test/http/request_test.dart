@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:tunder/http.dart';
 import 'package:tunder/utils.dart';
 import 'package:test/test.dart';
@@ -87,6 +89,19 @@ main() {
       expect(response.body, 'ok');
       response = await http.get('another/path?param=undefined');
       expect(response.body, 'ok');
+    });
+
+    test('returns the value of a key if it is json format', () async {
+      var result;
+      final body = {'name': 'Marco'};
+      route.post('json-format-test', (Request request) {
+        result = request.json;
+      });
+
+      await http.post('json-format-test',
+          headers: {'content-type': 'application/json'}, body: body);
+
+      expect(result, equals(body));
     });
   });
 }
