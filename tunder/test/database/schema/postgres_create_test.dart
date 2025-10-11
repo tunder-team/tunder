@@ -54,12 +54,12 @@ main() {
       };
 
       stringTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
@@ -95,12 +95,12 @@ main() {
       };
 
       textTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
@@ -142,12 +142,12 @@ main() {
       };
 
       integerTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
@@ -190,12 +190,12 @@ main() {
       };
 
       bigIntegerTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
@@ -238,12 +238,12 @@ main() {
       };
 
       smallIntegerTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
@@ -300,12 +300,12 @@ main() {
       };
 
       decimalTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
@@ -341,12 +341,12 @@ main() {
       };
 
       booleanTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
@@ -408,12 +408,12 @@ main() {
       };
 
       timestampTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
@@ -469,12 +469,12 @@ main() {
       };
 
       dateTimeTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
@@ -528,12 +528,12 @@ main() {
       };
 
       dateTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
@@ -557,12 +557,12 @@ main() {
       };
 
       jsonTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
@@ -586,12 +586,12 @@ main() {
       };
 
       jsonbTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
@@ -669,12 +669,12 @@ main() {
       };
 
       compoundTestCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
