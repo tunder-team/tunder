@@ -29,12 +29,12 @@ main() {
       };
 
       testCases.forEach(
-        (testCase, value) => {
+        (testCase, value) {
           test(testCase, () async {
             var sql = (value['action'] as Function)();
             expect(sql, value['result']);
             expect(await DB.execute(sql), isNotNull);
-          })
+          });
         },
       );
     });
