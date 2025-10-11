@@ -3,3 +3,5 @@
 **/.DS_Store
 /coverage/
 /coverage_report/
+agents/
+.dart_tool/
