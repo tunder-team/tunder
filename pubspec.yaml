@@ -1,0 +1,11 @@
+name: tunder_workspace
+publish_to: none
+environment:
+  sdk: ^3.5.0
+
+workspace:
+  - tunder
+  - tunder_cli
+
+dev_dependencies:
+  melos: ^7.0.0

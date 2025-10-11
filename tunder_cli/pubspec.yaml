@@ -2,15 +2,16 @@ name: tunder_cli
 description: The Tunder Framework CLI.
 version: 1.0.0-pre.4
 repository: https://github.com/tunder-team/tunder
+resolution: workspace
 
 environment:
-  sdk: '>=2.17.6 <3.0.0'
+  sdk: ^3.5.0
 
 dependencies:
   args: ^2.3.1
   collection: ^1.16.0
-  mason: ^0.1.0-dev.29
-  mason_logger: ^0.1.1
+  mason: ^0.1.1
+  mason_logger: ^0.3.1
   recase: ^4.0.0
 
 dev_dependencies:

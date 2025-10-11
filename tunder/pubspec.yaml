@@ -2,11 +2,12 @@ name: tunder
 description: Tunder is a framework designed to build server side applications.
 version: 0.2.1
 repository: https://github.com/tunder-team/tunder
+resolution: workspace
 environment:
-  sdk: "^3.0.0"
+  sdk: ^3.5.0
 dependencies:
   path: ^1.8.1
-  http: ^0.13.4
+  http: ^1.0.0
   collection: ^1.16.0
   slugify: ^2.0.0
   recase: ^4.0.0
@@ -15,7 +16,7 @@ dependencies:
   args: ^2.3.1
   test: ^1.20.2
   postgres: ^2.4.6
-  mason_logger: ^0.1.1
+  mason_logger: ^0.3.1
   stack_trace: ^1.10.0
   clock: ^1.1.1
   intl: ^0.17.0
